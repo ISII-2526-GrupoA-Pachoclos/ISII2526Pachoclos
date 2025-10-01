@@ -4,7 +4,7 @@ project:
   teamId: 'Pachoclos'
   identities: {}
   notifications:
-    email: 'adriandaniel.mecinas@alu.uclm.es,jesus.sotos@alu.uclm.es,marcos.villalba@alu.uclm.es'
+    email: 'adriandaniel.mecinas@alu.uclm.es,jesus.sotos@alu.uclm.es,marcos.villalba@alu.uclm.es, jesus.resta@alu.uclm.es'
   members:
     member1:
       name: 'Adrián Daniel'
@@ -18,3 +18,7 @@ project:
       name: 'Marcos'
       surname: 'Villalba López' 
       githubUsername: 'MarcosVillalba005'
+    member4:
+      name: 'Jesús'
+      surname: 'Resta Navarro' 
+      githubUsername: 'jesusresta'
