@@ -9,5 +9,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<fabricante> fabricante { get; set; }
     public DbSet<ComprarItem> ComprarItem { get; set; }
     public DbSet<OfertaItem> OfertaItem { get; set; }
+    public DbSet<Compra> Compra { get; set; }
     public DbSet<Oferta> Oferta { get; set; }
+
 }
