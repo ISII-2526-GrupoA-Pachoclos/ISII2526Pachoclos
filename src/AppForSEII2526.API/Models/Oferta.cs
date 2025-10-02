@@ -5,15 +5,15 @@
         [Key]
         public int Id { get; set; }
 
-        [DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
+        [Required, DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime fechaInicio { get; set; }
 
-        [DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
+        [Required, DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime fechaFin { get; set; }
 
-        [DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
+        [Required, DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime fechaOferta { get; set; }
 
