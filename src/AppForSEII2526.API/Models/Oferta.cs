@@ -19,23 +19,22 @@
         public DateTime fechaOferta { get; set; }
 
 
+        // Relaciones
+        public List<OfertaItem> ofertaItems { get; set; }
         public tiposMetodoPago metodoPago { get; set; }
-        public enum tiposMetodoPago
+        
+
+        public tiposDirigidaOferta paraSocio { get; set; }
+    }
+    public enum tiposMetodoPago
         {
             Tarjeta,
             PayPal,
             Efectivo
         }
-
-        public tiposDirigidaOferta paraSocio { get; set; }
-        public enum tiposDirigidaOferta
+    public enum tiposDirigidaOferta
         {
             Socios,
             Clientes
         }
-
-        // Relaciones
-        public List<OfertaItem> ofertaItems { get; set; }
-        
-    }
 }
