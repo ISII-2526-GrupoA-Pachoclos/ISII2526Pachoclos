@@ -5,6 +5,7 @@
         [Key]
         public int idOferta { get; set; }
 
+        [Required]
         public int idHerramienta { get; set; }
 
         [Range(1, 100, ErrorMessage = "Establece un porcentaje entre 1 y 100")]
