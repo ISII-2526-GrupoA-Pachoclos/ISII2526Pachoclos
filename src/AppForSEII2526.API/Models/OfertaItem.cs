@@ -14,5 +14,10 @@
 
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float precioFinal { get; set; }
+
+        // Relaciones
+        public Oferta oferta { get; set; }
+        public Herramienta herramienta { get; set; }
+
     }
 }
