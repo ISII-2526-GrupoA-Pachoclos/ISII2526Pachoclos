@@ -30,16 +30,19 @@
         [StringLength(9, ErrorMessage = "No puede tener mas de 9 numeros.", MinimumLength = 1)]
         public string telefono { get; set; }
 
-        public metodoPago metodopago { get; set; }
+        public formaPago metodopago { get; set; }
 
-        public enum metodoPago
-        {
-            Efectivo,
-            TarjetaCredito,
-            PayPal
-        }
-        public IList<ComprarItem> items { get; set; }
+        
+        public IList<ComprarItem> CompraItems { get; set; }
 
 
+
+
+    }
+    public enum formaPago
+    {
+        Efectivo,
+        TarjetaCredito,
+        PayPal
     }
 }

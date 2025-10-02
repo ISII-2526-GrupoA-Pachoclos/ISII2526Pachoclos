@@ -16,5 +16,7 @@
         public int idHerramienta { get; set; }
 
         public Compra compra { get; set; }
+
+        public Herramienta herramienta { get; set; }
     }
 }
