@@ -17,6 +17,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppForSEII2526.UIT", "test\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppForSEII2526.Maui", "src\AppForSEII2526.Maui\AppForSEII2526.Maui.csproj", "{9A8C18DB-2D24-48C7-9EEF-9ABFFEC2A58C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "req", "req", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		req\Caso de Uso - Reparar Herramientas.docx = req\Caso de Uso - Reparar Herramientas.docx
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
