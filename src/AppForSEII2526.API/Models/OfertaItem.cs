@@ -1,8 +1,10 @@
 ﻿namespace AppForSEII2526.API.Models
 {
+
+    [PrimaryKey(nameof(idOferta), nameof(idHerramienta))]
     public class OfertaItem
     {
-        [Key]
+        
         public int idOferta { get; set; }
 
         public int idHerramienta { get; set; }
