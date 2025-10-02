@@ -25,6 +25,11 @@
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float precioTotal { get; set; }
 
+
+        // Relaciones
+
+        public IList<ReparacionItem> ReparacionItems { get; set; }
+
         public metodoPago metodoPago { get; set; }
 
     }
