@@ -5,10 +5,12 @@
         [StringLength(100, ErrorMessage = "No puede tener mas de 100 caracteres.", MinimumLength = 1)]
         public string apellidoCliente { get; set; }
 
-        [System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
+        [Required, DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime fechaEntrega { get; set; }
 
-        [System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
+        [Required, DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime fechaRecogida { get; set; }
 
         [Key]
@@ -22,5 +24,14 @@
 
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float precioTotal { get; set; }
+
+        public metodoPago metodoPago { get; set; }
+
+    }
+    public enum metodoPago
+    {
+        Efectivo,
+        TarjetaCredito,
+        PayPal
     }
 }
