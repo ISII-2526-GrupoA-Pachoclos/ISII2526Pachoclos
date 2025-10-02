@@ -18,6 +18,8 @@
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime fechaOferta { get; set; }
 
+
+        public tiposMetodoPago metodoPago { get; set; }
         public enum tiposMetodoPago
         {
             Tarjeta,
@@ -25,10 +27,15 @@
             Efectivo
         }
 
+        public tiposDirigidaOferta paraSocio { get; set; }
         public enum tiposDirigidaOferta
         {
             Socios,
             Clientes
         }
+
+        // Relaciones
+        public List<OfertaItem> ofertaItems { get; set; }
+        
     }
 }
