@@ -18,5 +18,6 @@
 
         // Relación
         public Reparacion Reparacion { get; set; }
-    }
+        public Herramienta Herramienta { get; set; }
+        }
 }
