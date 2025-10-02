@@ -28,5 +28,7 @@
 
         public IList<ComprarItem> ComprarItems { get; set; }
 
+        public fabricante fabricante { get; set; }
+
     }
 }
