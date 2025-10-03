@@ -3,8 +3,10 @@
     [PrimaryKey(nameof(idCompra), nameof(idHerramienta))]
     public class ComprarItem
     {
+        [Required]
         public int cantidad { get; set; }
 
+        [Required]
         public string descripcion { get; set; }
 
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
