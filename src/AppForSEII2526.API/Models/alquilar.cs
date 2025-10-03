@@ -34,24 +34,26 @@ namespace AppForSEII2526.API.Models
         public string? telefono { get; set; }
 
         [Required, StringLength(30, ErrorMessage = "No puede tener mas de 30 caracteres.", MinimumLength = 1)]
-        public string Periodo get; set; }
+        //public string Periodo get; set;}
 
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float precioTotal { get; set; }
-        
+
         public tiposMetodosPago metodoPago { get; set; }
 
         // Relaciones
         public List<alquilarItem> alquilarItems { get; set; }
 
 
-        
 
-    public enum tiposMetodosPago{
-    tarjetaCredito,
-    paypal,
-    Efectivo
 
+        public enum tiposMetodosPago
+        {
+            tarjetaCredito,
+            paypal,
+            Efectivo
+
+        }
+    }
 }
-}
-}
+
