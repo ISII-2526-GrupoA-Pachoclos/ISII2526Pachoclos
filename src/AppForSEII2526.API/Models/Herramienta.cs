@@ -20,7 +20,6 @@
 
         // Relaciones
 
-        // alquilarItems falta
 
         public IList<ReparacionItem> ReparacionItem { get; set; }
 
@@ -29,6 +28,8 @@
         public IList<ComprarItem> ComprarItems { get; set; }
 
         public fabricante fabricante { get; set; }
+
+        public IList<alquilarItem> alquilarItems { get; set; }
 
     }
 }
