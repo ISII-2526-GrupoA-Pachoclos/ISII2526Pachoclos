@@ -21,10 +21,12 @@
 
         // Relaciones
         public List<OfertaItem> ofertaItems { get; set; }
+
+        [Required]
         public tiposMetodoPago metodoPago { get; set; }
         
 
-        public tiposDirigidaOferta paraSocio { get; set; }
+        public tiposDirigidaOferta? paraSocio { get; set; }
     }
     public enum tiposMetodoPago
         {
