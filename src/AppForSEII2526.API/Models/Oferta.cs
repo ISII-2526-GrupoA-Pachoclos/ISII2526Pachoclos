@@ -5,29 +5,40 @@
         [Key]
         public int Id { get; set; }
 
-        [DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
+
+        [Required, DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime fechaInicio { get; set; }
 
-        [DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
+        [Required, DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime fechaFin { get; set; }
 
-        [DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
+        [Required, DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime fechaOferta { get; set; }
 
-        public enum tiposMetodoPago
+
+        // Relaciones
+        public List<OfertaItem> ofertaItems { get; set; }
+
+        [Required]
+        public tiposMetodoPago metodoPago { get; set; }
+        
+
+        public tiposDirigidaOferta? paraSocio { get; set; }
+    }
+    public enum tiposMetodoPago
         {
             Tarjeta,
             PayPal,
             Efectivo
         }
 
-        public enum tiposDirigidaOferta
+    public enum tiposDirigidaOferta
         {
             Socios,
             Clientes
         }
-    }
+}
 }
