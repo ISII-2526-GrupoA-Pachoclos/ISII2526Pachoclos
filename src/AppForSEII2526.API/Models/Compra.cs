@@ -17,10 +17,6 @@
         [Required, StringLength(50, ErrorMessage = "No puede tener mas de 50 caracteres.", MinimumLength = 1)]
         public string apellidoCliente { get; set; }
 
-        [DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime fechaCompra { get; set; }
-
         [StringLength(50, ErrorMessage = "No puede tener mas de 50 caracteres.", MinimumLength = 1)]
         public string? correoElectronico { get; set; }
 
