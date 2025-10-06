@@ -2,11 +2,14 @@
 {
     public class Herramienta
     {
-
+        // alquilaritem falta
+        // compraitems falta
+        // ofertaitems falta
+        // itemsreparacion falta
         [Key]
         public int id { get; set; }
 
-        [StringLength(50, ErrorMessage = "No puede tener mas de 50 caracteres.", MinimumLength = 1)]
+        [Required, StringLength(50, ErrorMessage = "No puede tener mas de 50 caracteres.", MinimumLength = 1)]
         public string material { get; set; }
 
         [Required, StringLength(50, ErrorMessage = "No puede tener mas de 50 caracteres.", MinimumLength = 1)]
@@ -17,20 +20,6 @@
 
         [Required]
         public string tiempoReparacion { get; set; }
-
-
-        // Relaciones
-
-
-        public IList<ReparacionItem> ReparacionItem { get; set; }
-
-        public IList<OfertaItem> OfertaItems { get; set; }
-
-        public IList<ComprarItem> ComprarItems { get; set; }
-
-        public fabricante fabricante { get; set; }
-
-        public IList<alquilarItem> alquilarItems { get; set; }
 
     }
 }
