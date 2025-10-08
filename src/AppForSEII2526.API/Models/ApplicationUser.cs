@@ -15,6 +15,8 @@ public class ApplicationUser : IdentityUser {
     public string correoElectronico { get; set; }
 
 
-
     public IList<Oferta> oferta { get; set; }
+
+    public IList<Compra> Compra { get; set; }
+
 }
