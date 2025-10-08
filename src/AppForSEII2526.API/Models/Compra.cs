@@ -19,9 +19,6 @@
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float precioTotal { get; set; }
 
-        [StringLength(9, ErrorMessage = "No puede tener mas de 9 numeros.", MinimumLength = 1)]
-        public string? telefono { get; set; }
-
         [Required]
         public formaPago metodopago { get; set; }
 

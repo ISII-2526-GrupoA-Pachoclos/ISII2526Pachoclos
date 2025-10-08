@@ -13,7 +13,7 @@
   <Class Name="AppForSEII2526.API.Models.Herramienta">
     <Position X="3.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAACAAAAAAAAAEAAAMAAAEAAAAIBAEgA=</HashCode>
+      <HashCode>AAQAAAAAAAAAAACAAAAAAAAAEAAAMAAAEAAAAIBAEgA=</HashCode>
       <FileName>Models\Herramienta.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -26,11 +26,12 @@
   <Class Name="AppForSEII2526.API.Models.Reparacion">
     <Position X="9.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ABACAAAAAIgAAAAAAAAAAAEAAAAAAAAEAAAQAIAAAgA=</HashCode>
+      <HashCode>ABACAAAAAIAAAAAQAAAAAAAAAAAAAAAEAAAAAIAAAgA=</HashCode>
       <FileName>Models\Reparacion.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="metodoPago" />
+      <Property Name="ApplicationUser" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="ReparacionItems" />
@@ -39,13 +40,23 @@
   <Class Name="AppForSEII2526.API.Models.ReparacionItem">
     <Position X="6.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AQAAAAAAAAAAAAAAAAEAEAAAAAAAEAgAIAAAAAAAAEA=</HashCode>
+      <HashCode>AQAAAAAAAAAAAACAAAEAAAAIAAAAEAAAIAAAAAAAAEA=</HashCode>
       <FileName>Models\ReparacionItem.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="Herramienta" />
       <Property Name="Reparacion" />
+      <Property Name="Herramienta" />
     </ShowAsAssociation>
+  </Class>
+  <Class Name="AppForSEII2526.API.Models.ApplicationUser">
+    <Position X="12.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAABCAAAAAAAEAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Models\ApplicationUser.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Reparacion" />
+    </ShowAsCollectionAssociation>
   </Class>
   <Enum Name="AppForSEII2526.API.Models.metodoPago">
     <Position X="7.5" Y="3" Width="1.5" />
