@@ -26,25 +26,36 @@
   <Class Name="AppForSEII2526.API.Models.alquilarItem">
     <Position X="8" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AQAAAAAAAAAAAEAAAAAAEgAAAAAgEAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AQAAAAAAAIAAAEAAAAAAAAAAAAAgEAAAAEAAAAAAAAA=</HashCode>
       <FileName>Models\Alquilaritem.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="herramienta" />
       <Property Name="alquilar" />
+      <Property Name="herramienta" />
     </ShowAsAssociation>
   </Class>
   <Class Name="AppForSEII2526.API.Models.alquilar">
     <Position X="11" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ABQCAAAAAAkAABAAAAACAAAAAABAAAAAACAQAAAAAgI=</HashCode>
+      <HashCode>ABQCAAAAAAEAAAAAAAACEAAAAABAAAAAACAAAAAAAgA=</HashCode>
       <FileName>Models\alquilar.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="metodoPago" />
+      <Property Name="applicationUser" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="alquilarItems" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="AppForSEII2526.API.Models.ApplicationUser">
+    <Position X="14" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAFCAAAAAAAEAAAAAAAAAAAgEAAAAAEA=</HashCode>
+      <FileName>Models\ApplicationUser.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="alquilar" />
     </ShowAsCollectionAssociation>
   </Class>
   <Enum Name="AppForSEII2526.API.Models.tiposMetodosPago">
