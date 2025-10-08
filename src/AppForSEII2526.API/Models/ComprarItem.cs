@@ -1,6 +1,6 @@
 ﻿namespace AppForSEII2526.API.Models
 {
-    [PrimaryKey(nameof(idCompra), nameof(idHerramienta))]
+    [PrimaryKey(nameof(compraId), nameof(herramientaid))]
     public class ComprarItem
     {
         [Required]
@@ -13,9 +13,9 @@
         public float precio { get; set; }
 
         
-        public int idCompra { get; set; }
+        public int compraId { get; set; }
 
-        public int idHerramienta { get; set; }
+        public int herramientaid { get; set; }
 
         public Compra compra { get; set; }
 
