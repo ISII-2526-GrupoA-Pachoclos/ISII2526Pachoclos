@@ -25,4 +25,7 @@ public class ApplicationUser : IdentityUser {
 
     public IList<Compra> Compra { get; set; }
 
+    public IList<alquilar> alquilar { get; set; }
+
+
 }
