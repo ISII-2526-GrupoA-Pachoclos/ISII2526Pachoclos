@@ -1,13 +1,13 @@
 ﻿namespace AppForSEII2526.API.Models
 {
 
-    [PrimaryKey(nameof(idOferta), nameof(idHerramienta))]
+    [PrimaryKey(nameof(ofertaId), nameof(herramientaid))]
     public class OfertaItem
     {
         
-        public int idOferta { get; set; }
+        public int ofertaId { get; set; }
 
-        public int idHerramienta { get; set; }
+        public int herramientaid { get; set; }
 
         [Required, Range(1, 100, ErrorMessage = "Establece un porcentaje entre 1 y 100")]
         public int porcentaje { get; set; }

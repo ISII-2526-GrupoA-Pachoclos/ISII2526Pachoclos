@@ -13,4 +13,8 @@ public class ApplicationUser : IdentityUser {
 
     [Required, StringLength(100, ErrorMessage = "El correo electrónico no puede tener más de 100 caracteres.")]
     public string correoElectronico { get; set; }
+
+
+
+    public IList<Oferta> oferta { get; set; }
 }
