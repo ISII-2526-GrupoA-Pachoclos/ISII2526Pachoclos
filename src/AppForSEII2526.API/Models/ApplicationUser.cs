@@ -13,4 +13,10 @@ public class ApplicationUser : IdentityUser {
 
     [Required, StringLength(100, ErrorMessage = "El correo electrónico no puede tener más de 100 caracteres.")]
     public string correoElectronico { get; set; }
+
+    [StringLength(50, ErrorMessage = "No puede tener mas de 50 caracteres.", MinimumLength = 1)]
+    [RegularExpression(@"^\+?\d{10,15}$", ErrorMessage = "El número de teléfono no es válido.")]
+    public string numTelefono { get; set; }
+
+    public IList<Reparacion> Reparacion { get; set; }
 }
