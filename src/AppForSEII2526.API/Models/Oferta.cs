@@ -22,6 +22,8 @@
         // Relaciones
         public List<OfertaItem> ofertaItems { get; set; }
 
+        public ApplicationUser ApplicationUser { get; set; }
+
         [Required]
         public tiposMetodoPago metodoPago { get; set; }
         

@@ -13,7 +13,7 @@
   <Class Name="AppForSEII2526.API.Models.Herramienta">
     <Position X="4" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAACAAAAAAAAAEAAAMAAAEAAAAIBAEgA=</HashCode>
+      <HashCode>AAQAAAAAAAAAAACAAAAAAAAAEAAAMAAAEAAAAIBAEgA=</HashCode>
       <FileName>Models\Herramienta.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -26,12 +26,12 @@
   <Class Name="AppForSEII2526.API.Models.OfertaItem">
     <Position X="8" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAEAAAAAAgIAABAAgAAAAAgAA=</HashCode>
+      <HashCode>AAABAAAAAIAAAAAAAAAAAAAAAAAgIAABAAgAAAAAAAA=</HashCode>
       <FileName>Models\OfertaItem.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="herramienta" />
       <Property Name="oferta" />
+      <Property Name="herramienta" />
     </ShowAsAssociation>
   </Class>
   <Class Name="AppForSEII2526.API.Models.Oferta">
@@ -42,15 +42,26 @@
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAIAAAAAACAAAAAAAAQBAAACAAAAAAAAA=</HashCode>
+      <HashCode>AAACAAAAAAAAIAAQAAACAAAAAAAAQBAAACAAAAAAAAA=</HashCode>
       <FileName>Models\Oferta.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="metodoPago" />
       <Property Name="paraSocio" />
+      <Property Name="ApplicationUser" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="ofertaItems" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="AppForSEII2526.API.Models.ApplicationUser">
+    <Position X="14.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAABCAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Models\ApplicationUser.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="oferta" />
     </ShowAsCollectionAssociation>
   </Class>
   <Enum Name="AppForSEII2526.API.Models.tiposMetodoPago">
