@@ -46,9 +46,9 @@
       <FileName>Models\Oferta.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
+      <Property Name="ApplicationUser" />
       <Property Name="metodoPago" />
       <Property Name="paraSocio" />
-      <Property Name="ApplicationUser" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="ofertaItems" />
@@ -57,7 +57,7 @@
   <Class Name="AppForSEII2526.API.Models.ApplicationUser">
     <Position X="14.75" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAQAABCAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAQAABCAAAAAAAEAAAAAAAAAAAgEAAAAAEA=</HashCode>
       <FileName>Models\ApplicationUser.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
