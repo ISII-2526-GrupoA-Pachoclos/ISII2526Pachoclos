@@ -19,7 +19,7 @@ namespace AppForSEII2526.API.Controllers
 
 
         [HttpGet]
-        [Route("[accion]")]
+        [Route("[action]")]
         [ProducesResponseType(typeof(IList<Herramienta>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetAllHerramientas()
         {
@@ -30,7 +30,7 @@ namespace AppForSEII2526.API.Controllers
 
 
         [HttpGet]
-        [Route("[accion]")]
+        [Route("[action]")]
         [ProducesResponseType(typeof(IList<Herramienta>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult> GetHerramientas_sinDTOs() { 
             IList<Herramienta> herramientas = await _context.Herramienta.ToListAsync();
@@ -38,7 +38,7 @@ namespace AppForSEII2526.API.Controllers
 
         }
         [HttpGet]
-        [Route("[accion]")]
+        [Route("[action]")]
         [ProducesResponseType(typeof(IList<HerramientasParaComprarDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult> GetHerramientasParaComprar_conTodosLosDatos_DTO(float? filtroPrecio, string? filtroMaterial) {
             
