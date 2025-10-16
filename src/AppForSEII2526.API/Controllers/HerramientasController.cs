@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+
+﻿using AppForSEII2526.API.DTOs;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using AppForSEII2526.API.DTOs;
+
 
 namespace AppForSEII2526.API.Controllers
 {
@@ -18,6 +20,49 @@ namespace AppForSEII2526.API.Controllers
         }
 
         /*
+
+        [HttpGet]
+        [Route("[action]")]
+        [ProducesResponseType(typeof(IList<Herramienta>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetAllHerramientas()
+        {
+            IList<Herramienta> herramientas = await _context.Herramienta.ToListAsync();
+            return Ok(herramientas);
+
+        }
+        */
+
+        /*
+        [HttpGet]
+        [Route("[action]")]
+        [ProducesResponseType(typeof(IList<Herramienta>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult> GetHerramientas_sinDTOs() { 
+            IList<Herramienta> herramientas = await _context.Herramienta.ToListAsync();
+            return Ok(herramientas);
+
+        }
+
+        */
+        [HttpGet]
+        [Route("[action]")]
+        [ProducesResponseType(typeof(IList<HerramientasParaComprarDTO>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult> GetHerramientasParaComprar_conTodosLosDatos_DTO(float? filtroPrecio, string? filtroMaterial) {
+            
+            var herramientas = await _context.Herramienta
+                .Include(h => h.fabricante)
+                .Where(h => (h.precio <= filtroPrecio || (filtroPrecio==null))
+                && (h.material.Contains(filtroMaterial) ||  (filtroMaterial==null))
+                )
+                .OrderBy(h => h.nombre)
+                .Select(h => new HerramientasParaComprarDTO(h.id, h.nombre, h.material, h.fabricante.nombre, h.precio))
+                .ToListAsync();
+            return Ok(herramientas);
+
+        }
+
+
+
+/*
         // Devuelve toda la informacion directamente de la BBDD
         [HttpGet]
         [Route("[action]")]
@@ -34,7 +79,7 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<HerramientasParaRepararDTO>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult> GetHerramientas_conTodosLosDatos_DTO(string? filtroNombre, string? filtroTiempoReparacion)
+        public async Task<ActionResult> GetHerramientasParaReparar_conTodosLosDatos_DTO(string? filtroNombre, string? filtroTiempoReparacion)
         {
             var herramientas = await _context.Herramienta
                 .Include(herramienta => herramienta.fabricante)
@@ -46,6 +91,7 @@ namespace AppForSEII2526.API.Controllers
                 .ToArrayAsync();
             return Ok(herramientas);
         }
+
 
 
     }
