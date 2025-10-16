@@ -17,7 +17,7 @@ namespace AppForSEII2526.API.Controllers
             _logger = logger;
         }
 
-
+        /*
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<Herramienta>), (int)HttpStatusCode.OK)]
@@ -27,8 +27,9 @@ namespace AppForSEII2526.API.Controllers
             return Ok(herramientas);
 
         }
+        */
 
-
+        /*
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<Herramienta>), (int)HttpStatusCode.OK)]
@@ -37,6 +38,8 @@ namespace AppForSEII2526.API.Controllers
             return Ok(herramientas);
 
         }
+
+        */
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<HerramientasParaComprarDTO>), (int)HttpStatusCode.OK)]
