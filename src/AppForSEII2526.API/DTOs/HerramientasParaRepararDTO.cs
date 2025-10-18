@@ -1,8 +1,7 @@
-﻿namespace AppForSEII2526.API.Models
+﻿namespace AppForSEII2526.API.DTOs
 {
-    public class Herramienta
+    public class HerramientasParaRepararDTO
     {
-
         [Key]
         public int id { get; set; }
 
@@ -11,26 +10,22 @@
 
         [Required, StringLength(50, ErrorMessage = "No puede tener mas de 50 caracteres.", MinimumLength = 1)]
         public string nombre { get; set; }
-        
+
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float precio { get; set; }
 
         public string tiempoReparacion { get; set; }
 
+        public string fabricante { get; set; }
 
-        // Relaciones
-
-
-        public IList<ReparacionItem> ReparacionItem { get; set; }
-
-        public IList<OfertaItem> OfertaItems { get; set; }
-
-        public IList<ComprarItem> ComprarItems { get; set; }
-
-        public fabricante fabricante { get; set; }
-
-        public IList<alquilarItem> alquilarItems { get; set; }
-
-
+        public HerramientasParaRepararDTO(int id, string material, string nombre, float precio, string tiempoReparacion, string fabricante)
+        {
+            this.id = id;
+            this.material = material;
+            this.nombre = nombre;
+            this.precio = precio;
+            this.tiempoReparacion = tiempoReparacion;
+            this.fabricante = fabricante;
+        }
     }
 }
