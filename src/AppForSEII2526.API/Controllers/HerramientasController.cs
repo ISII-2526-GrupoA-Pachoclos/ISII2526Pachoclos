@@ -17,6 +17,7 @@ namespace AppForSEII2526.API.Controllers
             _logger = logger;
         }
 
+        /*
         //Devuelve toda la información directamente de la BBDD
         [HttpGet]
         [Route("[action]")]
@@ -26,20 +27,21 @@ namespace AppForSEII2526.API.Controllers
             IList<Herramienta> herramientas = await _context.Herramienta.ToListAsync();
             return Ok(herramientas);
         }
+        */
 
         //Devuelve todos los datos de las herramientas que se piden en el paso 2 del CU3 (Crear Ofertas)
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<HerramientasParaOfertasDTO>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult> GetHerramientas_conTodosLosDatos_DTO(float? filtroPrecio, string? filtroFabricante)
+        public async Task<ActionResult> GetHerramientasParaOferta_conTodosLosDatos_DTO(float? filtroPrecio, string? filtroFabricante)
         {
             var herramientas = await _context.Herramienta
                 .Include(h => h.fabricante)
-                .Where(h =>
-                    (filtroPrecio == null || h.precio < filtroPrecio) &&
+                .Where(h => (filtroPrecio == null || h.precio <= filtroPrecio) &&
                     (filtroFabricante == null || h.fabricante.nombre == filtroFabricante)
                 )
                 .OrderBy(herramientas => herramientas.fabricante.nombre)
+                    .ThenBy(herramientas => herramientas.precio)
                 .Select(h => new HerramientasParaOfertasDTO(h.id, h.material, h.nombre, h.precio, h.fabricante.nombre))
                 .ToListAsync();
 
@@ -47,3 +49,4 @@ namespace AppForSEII2526.API.Controllers
         }
     }
 }
+
