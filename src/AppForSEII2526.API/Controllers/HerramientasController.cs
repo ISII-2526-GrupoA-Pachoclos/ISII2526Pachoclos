@@ -1,5 +1,4 @@
-
-﻿using AppForSEII2526.API.DTOs;
+using AppForSEII2526.API.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +18,7 @@ namespace AppForSEII2526.API.Controllers
             _logger = logger;
         }
 
-        /*
+
 
         [HttpGet]
         [Route("[action]")]
@@ -30,7 +29,7 @@ namespace AppForSEII2526.API.Controllers
             return Ok(herramientas);
 
         }
-        */
+        
 
         /*
         [HttpGet]
@@ -41,8 +40,9 @@ namespace AppForSEII2526.API.Controllers
             return Ok(herramientas);
 
         }
-
         */
+        
+        
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<HerramientasParaComprarDTO>), (int)HttpStatusCode.OK)]
@@ -93,6 +93,37 @@ namespace AppForSEII2526.API.Controllers
         }
 
 
+
+  /*
+        //Devuelve toda la información directamente de la BBDD
+        [HttpGet]
+        [Route("[action]")]
+        [ProducesResponseType(typeof(IList<Herramienta>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult> GetHerramienta_sinDTOs()
+        {
+            IList<Herramienta> herramientas = await _context.Herramienta.ToListAsync();
+            return Ok(herramientas);
+        }
+  */
+
+        //Devuelve todos los datos de las herramientas que se piden en el paso 2 del CU3 (Crear Ofertas)
+        [HttpGet]
+        [Route("[action]")]
+        [ProducesResponseType(typeof(IList<HerramientasParaOfertasDTO>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult> GetHerramientasParaOferta_conTodosLosDatos_DTO(float? filtroPrecio, string? filtroFabricante)
+        {
+            var herramientas = await _context.Herramienta
+                .Include(h => h.fabricante)
+                .Where(h => (filtroPrecio == null || h.precio <= filtroPrecio) &&
+                    (filtroFabricante == null || h.fabricante.nombre == filtroFabricante)
+                )
+                .OrderBy(herramientas => herramientas.fabricante.nombre)
+                    .ThenBy(herramientas => herramientas.precio)
+                .Select(h => new HerramientasParaOfertasDTO(h.id, h.material, h.nombre, h.precio, h.fabricante.nombre))
+                .ToListAsync();
+
+            return Ok(herramientas);
+        }
 
     }
 }
