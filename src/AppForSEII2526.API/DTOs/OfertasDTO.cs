@@ -24,6 +24,7 @@
 
         public List<HerramientasParaOfertasDTO> herramienta { get; set; }
 
+
         public OfertasDTO()
         {
         }
