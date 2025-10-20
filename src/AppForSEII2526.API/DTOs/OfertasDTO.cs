@@ -2,6 +2,7 @@
 {
     public class OfertasDTO
     {
+        
 
         public int Id { get; set; }
 
@@ -18,18 +19,22 @@
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime fechaOferta { get; set; }
 
-        public string tiposMetodoPago { get; set; }
+        public tiposMetodoPago tiposMetodoPago { get; set; }
 
-        public string tiposDirigidaOferta { get; set; }
+        public tiposDirigidaOferta? tiposDirigidaOferta { get; set; }
 
-        public List<HerramientasParaOfertasDTO> herramienta { get; set; }
+        public string nombreHerramienta { get; set; }
+        public string materialHerramienta { get; set; }
+        public string fabricanteHerramienta { get; set; }
+        public float precioOriginalHerramienta { get; set; }
+        public float precioConOfertaHerramienta { get; set; }
 
 
         public OfertasDTO()
         {
         }
 
-        public OfertasDTO(int id, DateTime fechaInicio, DateTime fechaFin, DateTime fechaOferta, string tiposMetodoPago, string tiposDirigidaOferta, List<HerramientasParaOfertasDTO> herramienta)
+        public OfertasDTO(int id, DateTime fechaInicio, DateTime fechaFin, DateTime fechaOferta, tiposMetodoPago tiposMetodoPago, tiposDirigidaOferta? tiposDirigidaOferta, string nombreHerramienta, string materialHerramienta, string fabricanteHerramienta, float precioOriginalHerramienta, float precioConOfertaHerramienta)
         {
             Id = id;
             this.fechaInicio = fechaInicio;
@@ -37,7 +42,11 @@
             this.fechaOferta = fechaOferta;
             this.tiposMetodoPago = tiposMetodoPago;
             this.tiposDirigidaOferta = tiposDirigidaOferta;
-            this.herramienta = herramienta;
+            this.nombreHerramienta = nombreHerramienta;
+            this.materialHerramienta = materialHerramienta;
+            this.fabricanteHerramienta = fabricanteHerramienta;
+            this.precioOriginalHerramienta = precioOriginalHerramienta;
+            this.precioConOfertaHerramienta = precioConOfertaHerramienta;
         }
     }
 }

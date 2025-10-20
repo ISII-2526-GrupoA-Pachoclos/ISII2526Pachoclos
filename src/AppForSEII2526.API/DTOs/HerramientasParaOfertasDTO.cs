@@ -18,20 +18,17 @@ namespace AppForSEII2526.API.DTOs
 
         public string fabricante { get; set; }
 
-        [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
-        public float precioConOferta { get; set; }
 
 
         // Constructor sin parámetros requerido por EF y proyecciones LINQ
         public HerramientasParaOfertasDTO() { }
 
-        public HerramientasParaOfertasDTO(int id, string material, string nombre, float precio, string fabricante, float precioConOferta) {
+        public HerramientasParaOfertasDTO(int id, string material, string nombre, float precio, string fabricante) {
             this.id = id;
             this.material = material;
             this.nombre = nombre;
             this.precio = precio;
             this.fabricante = fabricante;
-            this.precioConOferta = precioConOferta;
         }
 
         
