@@ -20,7 +20,7 @@ namespace AppForSEII2526.API.Controllers
 
         // Obtiene el detalle de una reparación por su ID. Corresponde al paso
         // 7 del caso de uso "Reparar herramientas". -> GET del Detalle
-        [HttpGet("GetDetalles_Reparacion/{id}")]
+        [HttpGet]
         [ProducesResponseType(typeof(ReparacionDetalleDTO), (int)HttpStatusCode.OK)]
         public async Task<ActionResult> GetDetalles_Reparacion(int id)
         {

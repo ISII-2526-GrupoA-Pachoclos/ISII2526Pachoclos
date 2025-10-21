@@ -6,7 +6,7 @@ namespace AppForSEII2526.API.DTOs
     public class ReparacionDetalleDTO
     {
         public ReparacionDetalleDTO(int id, string nombre, string apellido, DateTime fechaEntrega,
-            DateTime fechaRecogida, metodoPago metodoPago, float precioTotal,
+            DateTime fechaRecogida, metodoPago metodoPago, float? precioTotal,
             IList<ReparacionItemDTO> herramientasAReparar)
         {
             this.id = id;
@@ -40,7 +40,7 @@ namespace AppForSEII2526.API.DTOs
         public metodoPago metodoPago { get; set; }
 
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
-        public float precioTotal { get; set; }
+        public float? precioTotal { get; set; }
 
         public IList<ReparacionItemDTO> HerramientasAReparar { get; set; }
 
