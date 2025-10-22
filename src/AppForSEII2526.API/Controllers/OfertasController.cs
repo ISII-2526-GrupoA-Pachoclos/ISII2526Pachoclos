@@ -42,22 +42,20 @@ namespace AppForSEII2526.API.Controllers
                         oi.herramienta.material,
                         oi.herramienta.fabricante.nombre,
                         oi.herramienta.precio,
-                        oi.precioFinal
-                        //oi.herramienta.precio * (100f - oi.porcentaje) / 100f
+                        oi.herramienta.precio * (100f - oi.porcentaje) / 100
                     )).ToList()
                 ))
                 .FirstOrDefaultAsync();
 
-            /*
+            
             if (ofertas == null)
                 return NotFound();
 
-            // Calculamos el total sumando los precioOferta ya calculados en la proyección.
             var precioTotal = ofertas.HerramientasAOfertar?.Sum(i => i.precioOferta) ?? 0f;
 
             return Ok(new { detalle = ofertas, precioTotal });
-            */
-            return Ok(ofertas);
+            
+            
         }
     }
 }
