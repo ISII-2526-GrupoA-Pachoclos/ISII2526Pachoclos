@@ -28,7 +28,7 @@
         public tiposMetodoPago metodoPago { get; set; }
         
 
-        public tiposDirigidaOferta? paraSocio { get; set; }
+        public tiposDirigidaOferta paraSocio { get; set; }
     }
     public enum tiposMetodoPago
         {

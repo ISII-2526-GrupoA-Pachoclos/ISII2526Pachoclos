@@ -18,6 +18,8 @@ namespace AppForSEII2526.API.DTOs
 
         public string fabricante { get; set; }
 
+
+
         // Constructor sin parámetros requerido por EF y proyecciones LINQ
         public HerramientasParaOfertasDTO() { }
 
