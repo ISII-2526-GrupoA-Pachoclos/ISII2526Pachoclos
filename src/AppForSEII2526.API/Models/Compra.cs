@@ -17,7 +17,7 @@
 
 
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
-        public float precioTotal { get; set; }
+        public float? precioTotal { get; set; }
 
         [Required]
         public formaPago metodopago { get; set; }
