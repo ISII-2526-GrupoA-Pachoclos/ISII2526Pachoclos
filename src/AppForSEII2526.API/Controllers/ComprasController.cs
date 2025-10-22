@@ -31,7 +31,7 @@ namespace AppForSEII2526.API.Controllers
                 .Select(c => new CompraDetalleDTO(
                     c.Id,
                     c.direccionEnvio,
-                    //c.fechaCompra,
+                    c.fechaCompra,
                     c.precioTotal,
                     c.CompraItems.Select(ci => new CompraItemDTO(
                         ci.herramientaid,

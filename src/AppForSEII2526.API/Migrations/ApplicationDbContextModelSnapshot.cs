@@ -124,10 +124,13 @@ namespace AppForSEII2526.API.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<DateTime>("fechaCompra")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("metodopago")
                         .HasColumnType("int");
 
-                    b.Property<float>("precioTotal")
+                    b.Property<float?>("precioTotal")
                         .HasColumnType("real");
 
                     b.HasKey("Id");
@@ -221,7 +224,7 @@ namespace AppForSEII2526.API.Migrations
                     b.Property<int>("metodoPago")
                         .HasColumnType("int");
 
-                    b.Property<int?>("paraSocio")
+                    b.Property<int>("paraSocio")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
