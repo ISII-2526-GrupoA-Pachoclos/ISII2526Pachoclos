@@ -204,7 +204,8 @@ namespace AppForSEII2526.API.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     direccionEnvio = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    precioTotal = table.Column<float>(type: "real", nullable: false),
+                    fechaCompra = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    precioTotal = table.Column<float>(type: "real", nullable: true),
                     metodopago = table.Column<int>(type: "int", nullable: false),
                     ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
@@ -230,7 +231,7 @@ namespace AppForSEII2526.API.Migrations
                     fechaOferta = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     metodoPago = table.Column<int>(type: "int", nullable: false),
-                    paraSocio = table.Column<int>(type: "int", nullable: true)
+                    paraSocio = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
