@@ -57,5 +57,22 @@ namespace AppForSEII2526.API.Controllers
             
             
         }
+
+
+        [HttpPost]
+        [ProducesResponseType(typeof(OfertaDetalleDTO), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
+        public async Task<ActionResult> CrearOferta(CrearOfertaDTO crearOfertaDTO)
+        {
+            if(crearOfertaDTO.fechaInicio <= DateTime.Today) 
+                ModelState.AddModelError("fechaInicio", "La fecha de inicio debe ser posterior a la fecha actual.");
+
+            if(crearOfertaDTO.fechaInicio >= crearOfertaDTO.fechaFin)
+                ModelState.AddModelError("fechaFin", "La fecha de fin debe ser posterior a la fecha de inicio.");
+
+            if(crearOfertaDTO.CrearHerramientasAOfertar.Count == 0)
+                ModelState.AddModelError("CrearHerramientasAOfertar", "Debe agregar al menos una herramienta a la oferta.");
+        }
     }
 }
