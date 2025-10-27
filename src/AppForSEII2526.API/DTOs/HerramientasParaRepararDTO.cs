@@ -1,4 +1,5 @@
-﻿namespace AppForSEII2526.API.DTOs
+﻿
+namespace AppForSEII2526.API.DTOs
 {
     public class HerramientasParaRepararDTO
     {
@@ -26,6 +27,26 @@
             this.precio = precio;
             this.tiempoReparacion = tiempoReparacion;
             this.fabricante = fabricante;
+        }
+
+        public HerramientasParaRepararDTO()
+        {
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is HerramientasParaRepararDTO dTO &&
+                   id == dTO.id &&
+                   material == dTO.material &&
+                   nombre == dTO.nombre &&
+                   precio == dTO.precio &&
+                   tiempoReparacion == dTO.tiempoReparacion &&
+                   fabricante == dTO.fabricante;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(id, material, nombre, precio, tiempoReparacion, fabricante);
         }
     }
 }

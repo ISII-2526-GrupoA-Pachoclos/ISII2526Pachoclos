@@ -1,7 +1,28 @@
-﻿namespace AppForSEII2526.API.Models
+﻿using Microsoft.DotNet.Scaffolding.Shared.T4Templating;
+
+namespace AppForSEII2526.API.Models
 {
     public class Compra
     {
+        public Compra()
+        {
+            CompraItems = new List<ComprarItem>();
+            ApplicationUser = new ApplicationUser();
+            metodopago = new formaPago();
+        }
+
+        public Compra(int id, string direccionEnvio, DateTime fechaCompra, float? precioTotal, formaPago metodopago, 
+            IList<ComprarItem> compraItems, ApplicationUser applicationUser)
+        {
+            Id = id;
+            this.direccionEnvio = direccionEnvio;
+            this.fechaCompra = fechaCompra;
+            this.precioTotal = precioTotal;
+            this.metodopago = metodopago;
+            CompraItems = compraItems;
+            ApplicationUser = applicationUser;
+        }
+
         [Key]
         public int Id { get; set; }
 
@@ -33,9 +54,22 @@
 
         public ApplicationUser ApplicationUser { get; set; }
 
+        public override bool Equals(object? obj)
+        {
+            return obj is Compra compra &&
+                   Id == compra.Id &&
+                   direccionEnvio == compra.direccionEnvio &&
+                   fechaCompra == compra.fechaCompra &&
+                   precioTotal == compra.precioTotal &&
+                   metodopago == compra.metodopago &&
+                   EqualityComparer<IList<ComprarItem>>.Default.Equals(CompraItems, compra.CompraItems) &&
+                   EqualityComparer<ApplicationUser>.Default.Equals(ApplicationUser, compra.ApplicationUser);
+        }
 
-
-
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, direccionEnvio, fechaCompra, precioTotal, metodopago, CompraItems, ApplicationUser);
+        }
     }
     public enum formaPago
     {

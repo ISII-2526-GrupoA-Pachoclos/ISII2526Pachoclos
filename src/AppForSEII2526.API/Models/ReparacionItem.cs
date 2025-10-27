@@ -1,8 +1,27 @@
-﻿namespace AppForSEII2526.API.Models
+﻿
+namespace AppForSEII2526.API.Models
 {
     [PrimaryKey(nameof(Herramientaid), nameof(Reparacionid))]
     public class ReparacionItem
     {
+        public ReparacionItem()
+        {
+            Reparacion = new Reparacion();
+            Herramienta = new Herramienta();
+        }
+
+        public ReparacionItem(int cantidad, string? descripcion, int herramientaid, int reparacionid, float precio, 
+            Reparacion reparacion, Herramienta herramienta)
+        {
+            this.cantidad = cantidad;
+            this.descripcion = descripcion;
+            Herramientaid = herramientaid;
+            Reparacionid = reparacionid;
+            this.precio = precio;
+            Reparacion = reparacion;
+            Herramienta = herramienta;
+        }
+
         [Required, Range(1, int.MaxValue, ErrorMessage = "El id debe ser un número positivo mayor que 0.")]
         public int cantidad { get; set; }
 
@@ -21,5 +40,22 @@
         public Reparacion Reparacion { get; set; }
 
         public Herramienta Herramienta { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is ReparacionItem item &&
+                   cantidad == item.cantidad &&
+                   descripcion == item.descripcion &&
+                   Herramientaid == item.Herramientaid &&
+                   Reparacionid == item.Reparacionid &&
+                   precio == item.precio &&
+                   EqualityComparer<Reparacion>.Default.Equals(Reparacion, item.Reparacion) &&
+                   EqualityComparer<Herramienta>.Default.Equals(Herramienta, item.Herramienta);
         }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(cantidad, descripcion, Herramientaid, Reparacionid, precio, Reparacion, Herramienta);
+        }
+    }
 }
