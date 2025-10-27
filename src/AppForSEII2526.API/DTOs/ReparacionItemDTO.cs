@@ -4,6 +4,10 @@ namespace AppForSEII2526.API.DTOs
 {
     public class ReparacionItemDTO
     {
+        public ReparacionItemDTO()
+        {
+        }
+
         public ReparacionItemDTO(int herramientaId, float precio, string nombreHerramienta, 
             string? descripcion, int cantidad)
         {

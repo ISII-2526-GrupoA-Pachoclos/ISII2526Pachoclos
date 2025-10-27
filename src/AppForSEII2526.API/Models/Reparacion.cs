@@ -2,6 +2,24 @@
 {
     public class Reparacion
     {
+        public Reparacion()
+        {
+            ReparacionItems = new List<ReparacionItem>();
+            metodoPago = new metodoPago();
+            ApplicationUser = new ApplicationUser();
+        }
+
+        public Reparacion(DateTime fechaEntrega, DateTime fechaRecogida, int id, float precioTotal, 
+            IList<ReparacionItem> reparacionItems, metodoPago metodoPago, ApplicationUser applicationUser)
+        {
+            this.fechaEntrega = fechaEntrega;
+            this.fechaRecogida = fechaRecogida;
+            this.id = id;
+            this.precioTotal = precioTotal;
+            ReparacionItems = reparacionItems;
+            this.metodoPago = metodoPago;
+            ApplicationUser = applicationUser;
+        }
 
         [Required, DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
@@ -31,6 +49,23 @@
 
         public ApplicationUser ApplicationUser { get; set; }
 
+        public override bool Equals(object? obj)
+        {
+            return obj is Reparacion reparacion &&
+                   fechaEntrega == reparacion.fechaEntrega &&
+                   fechaRecogida == reparacion.fechaRecogida &&
+                   id == reparacion.id &&
+                   precioTotal == reparacion.precioTotal &&
+                   EqualityComparer<IList<ReparacionItem>>.Default.Equals(ReparacionItems, reparacion.ReparacionItems) &&
+                   metodoPago == reparacion.metodoPago &&
+                   EqualityComparer<ApplicationUser>.Default.Equals(ApplicationUser, reparacion.ApplicationUser);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(fechaEntrega, fechaRecogida, id, precioTotal, ReparacionItems, 
+                metodoPago, ApplicationUser);
+        }
     }
     public enum metodoPago
     {

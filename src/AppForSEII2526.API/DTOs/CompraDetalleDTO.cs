@@ -28,5 +28,23 @@ namespace AppForSEII2526.API.DTOs
             this.precioTotal = HerramientasCompradas.Sum(h => h.precio * h.cantidad);
         }
 
+        public CompraDetalleDTO()
+        {
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is CompraDetalleDTO dTO &&
+                   Id == dTO.Id &&
+                   direccionEnvio == dTO.direccionEnvio &&
+                   fechaCompra == dTO.fechaCompra &&
+                   precioTotal == dTO.precioTotal &&
+                   EqualityComparer<IList<CompraItemDTO>>.Default.Equals(HerramientasCompradas, dTO.HerramientasCompradas);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, direccionEnvio, fechaCompra, precioTotal, HerramientasCompradas);
+        }
     }
 }
