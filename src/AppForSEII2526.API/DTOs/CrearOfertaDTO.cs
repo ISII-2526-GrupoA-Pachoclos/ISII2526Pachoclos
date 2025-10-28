@@ -2,7 +2,6 @@
 {
     public class CrearOfertaDTO
     {
-        public int Id { get; set; }
 
         [Required, DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
@@ -22,9 +21,8 @@
         {
         }
 
-        public CrearOfertaDTO(int id, DateTime fechaInicio, DateTime fechaFin, tiposMetodoPago metodoPago, tiposDirigidaOferta? paraSocio, IList<CrearOfertaItemDTO> crearHerramientasAOfertar)
+        public CrearOfertaDTO(DateTime fechaInicio, DateTime fechaFin, tiposMetodoPago metodoPago, tiposDirigidaOferta? paraSocio, IList<CrearOfertaItemDTO> crearHerramientasAOfertar)
         {
-            Id = id;
             this.fechaInicio = fechaInicio;
             this.fechaFin = fechaFin;
             this.metodoPago = metodoPago;
@@ -35,7 +33,6 @@
         public override bool Equals(object? obj)
         {
             return obj is CrearOfertaDTO dTO &&
-                   Id == dTO.Id &&
                    fechaInicio == dTO.fechaInicio &&
                    fechaFin == dTO.fechaFin &&
                    metodoPago == dTO.metodoPago &&
@@ -44,7 +41,7 @@
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, fechaInicio, fechaFin, metodoPago, paraSocio, CrearHerramientasAOfertar);
+            return HashCode.Combine(fechaInicio, fechaFin, metodoPago, paraSocio, CrearHerramientasAOfertar);
         }
     }
 }

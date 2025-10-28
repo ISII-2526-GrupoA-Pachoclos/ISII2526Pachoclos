@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 
 namespace AppForSEII2526.API.Controllers
 {
@@ -72,7 +73,7 @@ namespace AppForSEII2526.API.Controllers
             if (crearOfertaDTO.fechaInicio >= crearOfertaDTO.fechaFin)
                 ModelState.AddModelError("fechaFin", "La fecha de fin debe ser posterior a la fecha de inicio.");
 
-            if (crearOfertaDTO.CrearHerramientasAOfertar == null || crearOfertaDTO.CrearHerramientasAOfertar.Any())
+            if (crearOfertaDTO.CrearHerramientasAOfertar.Count == 0)
                 ModelState.AddModelError("CrearHerramientasAOfertar", "Debe agregar al menos una herramienta a la oferta.");
             
             
@@ -118,7 +119,7 @@ namespace AppForSEII2526.API.Controllers
 
                 else
                 {
-                    float precioFinal = herramienta.precio * (100f - itemDTO.porcentaje) / 100f;
+                    float precioFinal = herramienta.precio * (1 - (itemDTO.porcentaje / 100.0f));
                     var nuevoItem = new OfertaItem(
                         herramienta.id,
                         itemDTO.porcentaje,
@@ -134,6 +135,7 @@ namespace AppForSEII2526.API.Controllers
             {
                 return BadRequest(new ValidationProblemDetails(ModelState));
             }
+            
 
             _context.Add(ofertaNueva);
 
