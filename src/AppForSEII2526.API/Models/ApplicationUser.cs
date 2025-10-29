@@ -16,7 +16,7 @@ public class ApplicationUser : IdentityUser {
 
 
     [StringLength(50, ErrorMessage = "No puede tener mas de 50 caracteres.", MinimumLength = 1)]
-    [RegularExpression(@"^\+?\d{10,15}$", ErrorMessage = "El número de teléfono no es válido.")]
+    [RegularExpression(@"^\+?\d{10,15}$", ErrorMessage = "El número de teléfono no es válido. Ejemplo válido: 9876543210")]
     public string numTelefono { get; set; }
 
     public IList<Reparacion> Reparacion { get; set; }

@@ -2,6 +2,18 @@
 {
     public class fabricante
     {
+        public fabricante()
+        {
+            herramientas = new List<Herramienta>();
+        }
+
+        public fabricante(int id, string nombre, IList<Herramienta> herramientas)
+        {
+            this.id = id;
+            this.nombre = nombre;
+            this.herramientas = herramientas;
+        }
+
         [Key]
         public int id { get; set; }
 

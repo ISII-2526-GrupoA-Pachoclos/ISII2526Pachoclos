@@ -3,6 +3,24 @@
     [PrimaryKey(nameof(Herramientaid), nameof(Reparacionid))]
     public class ReparacionItem
     {
+        public ReparacionItem()
+        {
+            Reparacion = new Reparacion();
+            Herramienta = new Herramienta();
+        }
+
+        public ReparacionItem(int cantidad, string? descripcion, int herramientaid, int reparacionid, float precio,
+            Reparacion reparacion, Herramienta herramienta)
+        {
+            this.cantidad = cantidad;
+            this.descripcion = descripcion;
+            Herramientaid = herramientaid;
+            Reparacionid = reparacionid;
+            this.precio = precio;
+            Reparacion = reparacion;
+            Herramienta = herramienta;
+        }
+
         [Required, Range(1, int.MaxValue, ErrorMessage = "El id debe ser un número positivo mayor que 0.")]
         public int cantidad { get; set; }
 
@@ -13,7 +31,7 @@
 
         public int Reparacionid { get; set; }
 
-        [Required, Range(0.01, float.MaxValue, ErrorMessage = "El precio debe ser un valor positivo.")]
+        [Required, Range(0.001, float.MaxValue, ErrorMessage = "El precio debe ser un valor positivo mayor que 0.001.")]
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float precio { get; set; }
 
