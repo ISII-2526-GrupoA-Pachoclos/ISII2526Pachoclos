@@ -25,6 +25,15 @@ public class ApplicationUser : IdentityUser {
         this.alquilar = alquilar;
     }
 
+    public ApplicationUser(string id, string nombre, string apellido, string correoelectronico, string direccion)
+    {
+        id = id;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        correoElectronico = correoelectronico;
+        PhoneNumber = direccion;
+    }
+
     [Required, StringLength(50, ErrorMessage = "El nombre no puede tener más de 50 caracteres.")]
     public string nombre { get; set; } 
 
