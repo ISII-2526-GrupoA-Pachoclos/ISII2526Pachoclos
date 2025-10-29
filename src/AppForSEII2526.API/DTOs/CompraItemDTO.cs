@@ -18,7 +18,7 @@
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float precio { get; set; }
 
-
+        
 
         public CompraItemDTO(int herramientaid, int cantidad, string nombre, string descripcion, float precio)
         {
@@ -27,6 +27,7 @@
             this.nombre = nombre;
             this.descripcion = descripcion;
             this.precio = precio;
+            
         }
     }
 }

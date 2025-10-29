@@ -2,6 +2,37 @@
 {
     public class Compra
     {
+        public Compra()
+        {
+            CompraItems = new List<ComprarItem>();
+            ApplicationUser = new ApplicationUser();
+            metodopago = new formaPago();
+        }
+
+        public Compra(int id, string direccionEnvio, DateTime fechaCompra, float? precioTotal, formaPago metodopago,
+            IList<ComprarItem> compraItems, ApplicationUser applicationUser)
+        {
+            Id = id;
+            this.direccionEnvio = direccionEnvio;
+            this.fechaCompra = fechaCompra;
+            this.precioTotal = precioTotal;
+            this.metodopago = metodopago;
+            CompraItems = compraItems;
+            ApplicationUser = applicationUser;
+        }
+
+        public Compra(string direccionEnvio, DateTime fechaCompra, float? precioTotal, formaPago metodopago,
+            IList<ComprarItem> compraItems, ApplicationUser applicationUser)
+        {
+            
+            this.direccionEnvio = direccionEnvio;
+            this.fechaCompra = fechaCompra;
+            this.precioTotal = precioTotal;
+            this.metodopago = metodopago;
+            CompraItems = compraItems;
+            ApplicationUser = applicationUser;
+        }
+
         [Key]
         public int Id { get; set; }
 
@@ -33,9 +64,8 @@
 
         public ApplicationUser ApplicationUser { get; set; }
 
-
-
-
+        
+        
     }
     public enum formaPago
     {
