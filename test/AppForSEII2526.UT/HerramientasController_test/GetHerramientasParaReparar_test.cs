@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace AppForSEII2526.UT.HerramientasController_test
 {
-    public class GetHerramientas_test : AppForMovies4SqliteUT
+    public class GetHerramientasParaReparar_test : AppForMovies4SqliteUT
     {
-        public GetHerramientas_test()
+        public GetHerramientasParaReparar_test()
         {
             var fabricantes = new List<fabricante>()
             {
