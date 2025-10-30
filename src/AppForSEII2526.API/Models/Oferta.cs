@@ -41,7 +41,7 @@
 
 
         // Relaciones
-        public List<OfertaItem> ofertaItems { get; set; }
+        public IList<OfertaItem> ofertaItems { get; set; }
 
         public ApplicationUser ApplicationUser { get; set; }
 
@@ -58,7 +58,7 @@
                    fechaInicio == oferta.fechaInicio &&
                    fechaFin == oferta.fechaFin &&
                    fechaOferta == oferta.fechaOferta &&
-                   EqualityComparer<List<OfertaItem>>.Default.Equals(ofertaItems, oferta.ofertaItems) &&
+                   EqualityComparer<IList<OfertaItem>>.Default.Equals(ofertaItems, oferta.ofertaItems) &&
                    EqualityComparer<ApplicationUser>.Default.Equals(ApplicationUser, oferta.ApplicationUser) &&
                    metodoPago == oferta.metodoPago &&
                    paraSocio == oferta.paraSocio;
@@ -66,8 +66,7 @@
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, fechaInicio, fechaFin, fechaOferta, ofertaItems, ApplicationUser, 
-                metodoPago, paraSocio);
+            return HashCode.Combine(Id, fechaInicio, fechaFin, fechaOferta, ofertaItems, ApplicationUser, metodoPago, paraSocio);
         }
     }
     public enum tiposMetodoPago

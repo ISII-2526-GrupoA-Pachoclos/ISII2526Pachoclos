@@ -115,7 +115,7 @@ namespace AppForSEII2526.API.Controllers
             var herramientas = await _context.Herramienta
                 .Include(h => h.fabricante)
                 .Where(h => (filtroPrecio == null || h.precio <= filtroPrecio) &&
-                    (filtroFabricante == null || h.fabricante.nombre == filtroFabricante)
+                    (filtroFabricante == null || h.fabricante.nombre.Contains(filtroFabricante))
                 )
                 .OrderBy(herramientas => herramientas.fabricante.nombre)
                     .ThenBy(herramientas => herramientas.precio)

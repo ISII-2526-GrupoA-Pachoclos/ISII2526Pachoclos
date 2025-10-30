@@ -27,8 +27,10 @@ namespace AppForSEII2526.API.Controllers
         {
             var ofertas = await _context.Oferta
                 .Where(o => o.Id == id)
+                .Include(o => o.ApplicationUser)
                 .Include(o => o.ofertaItems)
                     .ThenInclude(oi => oi.herramienta)
+                        .ThenInclude(h => h.fabricante)
                 .Select(o => new OfertaDetalleDTO(
                     o.Id,
                     o.fechaInicio,

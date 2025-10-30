@@ -1,4 +1,5 @@
-﻿namespace AppForSEII2526.API.DTOs
+﻿
+namespace AppForSEII2526.API.DTOs
 {
     public class OfertaDetalleDTO
     {
@@ -45,7 +46,8 @@
                    fechaFin == dTO.fechaFin &&
                    fechaOferta == dTO.fechaOferta &&
                    metodoPago == dTO.metodoPago &&
-                   tiposDirigidaOferta == dTO.tiposDirigidaOferta;
+                   tiposDirigidaOferta == dTO.tiposDirigidaOferta &&
+                   EqualityComparer<IList<OfertaItemDTO>>.Default.Equals(HerramientasAOfertar, dTO.HerramientasAOfertar);
         }
 
         public override int GetHashCode()
