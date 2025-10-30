@@ -56,7 +56,7 @@ namespace AppForSEII2526.API.Controllers
 
         }
 
-        
+
         [HttpPost]
         [Route("[action]")]
         [ProducesResponseType(typeof(CompraDetalleDTO), (int)HttpStatusCode.Created)]
@@ -66,14 +66,31 @@ namespace AppForSEII2526.API.Controllers
         {
 
             if (Crearcompra.HerramientasCompradas.Count == 0)
+            {
                 ModelState.AddModelError("CompraItem", "Error! Debes incluir al menos un  ");
+            }
+            else 
+            { 
+                foreach (var item in Crearcompra.HerramientasCompradas)
+                {
+                    if (item.cantidad <= 0)
+                    {
+                        ModelState.AddModelError("Cantidad", "Error! La cantidad debe ser mayor que 0");
+                    }
+                }
 
-            var user = _context.ApplicationUser.FirstOrDefault(au => au.nombre == Crearcompra.Nombre);
+
+            }
+
+
+                var user = _context.ApplicationUser.FirstOrDefault(au => au.nombre == Crearcompra.Nombre);
+
             if (user == null)
                 ModelState.AddModelError("ApplicationUser", "Error! Usuario no registrado");
 
-            if (ModelState.ErrorCount > 0)
-                return BadRequest(new ValidationProblemDetails(ModelState));
+
+
+            
 
             var nombreHerramientas = Crearcompra.HerramientasCompradas.Select(ci => ci.nombre).ToList<string>();
 
@@ -89,26 +106,44 @@ namespace AppForSEII2526.API.Controllers
                 })
                 .ToList();
 
+            foreach (var herr in Crearcompra.HerramientasCompradas) 
+            { 
+                var herramientaaux = Herramientas.FirstOrDefault(h => h.nombre == herr.nombre);
+                if (herramientaaux == null)
+                {
+                    ModelState.AddModelError("Herramienta", $"Error! La herramienta con Id {herr.herramientaid} no existe");
+                }
+
+
+            }
+
+            if (ModelState.ErrorCount > 0)
+                return BadRequest(new ValidationProblemDetails(ModelState));
+
             var ComprasItems = new List<ComprarItem>();
 
             Compra compra = new Compra(Crearcompra.direccionEnvio, DateTime.Now, 0, Crearcompra.metodoPago, ComprasItems, user);
 
+            var herramientasAux = await _context.Herramienta
+                .Where(h => nombreHerramientas.Contains(h.nombre)) // todas las herramientas que esten en los ids anteriores
+                .ToListAsync();
+
+
+
+
             foreach (var item in Crearcompra.HerramientasCompradas)
             {
-                var herramientaaux = Herramientas.FirstOrDefault(h => h.nombre == item.nombre);
-                
+                var herramienta = herramientasAux.First(h => h.id == item.herramientaid);
 
-                if (herramientaaux == null)
+
+                if (herramienta == null)
                 {
                     ModelState.AddModelError("Herramienta", $"Error! La herramienta con Id {item.herramientaid} no existe");
                     continue;
                 }
 
-                Herramienta herramienta = new Herramienta();
-                herramienta.id = herramientaaux.id;
-                herramienta.material = herramientaaux.material;
-                herramienta.nombre = herramientaaux.nombre;
-                herramienta.precio = herramientaaux.precio;
+                
+
 
                 ComprarItem CompraItem = new ComprarItem(item.cantidad, item.descripcion, item.precio, compra.Id, item.herramientaid, compra, herramienta);
                 compra.CompraItems.Add(CompraItem);
