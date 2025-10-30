@@ -29,6 +29,15 @@ namespace AppForSEII2526.API.Models
             this.alquilarItems = alquilarItems;
         }
 
+        public Herramienta(int id, string material, string nombre, float precio, fabricante fabricante)
+        {
+            this.id = id;
+            this.material = material;
+            this.nombre = nombre;
+            this.precio = precio;
+            this.fabricante = fabricante;
+        }
+
         [Key]
         public int id { get; set; }
 
