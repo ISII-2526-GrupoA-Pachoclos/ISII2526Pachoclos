@@ -3,23 +3,6 @@
     [PrimaryKey(nameof(Herramientaid), nameof(Reparacionid))]
     public class ReparacionItem
     {
-        public ReparacionItem()
-        {
-            Reparacion = new Reparacion();
-            Herramienta = new Herramienta();
-        }
-
-        public ReparacionItem(int cantidad, string? descripcion, int herramientaid, int reparacionid, float precio,
-            Reparacion reparacion, Herramienta herramienta)
-        {
-            this.cantidad = cantidad;
-            this.descripcion = descripcion;
-            Herramientaid = herramientaid;
-            Reparacionid = reparacionid;
-            this.precio = precio;
-            Reparacion = reparacion;
-            Herramienta = herramienta;
-        }
 
         [Required, Range(1, int.MaxValue, ErrorMessage = "El id debe ser un número positivo mayor que 0.")]
         public int cantidad { get; set; }

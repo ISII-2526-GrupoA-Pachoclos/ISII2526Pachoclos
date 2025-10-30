@@ -2,24 +2,6 @@
 {
     public class Reparacion
     {
-        public Reparacion()
-        {
-            ReparacionItems = new List<ReparacionItem>();
-            metodoPago = new metodoPago();
-            ApplicationUser = new ApplicationUser();
-        }
-
-        public Reparacion(DateTime fechaEntrega, DateTime fechaRecogida, int id, float precioTotal,
-            IList<ReparacionItem> reparacionItems, metodoPago metodoPago, ApplicationUser applicationUser)
-        {
-            this.fechaEntrega = fechaEntrega;
-            this.fechaRecogida = fechaRecogida;
-            this.id = id;
-            this.precioTotal = precioTotal;
-            ReparacionItems = reparacionItems;
-            this.metodoPago = metodoPago;
-            ApplicationUser = applicationUser;
-        }
 
         [Required, DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]

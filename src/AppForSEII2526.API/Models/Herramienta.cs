@@ -3,31 +3,6 @@
     public class Herramienta
     {
 
-        public Herramienta()
-        {
-            ReparacionItem = new List<ReparacionItem>();
-            OfertaItems = new List<OfertaItem>();
-            ComprarItems = new List<ComprarItem>();
-            fabricante = new fabricante();
-            alquilarItems = new List<alquilarItem>();
-        }
-
-        public Herramienta(int id, string material, string nombre, float precio, string tiempoReparacion,
-            IList<ReparacionItem> reparacionItem, IList<OfertaItem> ofertaItems, IList<ComprarItem> comprarItems,
-            fabricante fabricante, IList<alquilarItem> alquilarItems)
-        {
-            this.id = id;
-            this.material = material;
-            this.nombre = nombre;
-            this.precio = precio;
-            this.tiempoReparacion = tiempoReparacion;
-            ReparacionItem = reparacionItem;
-            OfertaItems = ofertaItems;
-            ComprarItems = comprarItems;
-            this.fabricante = fabricante;
-            this.alquilarItems = alquilarItems;
-        }
-
         [Key]
         public int id { get; set; }
 
