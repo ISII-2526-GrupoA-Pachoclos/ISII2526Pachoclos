@@ -4,21 +4,21 @@
     {
         public CrearOfertaItemDTO(int id, string nombre, string material, float precio, string fabricante, float precioFinal)
         {
-            this.id = id;
-            this.nombre = nombre;
-            this.material = material;
-            this.precio = precio;
-            this.fabricante = fabricante;
-            this.precioFinal = precioFinal;
+            Id = id;
+            Nombre = nombre;
+            Material = material;
+            Fabricante = fabricante;
+            Precio = precio;
+            PrecioFinal = precioFinal;
         }
 
-        public int id { get; set; }
+        public int Id { get; set; }
 
-        public string nombre { get; set; }
-        public string material { get; set; }
-        public float precio { get; set; }
-        public string fabricante { get; set; }
-        public float precioFinal { get; set; }
+        public string Nombre { get; set; }
+        public string Material { get; set; }
+        public float Precio { get; set; }
+        public string Fabricante { get; set; }
+        public float PrecioFinal { get; set; }
 
     }
 }

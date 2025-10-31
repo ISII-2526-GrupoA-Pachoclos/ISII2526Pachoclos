@@ -69,26 +69,26 @@ namespace AppForSEII2526.API.Controllers
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
         public async Task<ActionResult> CrearOferta(CrearOfertaDTO crearofertas)
         {
-            if (crearofertas.fechaInicio <= DateTime.Today)
+            if (crearofertas.FechaInicio <= DateTime.Today)
                 ModelState.AddModelError("fechaInicio", "La fecha de inicio debe ser posterior a la fecha actual.");
 
-            if (crearofertas.fechaInicio >= crearofertas.fechaFin)
+            if (crearofertas.FechaInicio >= crearofertas.FechaFin)
                 ModelState.AddModelError("fechaFin", "La fecha de fin debe ser posterior a la fecha de inicio.");
 
-            if (crearofertas.crearOfertaItemDTO.Count == 0)
+            if (crearofertas.CrearOfertaItem.Count == 0)
                 ModelState.AddModelError("CrearHerramientasAOfertar", "Debe agregar al menos una herramienta a la oferta.");
 
-            if (crearofertas.fechaInicio == DateTime.MinValue)
+            if (crearofertas.FechaInicio == DateTime.MinValue)
             {
                 ModelState.AddModelError("FechaInicio", "Tiene que introducir una fecha de inicio");
             }
 
-            if (crearofertas.fechaFin == DateTime.MinValue)
+            if (crearofertas.FechaFin == DateTime.MinValue)
             {
                 ModelState.AddModelError("FechaFin", "Tiene que introducir una fecha de fin");
             }
 
-            if(crearofertas.metodoPago == null)
+            if(crearofertas.TiposMetodoPago == null)
             {
                 ModelState.AddModelError("MetodoPago", "Tiene que seleccionar un metodo de pago");
             }
@@ -98,46 +98,42 @@ namespace AppForSEII2526.API.Controllers
                 return BadRequest(new ValidationProblemDetails(ModelState));
             }
 
-            var nombreHerramientas = crearofertas.crearOfertaItemDTO.Select(oi => oi.nombre).ToList<string>();
-
+            // prefer Ids
+            var herramientaIds = crearofertas.CrearOfertaItem.Select(i => i.Id).ToList();
             var herramientas = _context.Herramienta
-                .Include(f => f.fabricante)
-                .Where(h => nombreHerramientas.Contains(h.nombre))
+                .Include(h => h.fabricante)
+                .Where(h => herramientaIds.Contains(h.id))
                 .ToList();
 
             Oferta oferta = new Oferta
             {
-                fechaInicio = crearofertas.fechaInicio,
-                fechaFin = crearofertas.fechaFin,
+                fechaInicio = crearofertas.FechaInicio,
+                fechaFin = crearofertas.FechaFin,
                 fechaOferta = DateTime.Now,
-                metodoPago = crearofertas.metodoPago,
-                paraSocio = crearofertas.tiposDirigidaOferta,
+                metodoPago = crearofertas.TiposMetodoPago,
+                paraSocio = crearofertas.TiposDirigidaOferta,
                 ofertaItems = new List<OfertaItem>()
             };
 
-            foreach (var herramientaItem in crearofertas.crearOfertaItemDTO)
+            foreach (var herramientaItem in crearofertas.CrearOfertaItem)
             {
-                var herramienta = herramientas.FirstOrDefault(h => h.nombre == herramientaItem.nombre);
-
-                if (crearofertas.porcentaje < 0 || crearofertas.porcentaje > 100)
-                    ModelState.AddModelError("porcentaje", "El porcentaje debe estar entre 0 y 100.");
-                else
+                var herramienta = herramientas.FirstOrDefault(h => h.id == herramientaItem.Id);
+                if (herramienta == null)
                 {
-                    float precioFinal = herramienta.precio * (100f - crearofertas.porcentaje) / 100;
-                    oferta.ofertaItems.Add(new OfertaItem
-                    {
-                        herramientaid = herramienta.id,
-                        porcentaje = crearofertas.porcentaje,
-                        precioFinal = precioFinal,
-                        oferta = oferta,
-                        herramienta = herramienta,
-                    });
+                    ModelState.AddModelError("CrearHerramientasAOfertar", $"Herramienta '{herramientaItem.Nombre}' (Id {herramientaItem.Id}) no encontrada.");
+                    continue;
                 }
+
+                if (crearofertas.Porcentaje < 0 || crearofertas.Porcentaje > 100)
+                {
+                    ModelState.AddModelError("porcentaje", "El porcentaje debe estar entre 0 y 100.");
+                    break;
+                }
+
+                float precioFinal = herramienta.precio * (1 - (crearofertas.Porcentaje / 100f));
+                oferta.ofertaItems.Add(new OfertaItem { porcentaje = crearofertas.Porcentaje, precioFinal = precioFinal, oferta = oferta, herramienta = herramienta});
             }
-            if (ModelState.ErrorCount > 0)
-            {
-                return BadRequest(new ValidationProblemDetails(ModelState));
-            }
+            if (ModelState.ErrorCount > 0) return BadRequest(new ValidationProblemDetails(ModelState));
             _context.Oferta.Add(oferta);
 
             try
