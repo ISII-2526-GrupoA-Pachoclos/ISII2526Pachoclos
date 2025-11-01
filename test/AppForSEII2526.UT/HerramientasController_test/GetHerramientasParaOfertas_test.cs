@@ -1,11 +1,10 @@
-﻿using AppForMovies.UT;
+﻿using AppForSEII2526.UT;
 using AppForSEII2526.API.Controllers;
 using AppForSEII2526.API.DTOs;
-using AppForSEII2526.UT;
 
 namespace AppForSEII2526.UT.HerramientasController_test
 {
-    public class GetHerramientasParaOfertas_test : AppForMovies4SqliteUT
+    public class GetHerramientasParaOfertas_test : AppForSEII25264SqliteUT
     {
 
         public GetHerramientasParaOfertas_test()
