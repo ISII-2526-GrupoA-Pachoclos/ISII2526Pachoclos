@@ -1,4 +1,4 @@
-﻿using AppForMovies.UT;
+﻿using AppForSEII2526;
 using AppForSEII2526.API.Controllers;
 using AppForSEII2526.API.DTOs;
 using System;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AppForSEII2526.UT.HerramientasController_test
 {
-    public class GetHerramientasParaReparar_test : AppForMovies4SqliteUT
+    public class GetHerramientasParaReparar_test : AppForSEII25264SqliteUT
     {
         public GetHerramientasParaReparar_test()
         {
