@@ -38,6 +38,15 @@ namespace AppForSEII2526.API.Models
             this.fabricante = fabricante;
         }
 
+        public Herramienta(string Nombre, string Material, float Precio, string TiempoReparacion, fabricante Fabricante)
+        {
+            nombre = Nombre;
+            material = Material;
+            precio = Precio;
+            tiempoReparacion = TiempoReparacion;
+            fabricante = Fabricante;
+        }
+
         [Key]
         public int id { get; set; }
 
@@ -50,7 +59,7 @@ namespace AppForSEII2526.API.Models
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float precio { get; set; }
 
-        public string tiempoReparacion { get; set; }
+        public string? tiempoReparacion { get; set; }
 
 
         // Relaciones
