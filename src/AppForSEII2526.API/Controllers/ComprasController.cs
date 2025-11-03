@@ -145,9 +145,9 @@ namespace AppForSEII2526.API.Controllers
                 
 
 
-                ComprarItem CompraItem = new ComprarItem(item.cantidad, item.descripcion, item.precio, compra.Id, item.herramientaid, compra, herramienta);
+                ComprarItem CompraItem = new ComprarItem(item.cantidad, item.descripcion, herramienta.precio, compra.Id, item.herramientaid, compra, herramienta);
                 compra.CompraItems.Add(CompraItem);
-                compra.precioTotal += item.precio * item.cantidad;
+                compra.precioTotal += herramienta.precio * item.cantidad;
             }
 
             if (ModelState.ErrorCount > 0)
