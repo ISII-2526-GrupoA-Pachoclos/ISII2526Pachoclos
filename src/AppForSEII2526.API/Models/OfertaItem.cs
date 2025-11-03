@@ -22,6 +22,14 @@ namespace AppForSEII2526.API.Models
             this.herramienta = herramienta;
         }
 
+        public OfertaItem (int porcentaje, float precioFinal, Oferta oferta, Herramienta herramienta)
+        {
+            this.porcentaje = porcentaje;
+            this.precioFinal = precioFinal;
+            this.oferta = oferta;
+            this.herramienta = herramienta;
+        }
+
         public int ofertaId { get; set; }
 
         public int herramientaid { get; set; }

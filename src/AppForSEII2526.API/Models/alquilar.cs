@@ -5,7 +5,6 @@ namespace AppForSEII2526.API.Models
         public alquilar()
         {
             alquilarItems = new List<alquilarItem>();
-            applicationUser = new ApplicationUser();
         }
 
         public alquilar(int id, string direccionEnvio, DateTime fechaAlquiler, DateTime fechaInicio, DateTime fechaFin, 
@@ -25,7 +24,6 @@ namespace AppForSEII2526.API.Models
         [Key]
         public int id { get; set; }
 
-
         [Required, StringLength(100, ErrorMessage = "No puede tener mas de 100 caracteres.", MinimumLength = 1)]
         public string direccionEnvio { get; set; }
 
@@ -41,11 +39,6 @@ namespace AppForSEII2526.API.Models
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime fechaFin { get; set; }
 
-     
-
-        [Required, StringLength(30, ErrorMessage = "No puede tener mas de 30 caracteres.", MinimumLength = 1)]
-        //public string Periodo get; set;}
-
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float precioTotal { get; set; }
 
@@ -54,7 +47,8 @@ namespace AppForSEII2526.API.Models
         // Relaciones
         public List<alquilarItem> alquilarItems { get; set; }
 
-        public ApplicationUser applicationUser { get; set; }
+        // Navegación nullable para evitar inserciones accidentales de ApplicationUser vacío
+        public ApplicationUser? applicationUser { get; set; }
 
         public override bool Equals(object? obj)
         {
@@ -67,7 +61,7 @@ namespace AppForSEII2526.API.Models
                    precioTotal == alquilar.precioTotal &&
                    metodoPago == alquilar.metodoPago &&
                    EqualityComparer<List<alquilarItem>>.Default.Equals(alquilarItems, alquilar.alquilarItems) &&
-                   EqualityComparer<ApplicationUser>.Default.Equals(applicationUser, alquilar.applicationUser);
+                   EqualityComparer<ApplicationUser?>.Default.Equals(applicationUser, alquilar.applicationUser);
         }
 
         public override int GetHashCode()
@@ -86,12 +80,10 @@ namespace AppForSEII2526.API.Models
         }
     }
     public enum tiposMetodosPago
-        {
-            tarjetaCredito,
-            paypal,
-            Efectivo
-
-        }
-
+    {
+        tarjetaCredito,
+        paypal,
+        Efectivo
+    }
 }
 
