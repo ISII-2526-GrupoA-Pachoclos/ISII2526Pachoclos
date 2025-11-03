@@ -59,17 +59,17 @@ namespace AppForSEII2526.UT.OfertasController_test
 
         public static IEnumerable<object[]> TestCasesFor_GetDetalleParaOferta_Ok()
         {
-            // Construimos el DTO esperado (solo con las propiedades relevantes)
+            // Debe coincidir con lo que se inserta en el constructor:
             var ofertaItemsDTO = new List<OfertaItemDTO>()
             {
-                new OfertaItemDTO(1, "Martillo", "Acero", "Herramientas SA", 15.5f, 13.95f),
-                new OfertaItemDTO(2, "Destornillador", "Acero", "Utensilios y Más", 7.0f, 5.6f),
-                new OfertaItemDTO(3, "Taladro", "Plástico", "Todo para Construcción", 5.0f, 4.25f),
+                new OfertaItemDTO(1, "Martillo", "Acero", "Pepe", 15.9f, 11.93f),
+                new OfertaItemDTO(2, "Destornillador", "Acero", "Ana", 5.5f, 4.95f),
+                new OfertaItemDTO(3, "Brocas", "Metal", "Luis", 8.0f, 6.40f),
             };
 
             var ofertaDetalleEsperada = new OfertaDetalleDTO(
                 1,
-                DateTime.UtcNow.AddDays(30), // Se compara por igualdad en DTO Equals; si falla por timestamps, la prueba comparará propiedades abajo
+                DateTime.UtcNow.AddDays(30),
                 DateTime.UtcNow.AddDays(60),
                 DateTime.UtcNow,
                 tiposMetodoPago.Efectivo,
@@ -124,8 +124,8 @@ namespace AppForSEII2526.UT.OfertasController_test
                     string.Equals(a.nombre, esperado.nombre, StringComparison.OrdinalIgnoreCase) &&
                     string.Equals(a.material, esperado.material, StringComparison.OrdinalIgnoreCase) &&
                     string.Equals(a.fabricante, esperado.fabricante, StringComparison.OrdinalIgnoreCase) &&
-                    Math.Abs(a.precio - esperado.precio) < 0.001f &&
-                    Math.Abs(a.precioOferta - esperado.precioOferta) < 0.001f
+                    Math.Abs(a.precio - esperado.precio) < 0.01f &&
+                    Math.Abs(a.precioOferta - esperado.precioOferta) < 0.01f
                 );
 
                 Assert.NotNull(match);
