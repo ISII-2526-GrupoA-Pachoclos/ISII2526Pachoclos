@@ -27,7 +27,7 @@ namespace AppForSEII2526.API.DTOs
         [StringLength(50, ErrorMessage = "No puede tener mas de 50 caracteres.", MinimumLength = 4)]
         public string? descripcion { get; set; }
 
-        [Required, Range(1, int.MaxValue, ErrorMessage = "La cantidad debe ser un número positivo mayor que 1.")]
+        [Required, Range(1, int.MaxValue, ErrorMessage = "La cantidad debe ser un número positivo mayor que 0.")]
         public int cantidad { get; set; }
 
         public override bool Equals(object? obj)

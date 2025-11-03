@@ -69,7 +69,7 @@ namespace AppForSEII2526.API.Controllers
         {
             // === Validación de reglas de negocio (Flujos Alternativos) ===
 
-            // Flujo Alternativo 1: fecha de entrega < hoy ??
+            // Flujo Alternativo 1: fecha de entrega <= hoy ??
             if (reparacionParaCrear.fechaEntrega.Date < DateTime.Today)
             {
                 ModelState.AddModelError("fechaEntrega", "La fecha de entrega debe ser igual o posterior a hoy.");
@@ -82,6 +82,7 @@ namespace AppForSEII2526.API.Controllers
             }
             else
             {
+                // Validación extra (ya validad en el DTO): cantidad > 0
                 foreach (var item in reparacionParaCrear.Herramientas)
                 {
                     if (item.cantidad <= 0)
@@ -90,6 +91,13 @@ namespace AppForSEII2526.API.Controllers
                             $"'{item.nombreHerramienta}' debe ser mayor que 0.");
                     }
                 }
+            }
+
+            // Validación extra para el enum metodoPago
+            if (!Enum.IsDefined(typeof(metodoPago), reparacionParaCrear.metodoPago))
+            {
+                ModelState.AddModelError("metodoPago",
+                    "El método de pago no es válido. Valores permitidos: 0 (Efectivo), 1 (TarjetaCredito), 2 (PayPal).");
             }
 
             // cliente en la base de datos (AspNetUsers) ??
@@ -107,7 +115,7 @@ namespace AppForSEII2526.API.Controllers
             // ids herramientas
             var herramientaIds = reparacionParaCrear.Herramientas.Select(h => h.HerramientaId).ToList();
 
-            // ver BD con las columnas (id, nombre, precio, tiempoReparacion)
+            // ver BD para obtener info herramientas solicitadas
             var herramientasDb = await _context.Herramienta
                 .Where(h => herramientaIds.Contains(h.id))
                 .Select(h => new
@@ -122,10 +130,22 @@ namespace AppForSEII2526.API.Controllers
             // herramientas solicitadas existen ??
             foreach (var item in reparacionParaCrear.Herramientas)
             {
+                // buscar herramienta en los resultados de la BD
                 var dbTool = herramientasDb.FirstOrDefault(h => h.id == item.HerramientaId);
+                
                 if (dbTool == null)
                 {
                     ModelState.AddModelError("Herramientas", $"La herramienta con ID {item.HerramientaId} no existe.");
+                }
+                else
+                {
+                    // nombre enviado = nombre en BD ??
+                    if (!string.Equals(dbTool.nombre, item.nombreHerramienta))
+                    {
+                        ModelState.AddModelError("Herramientas",
+                            $"El nombre de la herramienta '{item.nombreHerramienta}' no coincide con el ID {item.HerramientaId}. " +
+                            $"La herramienta con ese ID se llama '{dbTool.nombre}'.");
+                    }
                 }
             }
 
@@ -162,8 +182,8 @@ namespace AppForSEII2526.API.Controllers
             // crear reparacion
             var reparacion = new Reparacion
             {
-                fechaEntrega = reparacionParaCrear.fechaEntrega.Date,
-                fechaRecogida = fechaRecogida.Date,
+                fechaEntrega = reparacionParaCrear.fechaEntrega.Date, // sin hora
+                fechaRecogida = fechaRecogida.Date, // sin hora
                 metodoPago = reparacionParaCrear.metodoPago,
                 ApplicationUser = cliente,
                 precioTotal = 0, // a continuación se calcula
@@ -176,6 +196,7 @@ namespace AppForSEII2526.API.Controllers
                 .Where(h => herramientaIds.Contains(h.id)) // todas las herramientas que esten en los ids anteriores
                 .ToListAsync();
 
+            // reparacionitem para cada herramienta
             foreach (var item in reparacionParaCrear.Herramientas)
             {
                 var herramienta = herramientasAux.First(h => h.id == item.HerramientaId);
@@ -185,7 +206,7 @@ namespace AppForSEII2526.API.Controllers
                     Herramientaid = herramienta.id,
                     cantidad = item.cantidad,
                     descripcion = item.descripcion,
-                    precio = herramienta.precio,
+                    precio = herramienta.precio, // precio de la BD
                     Herramienta = herramienta,
                     Reparacion = reparacion
                 };
@@ -194,7 +215,7 @@ namespace AppForSEII2526.API.Controllers
             }
             reparacion.precioTotal = precioTotal;
 
-            _context.Reparacion.Add(reparacion); // marcado como added
+            _context.Reparacion.Add(reparacion); // marcado como entidad a insertar
 
             // === guardar cambios ===
 
@@ -228,7 +249,7 @@ namespace AppForSEII2526.API.Controllers
                 )).ToList()
             );
 
-            // codigo 201 de exito
+            // 201 de exito
             return CreatedAtAction("GetDetalles_Reparacion", new { id = reparacion.id }, reparacionDetalle);
 
             /*
