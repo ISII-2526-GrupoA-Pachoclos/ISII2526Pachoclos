@@ -31,7 +31,27 @@ namespace AppForSEII2526.API.DTOs
             this.fabricante = fabricante;
         }
 
-        
+        public HerramientasParaOfertasDTO(string nombre, string material, string fabricante, float precio)
+        {
+            this.nombre = nombre;
+            this.material = material;
+            this.precio = precio;
+            this.fabricante = fabricante;
+        }
 
+        public override bool Equals(object? obj)
+        {
+            return obj is HerramientasParaOfertasDTO dTO &&
+                   id == dTO.id &&
+                   material == dTO.material &&
+                   nombre == dTO.nombre &&
+                   precio == dTO.precio &&
+                   fabricante == dTO.fabricante;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(id, material, nombre, precio, fabricante);
+        }
     }
 }

@@ -23,6 +23,15 @@
             this.precioOferta = precioOferta;
         }
 
+        public OfertaItemDTO(string nombre, string material, string fabricante, float precio, float precioOferta)
+        {
+            this.nombre = nombre;
+            this.material = material;
+            this.fabricante = fabricante;
+            this.precio = precio;
+            this.precioOferta = precioOferta;
+        }
+
         public override bool Equals(object? obj)
         {
             return obj is OfertaItemDTO dTO &&
