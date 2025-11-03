@@ -44,7 +44,11 @@ namespace AppForSEII2526.UT.HerramientasController_test
             };
 
             // Caso sin filtros: ahora esperamos todos los elementos (ordenados por nombre)
-            var herramientasDTOsTC1 = new List<HerramientasParaRepararDTO>() { herramientasDTOs[0], herramientasDTOs[1], herramientasDTOs[2] }
+            var herramientasDTOsTC1 = new List<HerramientasParaRepararDTO>() { 
+                herramientasDTOs[0], // Pepe (Martillo)
+                herramientasDTOs[1], // Ana (Destornillador)
+                herramientasDTOs[2] // Luis (Llave inglesa) 
+            }
                 .OrderBy(h => h.nombre).ToList();
 
             var herramientasDTOsTC2 = new List<HerramientasParaRepararDTO>() { herramientasDTOs[1] };
@@ -52,8 +56,8 @@ namespace AppForSEII2526.UT.HerramientasController_test
 
             var allTest = new List<object[]>
             {
-                new object[] { null, null, herramientasDTOsTC1 }, // TC1: Sin filtros -> todos ordenados por nombre
-                new object[] { "Destornillador", null, herramientasDTOsTC2 }, // TC2: Filtro por nombre
+                new object[] { null, null, herramientasDTOsTC1 }, // TC1: Sin filtros -> todos ordenados por nombre herramienta
+                new object[] { "Destornillador", null, herramientasDTOsTC2 }, // TC2: Filtro por nombre herramienta
                 new object[] { null, "3 dias", herramientasDTOsTC3 }, // TC3: Filtro por tiempo de reparacion
             };
 

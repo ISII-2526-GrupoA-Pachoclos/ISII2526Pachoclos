@@ -85,7 +85,7 @@ namespace AppForSEII2526.API.Controllers
                 .Include(herramienta => herramienta.fabricante)
                 .Where(h => h.nombre.Contains(filtroNombre) || (filtroNombre == null)
                  && (h.tiempoReparacion.Equals(filtroTiempoReparacion) || filtroTiempoReparacion == null)
-                ).OrderBy(herramienta => herramienta.fabricante.nombre)
+                ).OrderBy(herramienta => herramienta.nombre)
                 .Select(h => new HerramientasParaRepararDTO (h.id, h.material, h.nombre, 
                     h.precio, h.tiempoReparacion, h.fabricante.nombre))
                 .ToArrayAsync();
