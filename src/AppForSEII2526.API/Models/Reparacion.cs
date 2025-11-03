@@ -5,8 +5,7 @@
         public Reparacion()
         {
             ReparacionItems = new List<ReparacionItem>();
-            metodoPago = new metodoPago();
-            ApplicationUser = new ApplicationUser();
+           
         }
 
         public Reparacion(DateTime fechaEntrega, DateTime fechaRecogida, int id, float precioTotal, 
@@ -32,22 +31,17 @@
         [Key]
         public int id { get; set; }
 
-
-
-        
-
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float precioTotal { get; set; }
 
-
         // Relaciones
-
         public IList<ReparacionItem> ReparacionItems { get; set; }
 
         [Required(ErrorMessage = "El método de pago es obligatorio.")]
         public metodoPago metodoPago { get; set; }
 
-        public ApplicationUser ApplicationUser { get; set; }
+        // Dejar la navegación nullable para evitar inserciones accidentales de ApplicationUser vacío
+        public ApplicationUser? ApplicationUser { get; set; }
 
         public override bool Equals(object? obj)
         {
@@ -58,7 +52,7 @@
                    precioTotal == reparacion.precioTotal &&
                    EqualityComparer<IList<ReparacionItem>>.Default.Equals(ReparacionItems, reparacion.ReparacionItems) &&
                    metodoPago == reparacion.metodoPago &&
-                   EqualityComparer<ApplicationUser>.Default.Equals(ApplicationUser, reparacion.ApplicationUser);
+                   EqualityComparer<ApplicationUser?>.Default.Equals(ApplicationUser, reparacion.ApplicationUser);
         }
 
         public override int GetHashCode()

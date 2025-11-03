@@ -5,9 +5,6 @@
         public Oferta()
         {
             ofertaItems = new List<OfertaItem>();
-            ApplicationUser = new ApplicationUser();
-            metodoPago = new tiposMetodoPago();
-            paraSocio = new tiposDirigidaOferta();
         }
 
         public Oferta(int id, DateTime fechaInicio, DateTime fechaFin, DateTime fechaOferta, List<OfertaItem> ofertaItems, 
@@ -26,7 +23,6 @@
         [Key]
         public int Id { get; set; }
 
-
         [Required, DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime fechaInicio { get; set; }
@@ -43,7 +39,8 @@
         // Relaciones
         public List<OfertaItem> ofertaItems { get; set; }
 
-        public ApplicationUser ApplicationUser { get; set; }
+        // Navegación opcional: no forzar la creación de un ApplicationUser vacío
+        public ApplicationUser? ApplicationUser { get; set; }
 
         [Required]
         public tiposMetodoPago metodoPago { get; set; }
@@ -59,7 +56,7 @@
                    fechaFin == oferta.fechaFin &&
                    fechaOferta == oferta.fechaOferta &&
                    EqualityComparer<List<OfertaItem>>.Default.Equals(ofertaItems, oferta.ofertaItems) &&
-                   EqualityComparer<ApplicationUser>.Default.Equals(ApplicationUser, oferta.ApplicationUser) &&
+                   EqualityComparer<ApplicationUser?>.Default.Equals(ApplicationUser, oferta.ApplicationUser) &&
                    metodoPago == oferta.metodoPago &&
                    paraSocio == oferta.paraSocio;
         }
@@ -71,14 +68,14 @@
         }
     }
     public enum tiposMetodoPago
-        {
-            Tarjeta,
-            PayPal,
-            Efectivo
-        }
+    {
+        Tarjeta,
+        PayPal,
+        Efectivo
+    }
     public enum tiposDirigidaOferta
-        {
-            Socios,
-            Clientes
-        }
+    {
+        Socios,
+        Clientes
+    }
 }

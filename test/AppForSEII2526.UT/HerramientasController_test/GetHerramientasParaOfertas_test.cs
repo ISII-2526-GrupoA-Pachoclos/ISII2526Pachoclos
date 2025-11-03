@@ -20,7 +20,7 @@ namespace AppForSEII2526.UT.HerramientasController_test
             {
                 new Herramienta { nombre = "Martillo", material = "Acero", precio = 15.9f, fabricante = fabricante[0], tiempoReparacion = "" },
                 new Herramienta { nombre = "Destornillador", material = "Acero", precio = 5.5f, fabricante = fabricante[1], tiempoReparacion = "" },
-                new Herramienta { nombre = "Taladro", material = "Plástico", precio = 8.0f, fabricante = fabricante[2], tiempoReparacion = "" },
+                new Herramienta { nombre = "Brocas", material = "Metal", precio = 8.0f, fabricante = fabricante[2], tiempoReparacion = "" },
             };
 
             _context.AddRange(fabricante);
@@ -34,7 +34,7 @@ namespace AppForSEII2526.UT.HerramientasController_test
             {
                 new HerramientasParaOfertasDTO { nombre = "Martillo", material = "Acero", fabricante = "Pepe", precio = 15.9f },
                 new HerramientasParaOfertasDTO { nombre = "Destornillador", material = "Acero", fabricante = "Ana", precio = 5.5f },
-                new HerramientasParaOfertasDTO { nombre = "Taladro", material = "Plástico", fabricante = "Luis", precio = 8.0f },
+                new HerramientasParaOfertasDTO { nombre = "Brocas", material = "Metal", fabricante = "Luis", precio = 8.0f },
             };
 
             var herramientaDTOsTC1 = new List<HerramientasParaOfertasDTO>() { herramientaDTOs[0], herramientaDTOs[1], herramientaDTOs[2] };
