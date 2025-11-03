@@ -20,6 +20,18 @@ namespace AppForSEII2526.API.DTOs
             Herramientas = herramientas;
         }
 
+        // Constructor para pruebas unitarias del POST
+        public ReparacionParaCrearDTO(string nombreC, string apellidos, string? numTelefono, metodoPago metodoPago,
+        DateTime fechaEntrega, IList<ReparacionItemDTO> herramientas)
+        {
+            this.nombreC = nombreC;
+            this.apellidos = apellidos;
+            this.numTelefono = numTelefono;
+            this.metodoPago = metodoPago;
+            this.fechaEntrega = fechaEntrega;
+            Herramientas = herramientas;
+        }
+
         [Required, StringLength(50, ErrorMessage = "El nombre no puede tener más de 50 caracteres.")]
         public string nombreC { get; set; }
 
