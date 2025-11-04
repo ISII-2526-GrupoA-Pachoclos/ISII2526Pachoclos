@@ -9,9 +9,9 @@ namespace AppForSEII2526.API.Controllers
     public class ComprasController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly ILogger<HerramientasController> _logger;
+        private readonly ILogger<ComprasController> _logger;
 
-        public ComprasController(ApplicationDbContext context, ILogger<HerramientasController> logger)
+        public ComprasController(ApplicationDbContext context, ILogger<ComprasController> logger)
         {
             _context = context;
             _logger = logger;

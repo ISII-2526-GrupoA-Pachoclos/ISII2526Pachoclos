@@ -93,5 +93,25 @@ namespace AppForSEII2526.UT.ComprasController_test
 
 
         }
+
+
+        [Fact]
+        [Trait("Database", "WithoutFixture")]
+        [Trait("LevelTesting", "Unit Testing")]
+        public async Task GetDetalleCompra_NotFound_test()
+        {
+            //Arrange
+            var mock = new Mock<ILogger<ComprasController>>();
+            ILogger<ComprasController> logger = mock.Object;
+
+            var controller = new ComprasController(_context, logger);
+
+            var result = await controller.GetDetalles_Compra(0);
+
+            Assert.IsType<NotFoundResult>(result);
+
+
+
+        }
     }
 }
