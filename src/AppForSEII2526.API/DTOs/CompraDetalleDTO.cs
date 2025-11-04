@@ -4,8 +4,8 @@ namespace AppForSEII2526.API.DTOs
 {
     public class CompraDetalleDTO
     {
-        [Key]
-        public int Id { get; set; }
+        //[Key]
+        //public int Id { get; set; }
 
         [Required, StringLength(100, ErrorMessage = "No puede tener mas de 100 caracteres.", MinimumLength = 1)]
         public string NombreCliente { get; set; }
@@ -28,9 +28,9 @@ namespace AppForSEII2526.API.DTOs
 
         public IList<CompraItemDTO> HerramientasCompradas { get; set; }
 
-        public CompraDetalleDTO(int id, string NombreCliente, string ApellidoCliente, string direccionEnvio, DateTime fechaCompra, float? precioTotal, IList<CompraItemDTO> herramientasCompradas)
+        public CompraDetalleDTO( string NombreCliente, string ApellidoCliente, string direccionEnvio, DateTime fechaCompra, float? precioTotal, IList<CompraItemDTO> herramientasCompradas)
         {
-            Id = id;
+            
             this.NombreCliente = NombreCliente;
             this.ApellidosCliente = ApellidoCliente;
             this.direccionEnvio = direccionEnvio;
@@ -55,8 +55,7 @@ namespace AppForSEII2526.API.DTOs
             if (obj is not CompraDetalleDTO dto)
                 return false;
 
-            return Id == dto.Id
-                && NombreCliente == dto.NombreCliente
+            return  NombreCliente == dto.NombreCliente
                 && ApellidosCliente == dto.ApellidosCliente
                 && precioTotal == dto.precioTotal
                 && CompareDate(fechaCompra, dto.fechaCompra)
@@ -66,7 +65,7 @@ namespace AppForSEII2526.API.DTOs
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, precioTotal, fechaCompra, direccionEnvio);
+            return HashCode.Combine( precioTotal, fechaCompra, direccionEnvio);
         }
     }
 }

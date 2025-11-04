@@ -1,5 +1,6 @@
 ﻿using AppForSEII2526.API.Controllers;
 using AppForSEII2526.API.DTOs;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace AppForSEII2526.UT.ComprasController_test
 {
-    public class GetDetalleParaCompras_test : AppForSEII25264SqliteUT
+    public class PostCompras_test : AppForSEII25264SqliteUT
     {
-        
-        public GetDetalleParaCompras_test()
+        public PostCompras_test()
         {
+
             var fabricantes = new List<fabricante>
             {
                 new fabricante{id=1, nombre= "Fabricante A" },
@@ -39,7 +40,7 @@ namespace AppForSEII2526.UT.ComprasController_test
 
             var compra = new Compra { Id = 1, ApplicationUser = clientes[0], CompraItems = compraItems, direccionEnvio = "calle", fechaCompra = new DateTime(2015, 01, 01), metodopago = formaPago.Efectivo, precioTotal = 50 };
 
-       
+
 
             _context.AddRange(fabricantes);
             _context.AddRange(herramientas);
@@ -47,51 +48,44 @@ namespace AppForSEII2526.UT.ComprasController_test
             _context.AddRange(compra);
             _context.AddRange(compraItems);
             _context.SaveChanges();
-
         }
 
-        public static IEnumerable<object?[]> TestCasesFor_GetDetalles_Compra()
-        {
+        [Fact]
+        [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
+        public async Task CrearCompra_Success_test() {
 
-            var compraItemDTO = new List<CompraItemDTO> {
+            // Arrange
+            var mock = new Mock<ILogger<ComprasController>>();
+            ILogger<ComprasController> logger = mock.Object;
 
+            var controller = new ComprasController(_context, logger);
+
+            var compraItems = new List<CompraItemDTO>
+            {
                 new CompraItemDTO{ cantidad=1, herramientaid=7, nombre="Martillo", precio=50 , descripcion="descripcion"}
-
-
             };
 
-            var compraDetalleDTO = new CompraDetalleDTO { NombreCliente= "Juan", ApellidosCliente="Valdes", direccionEnvio = "calle", precioTotal = 50, fechaCompra = new DateTime(2015, 01, 01), HerramientasCompradas = compraItemDTO };
+            var CompraDto = new CrearCompraDTO {Nombre="Juan", Apellido="Valdes", direccionEnvio="calle", metodoPago=formaPago.Efectivo, HerramientasCompradas=compraItems};
+
+            var expectedCompradetalleDTO = new CompraDetalleDTO { NombreCliente="Juan", ApellidosCliente="Valdes", direccionEnvio="calle", fechaCompra=DateTime.Today, precioTotal=50 , HerramientasCompradas=compraItems};
+
 
             
-
-            var Test = new List<object?[]>
-            {
-                new object?[] {1, compraDetalleDTO }
-            };
-            return Test;
-
-
-        }
-
-        [Theory]
-        [MemberData(nameof(TestCasesFor_GetDetalles_Compra))]
-        [Trait("Database", "WithoutFixure")]
-        [Trait("LevelTesting", "Unit Testing")]
-        public async Task GetDetalles_Compra_Test(int id, CompraDetalleDTO expectedCompra)
-        {
-            //Arrange
-            var controller = new ComprasController(_context, null);
-
             //Act
-            var result = await controller.GetDetalles_Compra(1);
+            var result = await controller.CrearCompra(CompraDto);
 
             //Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var comprasDTOsActual = Assert.IsAssignableFrom<CompraDetalleDTO>(okResult.Value);
-            Assert.Equal(expectedCompra, comprasDTOsActual);
+
+            var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+            var actualCompraDetalleDTO = Assert.IsType<CompraDetalleDTO>(createdResult.Value);
+
+            Assert.Equal(expectedCompradetalleDTO, actualCompraDetalleDTO);
 
 
 
         }
+
+
     }
 }

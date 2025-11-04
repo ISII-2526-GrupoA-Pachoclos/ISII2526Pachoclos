@@ -9,9 +9,9 @@ namespace AppForSEII2526.API.Controllers
     public class ComprasController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly ILogger<HerramientasController> _logger;
+        private readonly ILogger<ComprasController> _logger;
 
-        public ComprasController(ApplicationDbContext context, ILogger<HerramientasController> logger)
+        public ComprasController(ApplicationDbContext context, ILogger<ComprasController> logger)
         {
             _context = context;
             _logger = logger;
@@ -29,7 +29,7 @@ namespace AppForSEII2526.API.Controllers
                 .Include(c => c.CompraItems)
                     .ThenInclude(c => c.herramienta)
                 .Select(c => new CompraDetalleDTO(
-                    c.Id,
+                    
                     c.ApplicationUser.nombre,
                     c.ApplicationUser.apellido,
                     c.direccionEnvio,
@@ -124,7 +124,7 @@ namespace AppForSEII2526.API.Controllers
 
             var ComprasItems = new List<ComprarItem>();
 
-            Compra compra = new Compra(Crearcompra.direccionEnvio, DateTime.Now, 0, Crearcompra.metodoPago, ComprasItems, user);
+            Compra compra = new Compra(Crearcompra.direccionEnvio, DateTime.Today, 0, Crearcompra.metodoPago, ComprasItems, user);
 
             var herramientasAux = await _context.Herramienta
                 .Where(h => nombreHerramientas.Contains(h.nombre)) // todas las herramientas que esten en los ids anteriores
@@ -172,7 +172,7 @@ namespace AppForSEII2526.API.Controllers
 
             }
 
-            var compraDetalleDTO = new CompraDetalleDTO(compra.Id,user.nombre, user.apellido, compra.direccionEnvio, compra.fechaCompra, compra.precioTotal, Crearcompra.HerramientasCompradas);
+            var compraDetalleDTO = new CompraDetalleDTO(user.nombre, user.apellido, compra.direccionEnvio, compra.fechaCompra, compra.precioTotal, Crearcompra.HerramientasCompradas);
 
             return CreatedAtAction("GetDetalles_Compra", new { id = compra.Id }, compraDetalleDTO);
 
