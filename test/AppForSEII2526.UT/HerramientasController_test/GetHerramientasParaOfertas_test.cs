@@ -18,9 +18,9 @@ namespace AppForSEII2526.UT.HerramientasController_test
 
             var herramienta = new List<Herramienta>
             {
-                new Herramienta { nombre = "Martillo", material = "Acero", precio = 15.9f, fabricante = fabricante[0], tiempoReparacion = "" },
-                new Herramienta { nombre = "Destornillador", material = "Acero", precio = 5.5f, fabricante = fabricante[1], tiempoReparacion = "" },
-                new Herramienta { nombre = "Brocas", material = "Metal", precio = 8.0f, fabricante = fabricante[2], tiempoReparacion = "" },
+                new Herramienta { nombre = "Martillo", material = "Acero", precio = 15.9f, fabricante = fabricante[0], tiempoReparacion = "1 día" },
+                new Herramienta { nombre = "Destornillador", material = "Acero", precio = 5.5f, fabricante = fabricante[1], tiempoReparacion = "5 horas" },
+                new Herramienta { nombre = "Brocas", material = "Metal", precio = 8.0f, fabricante = fabricante[2], tiempoReparacion = "3 días" },
             };
 
             _context.AddRange(fabricante);
@@ -32,9 +32,9 @@ namespace AppForSEII2526.UT.HerramientasController_test
         {
             var herramientaDTOs = new List<HerramientasParaOfertasDTO>()
             {
-                new HerramientasParaOfertasDTO { nombre = "Martillo", material = "Acero", fabricante = "Pepe", precio = 15.9f },
-                new HerramientasParaOfertasDTO { nombre = "Destornillador", material = "Acero", fabricante = "Ana", precio = 5.5f },
-                new HerramientasParaOfertasDTO { nombre = "Brocas", material = "Metal", fabricante = "Luis", precio = 8.0f },
+                new HerramientasParaOfertasDTO { Nombre = "Martillo", Material = "Acero", Fabricante = "Pepe", Precio = 15.9f },
+                new HerramientasParaOfertasDTO { Nombre = "Destornillador", Material = "Acero", Fabricante = "Ana", Precio = 5.5f },
+                new HerramientasParaOfertasDTO { Nombre = "Brocas", Material = "Metal", Fabricante = "Luis", Precio = 8.0f },
             };
 
             var herramientaDTOsTC1 = new List<HerramientasParaOfertasDTO>() { herramientaDTOs[0], herramientaDTOs[1], herramientaDTOs[2] };
@@ -62,7 +62,7 @@ namespace AppForSEII2526.UT.HerramientasController_test
             var controller = new HerramientasController(_context, null);
 
             // Act
-            var result = await controller.GetHerramientasParaOferta_conTodosLosDatos_DTO(filtroPrecio, filtroFabricante);
+            var result = await controller.PruebasUnidad_GetSelectParaOfertas_Ok(filtroPrecio, filtroFabricante);
 
             // Assert: comprobamos que es Ok y obtenemos la lista
             var okResult = Assert.IsType<OkObjectResult>(result);

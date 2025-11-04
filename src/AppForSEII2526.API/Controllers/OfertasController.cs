@@ -32,8 +32,8 @@ namespace AppForSEII2526.API.Controllers
             }
 
             var ofertas = await _context.Oferta
-                .Include(o => o.metodoPago)
-                .Include(o => o.ofertaItems)
+                .Include(o => o.MetodoPago)
+                .Include(o => o.OfertaItems)
                     .ThenInclude(oi => oi.herramienta)
                         .ThenInclude(h => h.fabricante)
                 .Where(o => o.Id == id)
@@ -41,12 +41,12 @@ namespace AppForSEII2526.API.Controllers
 
 
             var ofertaDTO = ofertas.Select(o => new OfertaDetalleDTO(
-                o.fechaInicio,
-                o.fechaFin,
-                o.fechaOferta,
-                o.paraSocio,
-                o.metodoPago,
-                o.ofertaItems.Select(oi => new OfertaItemDTO(
+                o.FechaInicio,
+                o.FechaFin,
+                o.FechaOferta,
+                o.ParaSocio,
+                o.MetodoPago,
+                o.OfertaItems.Select(oi => new OfertaItemDTO(
                     oi.herramienta.nombre,
                     oi.herramienta.material,
                     oi.herramienta.fabricante.nombre,
@@ -64,11 +64,6 @@ namespace AppForSEII2526.API.Controllers
         }
 
 
-        [HttpPost]
-        [Route("[action]")]
-        [ProducesResponseType(typeof(OfertaDetalleDTO), (int)HttpStatusCode.Created)]
-        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
-        public async Task<IActionResult> CrearOferta([FromBody] )
+        
     }
 }
