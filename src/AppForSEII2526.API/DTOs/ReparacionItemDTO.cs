@@ -21,7 +21,7 @@ namespace AppForSEII2526.API.DTOs
         [Key]
         public int HerramientaId { get; set; }
 
-        [Required, Range(0.01, float.MaxValue, ErrorMessage = "El precio debe ser un valor positivo.")]
+        [Required, Range(0.001, float.MaxValue, ErrorMessage = "El precio debe ser un valor positivo mayor que 0.001.")]
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float precio { get; set; }
 
@@ -31,7 +31,7 @@ namespace AppForSEII2526.API.DTOs
         [StringLength(50, ErrorMessage = "No puede tener mas de 50 caracteres.", MinimumLength = 4)]
         public string? descripcion { get; set; }
 
-        [Required, Range(1, int.MaxValue, ErrorMessage = "El id debe ser un número positivo mayor que 0.")]
+        [Required, Range(1, int.MaxValue, ErrorMessage = "La cantidad debe ser un número positivo mayor que 0.")]
         public int cantidad { get; set; }
 
         public override bool Equals(object? obj)

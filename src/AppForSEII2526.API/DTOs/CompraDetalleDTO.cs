@@ -32,19 +32,28 @@ namespace AppForSEII2526.API.DTOs
         {
         }
 
+       
+
+        protected bool CompareDate(DateTime date1, DateTime date2)
+        {
+            return (date1.Subtract(date2) < new TimeSpan(0, 1, 0));
+        }
+
         public override bool Equals(object? obj)
         {
-            return obj is CompraDetalleDTO dTO &&
-                   Id == dTO.Id &&
-                   direccionEnvio == dTO.direccionEnvio &&
-                   fechaCompra == dTO.fechaCompra &&
-                   precioTotal == dTO.precioTotal &&
-                   EqualityComparer<IList<CompraItemDTO>>.Default.Equals(HerramientasCompradas, dTO.HerramientasCompradas);
+            if (obj is not CompraDetalleDTO dto)
+                return false;
+
+            return Id == dto.Id
+                && precioTotal == dto.precioTotal
+                && CompareDate(fechaCompra, dto.fechaCompra)
+                && direccionEnvio == dto.direccionEnvio
+                && HerramientasCompradas.SequenceEqual(dto.HerramientasCompradas);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, direccionEnvio, fechaCompra, precioTotal, HerramientasCompradas);
+            return HashCode.Combine(Id, precioTotal, fechaCompra, direccionEnvio);
         }
     }
 }
