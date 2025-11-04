@@ -7,9 +7,17 @@ namespace AppForSEII2526.API.Models
         public Compra()
         {
             CompraItems = new List<ComprarItem>();
+
+            ApplicationUser = new ApplicationUser();
+            metodopago = new formaPago();
+        }
+
+        public Compra(int id, string direccionEnvio, DateTime fechaCompra, float? precioTotal, formaPago metodopago,
+
         }
 
         public Compra(int id, string direccionEnvio, DateTime fechaCompra, float? precioTotal, formaPago metodopago, 
+
             IList<ComprarItem> compraItems, ApplicationUser applicationUser)
         {
             Id = id;
@@ -20,6 +28,20 @@ namespace AppForSEII2526.API.Models
             CompraItems = compraItems;
             ApplicationUser = applicationUser;
         }
+
+
+        public Compra(string direccionEnvio, DateTime fechaCompra, float? precioTotal, formaPago metodopago,
+            IList<ComprarItem> compraItems, ApplicationUser applicationUser)
+        {
+            
+            this.direccionEnvio = direccionEnvio;
+            this.fechaCompra = fechaCompra;
+            this.precioTotal = precioTotal;
+            this.metodopago = metodopago;
+            CompraItems = compraItems;
+            ApplicationUser = applicationUser;
+        }
+
 
         [Key]
         public int Id { get; set; }
@@ -39,8 +61,14 @@ namespace AppForSEII2526.API.Models
 
         public IList<ComprarItem> CompraItems { get; set; }
 
-        // Navegación nullable para evitar inserciones de ApplicationUser sin datos
-        public ApplicationUser? ApplicationUser { get; set; }
+
+        public ApplicationUser ApplicationUser { get; set; }
+
+        
+        
+
+       
+        
 
         public override bool Equals(object? obj)
         {
@@ -58,6 +86,7 @@ namespace AppForSEII2526.API.Models
         {
             return HashCode.Combine(Id, direccionEnvio, fechaCompra, precioTotal, metodopago, CompraItems, ApplicationUser);
         }
+
     }
     public enum formaPago
     {
