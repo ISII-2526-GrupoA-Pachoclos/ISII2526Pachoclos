@@ -1,7 +1,9 @@
+
 ﻿namespace AppForSEII2526.UT
 {
     public class AppForSEII25264SqliteUT
     {
+
         protected readonly DbConnection _connection;
         protected readonly ApplicationDbContext _context;
         protected readonly DbContextOptions<ApplicationDbContext> _contextOptions;
@@ -14,8 +16,10 @@
 
         void Dispose() => _connection.Dispose();
 
+
         public AppForSEII25264SqliteUT()
         {
+
             // Create and open a connection. This creates the SQLite in-memory database, which will persist until the connection is closed
             // at the end of the test (see Dispose below).
             _connection = new SqliteConnection("Filename=:memory:");
