@@ -219,6 +219,9 @@ namespace AppForSEII2526.API.Controllers
 
             // === guardar cambios ===
 
+            await _context.SaveChangesAsync();
+
+            /*
             try
             {
                 await _context.SaveChangesAsync();
@@ -228,6 +231,7 @@ namespace AppForSEII2526.API.Controllers
                 _logger.LogError(ex, "Error al guardar la reparación.");
                 return Conflict("Error al guardar la reparación. Por favor, inténtelo de nuevo más tarde.");
             }
+            */
 
             // === RESPUESTA ===
 

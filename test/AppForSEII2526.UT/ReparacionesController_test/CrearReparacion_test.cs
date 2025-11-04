@@ -49,6 +49,15 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                     precio = 7.0f,
                     tiempoReparacion = "7 dias",
                     fabricante = fabricantes[1]
+                },
+                new Herramienta
+                {
+                    id = 6,
+                    nombre = "Martillo",
+                    material = "Madera",
+                    precio = 15.0f,
+                    tiempoReparacion = "formato_invalido",
+                    fabricante = fabricantes[0]
                 }
             };
 
@@ -118,6 +127,15 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.PayPal,
                 DateTime.Today.AddDays(1), herramientasNombreIncorrecto);
 
+            // Caso 7: Método de pago inválido
+            var herramientasMetodoPagoInvalido = new List<ReparacionItemDTO>
+            {
+                new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 1)
+            };
+            var reparacionMetodoPagoInvalido = new ReparacionParaCrearDTO(
+                _nombreCliente, _apellidosCliente, _numTelefono, (metodoPago)99, // Valor inválido
+                DateTime.Today.AddDays(1), herramientasMetodoPagoInvalido);
+
             var allTests = new List<object[]>
             {
                 new object[] { reparacionSinHerramientas, "Debe incluir al menos una herramienta para reparar." },
@@ -126,6 +144,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 new object[] { reparacionHerramientaNoExiste, "La herramienta con ID 999 no existe." },
                 new object[] { reparacionCantidadCero, $"La cantidad de la herramienta '{_herramienta1Nombre}' debe ser mayor que 0." },
                 new object[] { reparacionNombreIncorrecto, $"El nombre de la herramienta 'Nombre Incorrecto' no coincide con el ID 4." },
+                new object[] { reparacionMetodoPagoInvalido, "El método de pago no es válido. Valores permitidos: 0 (Efectivo), 1 (TarjetaCredito), 2 (PayPal)." },
             };
 
             return allTests;
@@ -226,42 +245,71 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             Assert.Equal(precioTotalEsperado, reparacionEnBD.precioTotal);
         }
 
-        /*
+        // Método de pago inválido
         [Fact]
         [Trait("LevelTesting", "Unit Testing")]
         [Trait("Database", "WithoutFixture")]
-        public async Task CrearReparacion_SinTelefono_Success_test()
+        public async Task CrearReparacion_MetodoPagoInvalido_Error_test()
         {
             // Arrange
             var mockLogger = new Mock<ILogger<ReparacionesController>>();
             var logger = mockLogger.Object;
             var controller = new ReparacionesController(_context, logger);
 
-            // Crear DTO para la reparación sin teléfono
             var herramientas = new List<ReparacionItemDTO>
             {
                 new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 1)
             };
 
-            var fechaEntrega = DateTime.Today.AddDays(1);
+            // Usar un valor de enum inválido (fuera del rango)
             var reparacionDTO = new ReparacionParaCrearDTO(
-                _nombreCliente, _apellidosCliente, null, metodoPago.TarjetaCredito,
-                fechaEntrega, herramientas);
+                _nombreCliente, _apellidosCliente, _numTelefono, (metodoPago)99, // Valor inválido
+                DateTime.Today.AddDays(1), herramientas);
 
             // Act
             var result = await controller.CrearReparacion(reparacionDTO);
 
             // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var problemDetails = Assert.IsType<ValidationProblemDetails>(badRequestResult.Value);
+
+            var errorActual = problemDetails.Errors.First().Value[0];
+            Assert.Contains("El método de pago no es válido", errorActual);
+            Assert.Contains("0 (Efectivo), 1 (TarjetaCredito), 2 (PayPal)", errorActual);
+        }
+
+        // Formato inválido en tiempo de reparación
+        [Fact]
+        [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
+        public async Task CrearReparacion_FormatoTiempoReparacionInvalido_Success_test()
+        {
+            // Arrange
+            var mockLogger = new Mock<ILogger<ReparacionesController>>();
+            var logger = mockLogger.Object;
+            var controller = new ReparacionesController(_context, logger);
+
+            // Usar herramienta con formato de tiempo inválido (ID 6)
+            var herramientas = new List<ReparacionItemDTO>
+            {
+                new ReparacionItemDTO(6, 15.0f, "Martillo", "Cabeza floja", 1)
+            };
+
+            var fechaEntrega = DateTime.Today.AddDays(1);
+            var reparacionDTO = new ReparacionParaCrearDTO(
+                _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.Efectivo,
+                fechaEntrega, herramientas);
+
+            // Act
+            var result = await controller.CrearReparacion(reparacionDTO);
+
+            // Assert - Debería funcionar pero con 0 días adicionales por formato inválido
             var createdResult = Assert.IsType<CreatedAtActionResult>(result);
             var reparacionDetalle = Assert.IsType<ReparacionDetalleDTO>(createdResult.Value);
 
-            // Verificar que se creó correctamente sin teléfono
-            Assert.True(reparacionDetalle.id > 0);
-            Assert.Equal(_nombreCliente, reparacionDetalle.nombre);
-            Assert.Equal(_apellidosCliente, reparacionDetalle.apellido);
-            Assert.Equal(metodoPago.TarjetaCredito, reparacionDetalle.metodoPago);
-            Assert.Single(reparacionDetalle.HerramientasAReparar);
+            // La fecha de recogida debería ser igual a la fecha de entrega (0 días adicionales)
+            Assert.Equal(fechaEntrega.Date, reparacionDetalle.fechaRecogida);
+            Assert.Equal(15.0f, reparacionDetalle.precioTotal);
         }
-        */
     }
 }
