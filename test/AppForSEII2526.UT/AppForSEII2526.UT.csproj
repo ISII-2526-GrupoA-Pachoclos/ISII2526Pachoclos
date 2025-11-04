@@ -34,4 +34,8 @@
     <ProjectReference Include="..\..\src\AppForSEII2526.API\AppForSEII2526.API.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="GetHerramientas_test\" />
+  </ItemGroup>
+
 </Project>
