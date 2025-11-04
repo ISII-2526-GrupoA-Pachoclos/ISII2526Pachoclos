@@ -1,4 +1,4 @@
-﻿using AppForMovies.UT;
+﻿using AppForSEII2526.UT;
 using AppForSEII2526.API.Controllers;
 using AppForSEII2526.API.DTOs;
 using System;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AppForSEII2526.UT.HerramientasController_test
 {
-    public class GetHerramientasParaComprar_test : AppForMovies4SqliteUT
+    public class GetHerramientasParaComprar_test : AppForSEII2526UT
     {
 
         public GetHerramientasParaComprar_test()
