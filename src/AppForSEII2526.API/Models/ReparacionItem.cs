@@ -32,7 +32,7 @@ namespace AppForSEII2526.API.Models
 
         public int Reparacionid { get; set; }
 
-        [Required, Range(0.01, float.MaxValue, ErrorMessage = "El precio debe ser un valor positivo.")]
+        [Required, Range(0.001, float.MaxValue, ErrorMessage = "El precio debe ser un valor positivo mayor que 0.001.")]
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float precio { get; set; }
 

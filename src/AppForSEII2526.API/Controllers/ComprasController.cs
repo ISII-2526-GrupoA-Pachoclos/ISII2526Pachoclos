@@ -30,6 +30,8 @@ namespace AppForSEII2526.API.Controllers
                     .ThenInclude(c => c.herramienta)
                 .Select(c => new CompraDetalleDTO(
                     c.Id,
+                    c.ApplicationUser.nombre,
+                    c.ApplicationUser.apellido,
                     c.direccionEnvio,
                     c.fechaCompra,
                     c.precioTotal,
@@ -39,6 +41,7 @@ namespace AppForSEII2526.API.Controllers
                         ci.herramienta.nombre,
                         ci.descripcion,
                         ci.herramienta.precio
+                        
                     )).ToList()
 
                  ))
@@ -54,5 +57,137 @@ namespace AppForSEII2526.API.Controllers
 
 
         }
+
+
+        [HttpPost]
+        [Route("[action]")]
+        [ProducesResponseType(typeof(CompraDetalleDTO), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
+        public async Task<ActionResult> CrearCompra(CrearCompraDTO Crearcompra)
+        {
+
+            if (Crearcompra.HerramientasCompradas.Count == 0)
+            {
+                ModelState.AddModelError("CompraItem", "Error! Debes incluir al menos un  ");
+            }
+            else 
+            { 
+                foreach (var item in Crearcompra.HerramientasCompradas)
+                {
+                    if (item.cantidad <= 0)
+                    {
+                        ModelState.AddModelError("Cantidad", "Error! La cantidad debe ser mayor que 0");
+                    }
+                }
+
+
+            }
+
+
+                var user = _context.ApplicationUser.FirstOrDefault(au => au.nombre == Crearcompra.Nombre);
+
+            if (user == null)
+                ModelState.AddModelError("ApplicationUser", "Error! Usuario no registrado");
+
+
+
+            
+
+            var nombreHerramientas = Crearcompra.HerramientasCompradas.Select(ci => ci.nombre).ToList<string>();
+
+            var Herramientas = _context.Herramienta.Include(c => c.ComprarItems)
+                .ThenInclude(ci => ci.compra)
+                .Where(h => nombreHerramientas.Contains(h.nombre))
+
+                .Select(h => new {
+                    h.id,
+                    h.nombre,
+                    h.material,
+                    h.precio
+                })
+                .ToList();
+
+            foreach (var herr in Crearcompra.HerramientasCompradas) 
+            { 
+                var herramientaaux = Herramientas.FirstOrDefault(h => h.nombre == herr.nombre);
+                if (herramientaaux == null)
+                {
+                    ModelState.AddModelError("Herramienta", $"Error! La herramienta con Id {herr.herramientaid} no existe");
+                }
+
+
+            }
+
+            if (ModelState.ErrorCount > 0)
+                return BadRequest(new ValidationProblemDetails(ModelState));
+
+            var ComprasItems = new List<ComprarItem>();
+
+            Compra compra = new Compra(Crearcompra.direccionEnvio, DateTime.Now, 0, Crearcompra.metodoPago, ComprasItems, user);
+
+            var herramientasAux = await _context.Herramienta
+                .Where(h => nombreHerramientas.Contains(h.nombre)) // todas las herramientas que esten en los ids anteriores
+                .ToListAsync();
+
+
+
+
+            foreach (var item in Crearcompra.HerramientasCompradas)
+            {
+                var herramienta = herramientasAux.First(h => h.id == item.herramientaid);
+
+
+                if (herramienta == null)
+                {
+                    ModelState.AddModelError("Herramienta", $"Error! La herramienta con Id {item.herramientaid} no existe");
+                    continue;
+                }
+
+                
+
+
+                ComprarItem CompraItem = new ComprarItem(item.cantidad, item.descripcion, herramienta.precio, compra.Id, item.herramientaid, compra, herramienta);
+                compra.CompraItems.Add(CompraItem);
+                compra.precioTotal += herramienta.precio * item.cantidad;
+            }
+
+            if (ModelState.ErrorCount > 0)
+            {
+                return BadRequest(new ValidationProblemDetails(ModelState));
+            }
+
+            _context.Compra.Add(compra);
+
+            try
+            {
+           
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                ModelState.AddModelError("Compra", $"Error! Ha habido un error al realizar tu compra, por favor, ten paciencia");
+                return Conflict("Error" + ex.Message);
+
+            }
+
+            var compraDetalleDTO = new CompraDetalleDTO(compra.Id,user.nombre, user.apellido, compra.direccionEnvio, compra.fechaCompra, compra.precioTotal, Crearcompra.HerramientasCompradas);
+
+            return CreatedAtAction("GetDetalles_Compra", new { id = compra.Id }, compraDetalleDTO);
+
+
+
+
+
+
+
+
+
+
+        }
+        
+
+
     }
 }
