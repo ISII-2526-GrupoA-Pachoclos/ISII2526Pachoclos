@@ -54,7 +54,6 @@ namespace AppForSEII2526.UT.ReparacionesController_test
 
             var usuario = new ApplicationUser
             {
-                Id = "1",
                 nombre = "Juan",
                 apellido = "Pérez",
                 correoElectronico = "juan@gmail.com",
@@ -208,7 +207,6 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             // Arrange
             var usuario = new ApplicationUser
             {
-                Id = "2",
                 nombre = "María",
                 apellido = "Gómez",
                 correoElectronico = "maria@gmail.com",
