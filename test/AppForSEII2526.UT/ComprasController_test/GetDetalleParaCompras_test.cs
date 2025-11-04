@@ -60,7 +60,7 @@ namespace AppForSEII2526.UT.ComprasController_test
 
             };
 
-            var compraDetalleDTO = new CompraDetalleDTO { Id = 1, direccionEnvio = "calle", precioTotal = 50, fechaCompra = new DateTime(2015, 01, 01), HerramientasCompradas = compraItemDTO };
+            var compraDetalleDTO = new CompraDetalleDTO { Id = 1,NombreCliente= "Juan", ApellidosCliente="Valdes", direccionEnvio = "calle", precioTotal = 50, fechaCompra = new DateTime(2015, 01, 01), HerramientasCompradas = compraItemDTO };
 
             
 
