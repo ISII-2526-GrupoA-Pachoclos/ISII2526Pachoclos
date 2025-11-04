@@ -62,7 +62,7 @@ namespace AppForSEII2526.UT.HerramientasController_test
             var controller = new HerramientasController(_context, null);
 
             // Act
-            var result = await controller.PruebasUnidad_GetSelectParaOfertas_Ok(filtroPrecio, filtroFabricante);
+            var result = await controller.GetHerramientasParaOferta_conTodosLosDatos_DTO(filtroFabricante, filtroPrecio);
 
             // Assert: comprobamos que es Ok y obtenemos la lista
             var okResult = Assert.IsType<OkObjectResult>(result);
@@ -74,10 +74,10 @@ namespace AppForSEII2526.UT.HerramientasController_test
             foreach (var esperado in expectedHerramientasOfertadas)
             {
                 var match = herramientasDTOsActual.FirstOrDefault(a =>
-                    string.Equals(a.nombre, esperado.nombre, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(a.material, esperado.material, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(a.fabricante, esperado.fabricante, StringComparison.OrdinalIgnoreCase) &&
-                    Math.Abs(a.precio - esperado.precio) < 0.0001f
+                    string.Equals(a.Nombre, esperado.Nombre, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(a.Material, esperado.Material, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(a.Fabricante, esperado.Fabricante, StringComparison.OrdinalIgnoreCase) &&
+                    Math.Abs(a.Precio - esperado.Precio) < 0.0001f
                 );
 
                 Assert.NotNull(match);

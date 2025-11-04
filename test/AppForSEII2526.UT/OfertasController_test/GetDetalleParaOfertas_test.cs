@@ -44,92 +44,73 @@ namespace AppForSEII2526.UT.OfertasController_test
             // Creamos la oferta
             var oferta = new Oferta
             {
-                fechaInicio = DateTime.UtcNow.AddDays(30),
-                fechaFin = DateTime.UtcNow.AddDays(60),
-                fechaOferta = DateTime.UtcNow,
-                metodoPago = tiposMetodoPago.Efectivo,
-                paraSocio = tiposDirigidaOferta.Clientes,
-                ofertaItems = ofertaItems
+                FechaInicio = DateTime.UtcNow.AddDays(30),
+                FechaFin = DateTime.UtcNow.AddDays(60),
+                FechaOferta = DateTime.UtcNow,
+                MetodoPago = tiposMetodoPago.Efectivo,
+                ParaSocio = tiposDirigidaOferta.Clientes,
+                OfertaItems = ofertaItems
             };
 
             // Añadimos oferta (con sus items) y guardamos
             _context.Add(oferta);
             _context.SaveChanges();
         }
-
-        public static IEnumerable<object[]> TestCasesFor_GetDetalleParaOferta_Ok()
+        [Fact]
+        [Trait("Database", "WithoutFixture")]
+        [Trait("LevelTesting", "Unit Testing")]
+        public async Task GetDetalleParaOferta_NotFound()
         {
-            // Debe coincidir con lo que se inserta en el constructor:
-            var ofertaItemsDTO = new List<OfertaItemDTO>()
-            {
-                new OfertaItemDTO(1, "Martillo", "Acero", "Pepe", 15.9f, 11.93f),
-                new OfertaItemDTO(2, "Destornillador", "Acero", "Ana", 5.5f, 4.95f),
-                new OfertaItemDTO(3, "Brocas", "Metal", "Luis", 8.0f, 6.40f),
-            };
+            //Arrange
+            var mock = new Mock<ILogger<OfertasController>>();
+            ILogger<OfertasController> logger = mock.Object;
 
-            var ofertaDetalleEsperada = new OfertaDetalleDTO(
-                1,
+            var controller = new OfertasController(_context, logger);
+
+            //Act
+            var result = await controller.GetDetalles_Oferta(0); // ID de oferta que no existe (999)
+
+            //Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+
+        [Fact]
+        [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
+        public async Task GetDetalleParaOferta_Found_test()
+        {
+            //Arrange
+            var mock = new Mock<ILogger<OfertasController>>();
+            ILogger<OfertasController> logger = mock.Object;
+            var controller = new OfertasController(_context, logger);
+
+            var expectedOferta = new OfertaDetalleDTO(
                 DateTime.UtcNow.AddDays(30),
                 DateTime.UtcNow.AddDays(60),
                 DateTime.UtcNow,
-                tiposMetodoPago.Efectivo,
                 tiposDirigidaOferta.Clientes,
-                ofertaItemsDTO
+                tiposMetodoPago.Efectivo,
+                new List<OfertaItemDTO>()
             );
-
-            return new List<object[]>
+            expectedOferta.HerramientasAOfertar.Add(new OfertaItemDTO
             {
-                new object[] { 1, ofertaDetalleEsperada }
-            };
-        }
+                Nombre = "Martillo",
+                Material = "Acero",
+                Fabricante = "Pepe",
+                Precio = 15.9f,
+                PrecioOferta = 11.93f
+            });
 
-        [Theory]
-        [MemberData(nameof(TestCasesFor_GetDetalleParaOferta_Ok))]
-        public async Task GetDetalleParaOferta_Ok(int ofertaId, OfertaDetalleDTO expectedDTO)
-        {
-            // Arrange
-            var controller = new OfertasController(_context, null);
+            //Act
+            var result = await controller.GetDetalles_Oferta(1);
 
-            // Act
-            var actionResult = await controller.GetDetalles_Oferta(ofertaId);
+            //Assert 
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var ofertaDTOActual = Assert.IsType<OfertaDetalleDTO>(okResult.Value);
+            var eq = expectedOferta.Equals(ofertaDTOActual);
 
-            // Assert: 200 OK y DTO
-            var okResult = Assert.IsType<OkObjectResult>(actionResult);
-            var value = okResult.Value!;
-
-            // Si controller devuelve { detalle = ofertas, precioTotal = n }, extraer detalle
-            OfertaDetalleDTO actualDTO;
-            var detalleProp = value.GetType().GetProperty("detalle");
-            if (detalleProp != null)
-            {
-                actualDTO = Assert.IsType<OfertaDetalleDTO>(detalleProp.GetValue(value));
-            }
-            else
-            {
-                // Si la acción devolviera directamente el DTO
-                actualDTO = Assert.IsType<OfertaDetalleDTO>(value);
-            }
-
-            // Después usar actualDTO como antes
-            Assert.Equal(expectedDTO.Id, actualDTO.Id);
-            Assert.Equal(expectedDTO.metodoPago, actualDTO.metodoPago);
-            Assert.Equal(expectedDTO.tiposDirigidaOferta, actualDTO.tiposDirigidaOferta);
-
-            // Comparar items (ignorar posibles diferencias menores en timestamps)
-            Assert.Equal(expectedDTO.HerramientasAOfertar.Count, actualDTO.HerramientasAOfertar.Count);
-
-            foreach (var esperado in expectedDTO.HerramientasAOfertar)
-            {
-                var match = actualDTO.HerramientasAOfertar.FirstOrDefault(a =>
-                    string.Equals(a.nombre, esperado.nombre, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(a.material, esperado.material, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(a.fabricante, esperado.fabricante, StringComparison.OrdinalIgnoreCase) &&
-                    Math.Abs(a.precio - esperado.precio) < 0.01f &&
-                    Math.Abs(a.precioOferta - esperado.precioOferta) < 0.01f
-                );
-
-                Assert.NotNull(match);
-            }
+            Assert.Equal(expectedOferta, ofertaDTOActual);
         }
     }
 }
