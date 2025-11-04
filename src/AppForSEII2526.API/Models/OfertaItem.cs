@@ -7,8 +7,6 @@ namespace AppForSEII2526.API.Models
     {
         public OfertaItem()
         {
-            oferta = new Oferta();
-            herramienta = new Herramienta();
         }
 
         public OfertaItem(int ofertaId, int herramientaid, int porcentaje, float precioFinal, Oferta oferta, 

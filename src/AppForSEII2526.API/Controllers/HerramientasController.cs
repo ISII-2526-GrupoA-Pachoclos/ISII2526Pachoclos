@@ -1,6 +1,7 @@
 using AppForSEII2526.API.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 
 namespace AppForSEII2526.API.Controllers
@@ -110,16 +111,15 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<HerramientasParaOfertasDTO>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult> GetHerramientasParaOferta_conTodosLosDatos_DTO(float? filtroPrecio, string? filtroFabricante)
+        public async Task<ActionResult> GetHerramientasParaOferta_conTodosLosDatos_DTO(string? filtroFabricante, float? filtroPrecio)
         {
             var herramientas = await _context.Herramienta
                 .Include(h => h.fabricante)
-                .Where(h => (filtroPrecio == null || h.precio <= filtroPrecio) &&
-                    (filtroFabricante == null || h.fabricante.nombre == filtroFabricante)
-                )
+                .Where(h => (filtroFabricante == null || h.fabricante.nombre == filtroFabricante) &&
+                            (filtroPrecio == null || h.precio <= filtroPrecio))
                 .OrderBy(herramientas => herramientas.fabricante.nombre)
                     .ThenBy(herramientas => herramientas.precio)
-                .Select(h => new HerramientasParaOfertasDTO(h.id, h.material, h.nombre, h.precio, h.fabricante.nombre))
+                .Select(h => new HerramientasParaOfertasDTO(h.nombre, h.material, h.fabricante.nombre, h.precio))
                 .ToListAsync();
 
             return Ok(herramientas);

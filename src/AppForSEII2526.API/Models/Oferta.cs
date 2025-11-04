@@ -4,7 +4,6 @@
     {
         public Oferta()
         {
-            ofertaItems = new List<OfertaItem>();
         }
 
         public Oferta(int id, DateTime fechaInicio, DateTime fechaFin, DateTime fechaOferta, List<OfertaItem> ofertaItems, 

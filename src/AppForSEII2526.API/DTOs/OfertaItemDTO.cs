@@ -1,51 +1,40 @@
-﻿namespace AppForSEII2526.API.DTOs
+﻿
+namespace AppForSEII2526.API.DTOs
 {
     public class OfertaItemDTO
     {
-        public int herramientaId { get; set; }
-        public string nombre { get; set; }
-        public string material { get; set; }
-        public string fabricante { get; set; }
-        public float precio { get; set; }
-        public float precioOferta { get; set; }
+        public string Nombre { get; set; }
+        public string Material { get; set; }
+        public string Fabricante { get; set; }
+        public float Precio { get; set; }
+        public float PrecioOferta { get; set; }
 
         public OfertaItemDTO()
         {
         }
 
-        public OfertaItemDTO(int herramientaId, string nombre, string material, string fabricante, float precio, float precioOferta)
-        {
-            this.herramientaId = herramientaId;
-            this.nombre = nombre;
-            this.material = material;
-            this.fabricante = fabricante;
-            this.precio = precio;
-            this.precioOferta = precioOferta;
-        }
-
         public OfertaItemDTO(string nombre, string material, string fabricante, float precio, float precioOferta)
         {
-            this.nombre = nombre;
-            this.material = material;
-            this.fabricante = fabricante;
-            this.precio = precio;
-            this.precioOferta = precioOferta;
+            Nombre = nombre;
+            Material = material;
+            Fabricante = fabricante;
+            Precio = precio;
+            PrecioOferta = precioOferta;
         }
 
         public override bool Equals(object? obj)
         {
             return obj is OfertaItemDTO dTO &&
-                   herramientaId == dTO.herramientaId &&
-                   nombre == dTO.nombre &&
-                   material == dTO.material &&
-                   fabricante == dTO.fabricante &&
-                   precio == dTO.precio &&
-                   precioOferta == dTO.precioOferta;
+                   Nombre == dTO.Nombre &&
+                   Material == dTO.Material &&
+                   Fabricante == dTO.Fabricante &&
+                   Precio == dTO.Precio &&
+                   PrecioOferta == dTO.PrecioOferta;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(herramientaId, nombre, material, fabricante, precio, precioOferta);
+            return HashCode.Combine(Nombre, Material, Fabricante, Precio, PrecioOferta);
         }
     }
 }

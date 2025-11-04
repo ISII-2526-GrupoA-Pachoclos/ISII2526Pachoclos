@@ -23,39 +23,52 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<OfertaDetalleDTO>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult> GetDetalles_Oferta(int id)
+        public async Task<IActionResult> GetDetalles_Oferta(int id)
         {
+
+            if (_context.Oferta == null)
+            {
+                return NotFound();
+            }
+
             var ofertas = await _context.Oferta
-                .Where(o => o.Id == id)
+                .Include(o => o.metodoPago)
                 .Include(o => o.ofertaItems)
                     .ThenInclude(oi => oi.herramienta)
-                .Select(o => new OfertaDetalleDTO(
-                    o.Id,
-                    o.fechaInicio,
-                    o.fechaFin,
-                    o.fechaOferta,
-                    o.metodoPago,
-                    o.paraSocio,
-                    o.ofertaItems.Select(oi => new OfertaItemDTO(
-                        oi.herramienta.id,
-                        oi.herramienta.nombre,
-                        oi.herramienta.material,
-                        oi.herramienta.fabricante.nombre,
-                        oi.herramienta.precio,
-                        oi.herramienta.precio * (100f - oi.porcentaje) / 100
-                    )).ToList()
-                ))
-                .FirstOrDefaultAsync();
+                        .ThenInclude(h => h.fabricante)
+                .Where(o => o.Id == id)
+                .ToListAsync();
 
-            
-            if (ofertas == null)
+
+            var ofertaDTO = ofertas.Select(o => new OfertaDetalleDTO(
+                o.fechaInicio,
+                o.fechaFin,
+                o.fechaOferta,
+                o.paraSocio,
+                o.metodoPago,
+                o.ofertaItems.Select(oi => new OfertaItemDTO(
+                    oi.herramienta.nombre,
+                    oi.herramienta.material,
+                    oi.herramienta.fabricante.nombre,
+                    oi.herramienta.precio,
+                    oi.herramienta.precio * (100f - oi.porcentaje) / 100
+                )).ToList()
+            )).FirstOrDefault();
+
+            if (ofertaDTO == null)
+            {
                 return NotFound();
+            }
 
-            var precioTotal = ofertas.HerramientasAOfertar?.Sum(i => i.precioOferta) ?? 0f;
-
-            return Ok(new { detalle = ofertas, precioTotal });
-            
-            
+            return Ok(ofertaDTO);
         }
+
+
+        [HttpPost]
+        [Route("[action]")]
+        [ProducesResponseType(typeof(OfertaDetalleDTO), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
+        public async Task<IActionResult> CrearOferta([FromBody] )
     }
 }
