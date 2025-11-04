@@ -10,6 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="GetHerramientas_test\**" />
+    <EmbeddedResource Remove="GetHerramientas_test\**" />
+    <None Remove="GetHerramientas_test\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -32,10 +38,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\AppForSEII2526.API\AppForSEII2526.API.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="GetHerramientas_test\" />
   </ItemGroup>
 
 </Project>

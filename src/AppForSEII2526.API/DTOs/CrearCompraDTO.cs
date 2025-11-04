@@ -1,9 +1,13 @@
-﻿namespace AppForSEII2526.API.DTOs
+﻿using System.Security.Policy;
+
+namespace AppForSEII2526.API.DTOs
 {
     public class CrearCompraDTO
     {
         
         public string Nombre { get; set; }
+
+        public string Apellido { get; set; }
 
         public string direccionEnvio { get; set; }
 
