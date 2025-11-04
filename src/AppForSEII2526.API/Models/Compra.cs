@@ -12,9 +12,7 @@ namespace AppForSEII2526.API.Models
             metodopago = new formaPago();
         }
 
-        public Compra(int id, string direccionEnvio, DateTime fechaCompra, float? precioTotal, formaPago metodopago,
-
-        }
+        
 
         public Compra(int id, string direccionEnvio, DateTime fechaCompra, float? precioTotal, formaPago metodopago, 
 
