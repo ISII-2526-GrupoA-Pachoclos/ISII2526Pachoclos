@@ -29,7 +29,7 @@ namespace AppForSEII2526.API.Controllers
                 .Include(c => c.CompraItems)
                     .ThenInclude(c => c.herramienta)
                 .Select(c => new CompraDetalleDTO(
-                    c.Id,
+                    
                     c.ApplicationUser.nombre,
                     c.ApplicationUser.apellido,
                     c.direccionEnvio,
@@ -69,7 +69,7 @@ namespace AppForSEII2526.API.Controllers
 
             if (Crearcompra.HerramientasCompradas.Count == 0)
             {
-                ModelState.AddModelError("CompraItem", "Error! Debes incluir al menos un  ");
+                ModelState.AddModelError("CompraItem", "Error! Debes incluir al menos una herramienta ");
             }
             else 
             { 
@@ -108,23 +108,13 @@ namespace AppForSEII2526.API.Controllers
                 })
                 .ToList();
 
-            foreach (var herr in Crearcompra.HerramientasCompradas) 
-            { 
-                var herramientaaux = Herramientas.FirstOrDefault(h => h.nombre == herr.nombre);
-                if (herramientaaux == null)
-                {
-                    ModelState.AddModelError("Herramienta", $"Error! La herramienta con Id {herr.herramientaid} no existe");
-                }
+           
 
-
-            }
-
-            if (ModelState.ErrorCount > 0)
-                return BadRequest(new ValidationProblemDetails(ModelState));
+            
 
             var ComprasItems = new List<ComprarItem>();
 
-            Compra compra = new Compra(Crearcompra.direccionEnvio, DateTime.Now, 0, Crearcompra.metodoPago, ComprasItems, user);
+            Compra compra = new Compra(Crearcompra.direccionEnvio, DateTime.Today, 0, Crearcompra.metodoPago, ComprasItems, user);
 
             var herramientasAux = await _context.Herramienta
                 .Where(h => nombreHerramientas.Contains(h.nombre)) // todas las herramientas que esten en los ids anteriores
@@ -135,14 +125,17 @@ namespace AppForSEII2526.API.Controllers
 
             foreach (var item in Crearcompra.HerramientasCompradas)
             {
-                var herramienta = herramientasAux.First(h => h.id == item.herramientaid);
+                var herramienta = herramientasAux.FirstOrDefault(h => h.id == item.herramientaid);
 
 
                 if (herramienta == null)
                 {
-                    ModelState.AddModelError("Herramienta", $"Error! La herramienta con Id {item.herramientaid} no existe");
+                    ModelState.AddModelError("Herramienta", "Error! La herramienta con ese id no existe");
                     continue;
                 }
+
+                
+
 
                 
 
@@ -151,6 +144,7 @@ namespace AppForSEII2526.API.Controllers
                 compra.CompraItems.Add(CompraItem);
                 compra.precioTotal += herramienta.precio * item.cantidad;
             }
+            
 
             if (ModelState.ErrorCount > 0)
             {
@@ -172,7 +166,7 @@ namespace AppForSEII2526.API.Controllers
 
             }
 
-            var compraDetalleDTO = new CompraDetalleDTO(compra.Id,user.nombre, user.apellido, compra.direccionEnvio, compra.fechaCompra, compra.precioTotal, Crearcompra.HerramientasCompradas);
+            var compraDetalleDTO = new CompraDetalleDTO(user.nombre, user.apellido, compra.direccionEnvio, compra.fechaCompra, compra.precioTotal, Crearcompra.HerramientasCompradas);
 
             return CreatedAtAction("GetDetalles_Compra", new { id = compra.Id }, compraDetalleDTO);
 
