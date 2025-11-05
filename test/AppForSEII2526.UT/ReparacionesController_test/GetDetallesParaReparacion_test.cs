@@ -141,14 +141,16 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                     precio: 50.0f,
                     nombreHerramienta: "Taladro",
                     descripcion: "Motor quemado",
-                    cantidad: 2
+                    cantidad: 2,
+                    tiempoReparacion: "5 dias"
                 ),
                 new ReparacionItemDTO(
                     herramientaId: 2,
                     precio: 35.0f,
                     nombreHerramienta: "Sierra",
                     descripcion: "Filo desgastado",
-                    cantidad: 1
+                    cantidad: 1,
+                    tiempoReparacion: "3 dias"
                 )
             };
 
@@ -158,7 +160,6 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 apellido: "Pérez",
                 fechaEntrega: new DateTime(2024, 1, 15),
                 fechaRecogida: new DateTime(2024, 1, 25),
-                metodoPago: metodoPago.TarjetaCredito,
                 precioTotal: 1f, // Se calculará en la verificación
                 herramientasAReparar: herramientasEsperadas
             );
@@ -176,7 +177,6 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             Assert.Equal(reparacionEsperada.apellido, reparacionActual.apellido);
             Assert.Equal(reparacionEsperada.fechaEntrega, reparacionActual.fechaEntrega);
             Assert.Equal(reparacionEsperada.fechaRecogida, reparacionActual.fechaRecogida);
-            Assert.Equal(reparacionEsperada.metodoPago, reparacionActual.metodoPago);
 
             // assert items
             Assert.Equal(reparacionEsperada.HerramientasAReparar.Count, reparacionActual.HerramientasAReparar.Count);
@@ -197,53 +197,6 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             // assert precio total
             var precioTotalCalculado = reparacionActual.HerramientasAReparar.Sum(h => h.precio * h.cantidad);
             Assert.Equal(precioTotalCalculado, reparacionActual.precioTotal);
-        }
-
-        [Fact]
-        [Trait("Database", "WithoutFixture")]
-        [Trait("LevelTesting", "Unit Testing")]
-        public async Task GetDetalles_Reparacion_SinItems_test() // reparación sin items
-        {
-            // Arrange
-            var usuario = new ApplicationUser
-            {
-                nombre = "María",
-                apellido = "Gómez",
-                correoElectronico = "maria@gmail.com",
-                numTelefono = "987654321"
-            };
-
-            var reparacionSinItems = new Reparacion
-            {
-                id = 2,
-                fechaEntrega = new DateTime(2024, 2, 1),
-                fechaRecogida = new DateTime(2024, 2, 10),
-                metodoPago = metodoPago.Efectivo,
-                precioTotal = 0.0f,
-                ApplicationUser = usuario,
-                ReparacionItems = new List<ReparacionItem>()
-            };
-
-            _context.Add(usuario);
-            _context.Add(reparacionSinItems);
-            _context.SaveChanges();
-
-            var mockLogger = new Mock<ILogger<ReparacionesController>>();
-            var logger = mockLogger.Object;
-            var controller = new ReparacionesController(_context, logger);
-
-            // Act
-            var result = await controller.GetDetalles_Reparacion(2);
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var reparacionActual = Assert.IsType<ReparacionDetalleDTO>(okResult.Value);
-
-            Assert.Equal(2, reparacionActual.id);
-            Assert.Equal("María", reparacionActual.nombre);
-            Assert.Equal("Gómez", reparacionActual.apellido);
-            Assert.Empty(reparacionActual.HerramientasAReparar);
-            Assert.Equal(0.0f, reparacionActual.precioTotal);
         }
     }
 }

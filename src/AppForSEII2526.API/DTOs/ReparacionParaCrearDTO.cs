@@ -60,7 +60,8 @@ namespace AppForSEII2526.API.DTOs
                    numTelefono == dTO.numTelefono &&
                    metodoPago == dTO.metodoPago &&
                    fechaEntrega == dTO.fechaEntrega &&
-                   EqualityComparer<IList<ReparacionItemDTO>>.Default.Equals(Herramientas, dTO.Herramientas);
+                   Herramientas.SequenceEqual(dTO.Herramientas);
+                   
         }
 
         public override int GetHashCode()

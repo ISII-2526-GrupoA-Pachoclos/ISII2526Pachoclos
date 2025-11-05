@@ -49,6 +49,15 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                     precio = 7.0f,
                     tiempoReparacion = "7 dias",
                     fabricante = fabricantes[1]
+                },
+                new Herramienta
+                {
+                    id = 6,
+                    nombre = "Martillo",
+                    material = "Madera",
+                    precio = 15.0f,
+                    tiempoReparacion = "formato_invalido",
+                    fabricante = fabricantes[0]
                 }
             };
 
@@ -76,7 +85,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             // Caso 2: Fecha de entrega anterior a hoy
             var herramientasFechaAnterior = new List<ReparacionItemDTO>
             {
-                new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 3)
+                new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 3, "10 dias")
             };
             var reparacionFechaAnterior = new ReparacionParaCrearDTO(
                 _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.PayPal,
@@ -85,7 +94,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             // Caso 3: Cliente no registrado
             var herramientasClienteNoRegistrado = new List<ReparacionItemDTO>
             {
-                new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 3)
+                new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 3, "10 dias")
             };
             var reparacionClienteNoRegistrado = new ReparacionParaCrearDTO(
                 "Usuario", "Falso", "1234567890", metodoPago.Efectivo,
@@ -94,7 +103,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             // Caso 4: Herramienta no existe
             var herramientasNoExiste = new List<ReparacionItemDTO>
             {
-                new ReparacionItemDTO(999, 10.0f, "Herramienta Inexistente", "Descripción", 1)
+                new ReparacionItemDTO(999, 10.0f, "Herramienta Inexistente", "Descripción", 1, "10 dias")
             };
             var reparacionHerramientaNoExiste = new ReparacionParaCrearDTO(
                 _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.PayPal,
@@ -103,7 +112,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             // Caso 5: Cantidad <= 0
             var herramientasCantidadCero = new List<ReparacionItemDTO>
             {
-                new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 0)
+                new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 0, "10 dias")
             };
             var reparacionCantidadCero = new ReparacionParaCrearDTO(
                 _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.PayPal,
@@ -112,11 +121,20 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             // Caso 6: Nombre de herramienta no coincide con ID
             var herramientasNombreIncorrecto = new List<ReparacionItemDTO>
             {
-                new ReparacionItemDTO(4, 10.0f, "Nombre Incorrecto", "Mango roto", 1)
+                new ReparacionItemDTO(4, 10.0f, "Nombre Incorrecto", "Mango roto", 1, "10 dias")
             };
             var reparacionNombreIncorrecto = new ReparacionParaCrearDTO(
                 _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.PayPal,
                 DateTime.Today.AddDays(1), herramientasNombreIncorrecto);
+
+            // Caso 7: Método de pago inválido
+            var herramientasMetodoPagoInvalido = new List<ReparacionItemDTO>
+            {
+                new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 1, "10 dias")
+            };
+            var reparacionMetodoPagoInvalido = new ReparacionParaCrearDTO(
+                _nombreCliente, _apellidosCliente, _numTelefono, (metodoPago)99, // Valor inválido
+                DateTime.Today.AddDays(1), herramientasMetodoPagoInvalido);
 
             var allTests = new List<object[]>
             {
@@ -126,6 +144,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 new object[] { reparacionHerramientaNoExiste, "La herramienta con ID 999 no existe." },
                 new object[] { reparacionCantidadCero, $"La cantidad de la herramienta '{_herramienta1Nombre}' debe ser mayor que 0." },
                 new object[] { reparacionNombreIncorrecto, $"El nombre de la herramienta 'Nombre Incorrecto' no coincide con el ID 4." },
+                new object[] { reparacionMetodoPagoInvalido, "El método de pago no es válido. Valores permitidos: 0 (Efectivo), 1 (TarjetaCredito), 2 (PayPal)." },
             };
 
             return allTests;
@@ -168,8 +187,8 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             // Crear DTO para la reparación
             var herramientas = new List<ReparacionItemDTO>
             {
-                new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto y oxidada", 3),
-                new ReparacionItemDTO(5, 7.0f, _herramienta2Nombre, "Punta desgastada", 2)
+                new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto y oxidada", 3, "10 dias"),
+                new ReparacionItemDTO(5, 7.0f, _herramienta2Nombre, "Punta desgastada", 2, "10 dias")
             };
 
             var fechaEntrega = DateTime.Today.AddDays(1);
@@ -189,12 +208,10 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             var reparacionDetalle = Assert.IsType<ReparacionDetalleDTO>(createdResult.Value);
 
             // Verificar propiedades básicas
-            // Assert.True(reparacionDetalle.id > 0); // ID generado automáticamente
             Assert.Equal(_nombreCliente, reparacionDetalle.nombre);
             Assert.Equal(_apellidosCliente, reparacionDetalle.apellido);
             Assert.Equal(fechaEntrega.Date, reparacionDetalle.fechaEntrega);
             Assert.Equal(fechaRecogidaEsperada.Date, reparacionDetalle.fechaRecogida);
-            Assert.Equal(metodoPago.PayPal, reparacionDetalle.metodoPago);
             Assert.Equal(precioTotalEsperado, reparacionDetalle.precioTotal);
 
             // Verificar herramientas
@@ -225,43 +242,5 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             Assert.Equal(2, reparacionEnBD.ReparacionItems.Count);
             Assert.Equal(precioTotalEsperado, reparacionEnBD.precioTotal);
         }
-
-        /*
-        [Fact]
-        [Trait("LevelTesting", "Unit Testing")]
-        [Trait("Database", "WithoutFixture")]
-        public async Task CrearReparacion_SinTelefono_Success_test()
-        {
-            // Arrange
-            var mockLogger = new Mock<ILogger<ReparacionesController>>();
-            var logger = mockLogger.Object;
-            var controller = new ReparacionesController(_context, logger);
-
-            // Crear DTO para la reparación sin teléfono
-            var herramientas = new List<ReparacionItemDTO>
-            {
-                new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 1)
-            };
-
-            var fechaEntrega = DateTime.Today.AddDays(1);
-            var reparacionDTO = new ReparacionParaCrearDTO(
-                _nombreCliente, _apellidosCliente, null, metodoPago.TarjetaCredito,
-                fechaEntrega, herramientas);
-
-            // Act
-            var result = await controller.CrearReparacion(reparacionDTO);
-
-            // Assert
-            var createdResult = Assert.IsType<CreatedAtActionResult>(result);
-            var reparacionDetalle = Assert.IsType<ReparacionDetalleDTO>(createdResult.Value);
-
-            // Verificar que se creó correctamente sin teléfono
-            Assert.True(reparacionDetalle.id > 0);
-            Assert.Equal(_nombreCliente, reparacionDetalle.nombre);
-            Assert.Equal(_apellidosCliente, reparacionDetalle.apellido);
-            Assert.Equal(metodoPago.TarjetaCredito, reparacionDetalle.metodoPago);
-            Assert.Single(reparacionDetalle.HerramientasAReparar);
-        }
-        */
     }
 }
