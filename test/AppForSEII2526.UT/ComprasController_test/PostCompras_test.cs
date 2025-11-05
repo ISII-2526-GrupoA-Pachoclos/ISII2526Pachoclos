@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AppForSEII2526.UT.ComprasController_test
 {
@@ -49,6 +50,65 @@ namespace AppForSEII2526.UT.ComprasController_test
             _context.AddRange(compraItems);
             _context.SaveChanges();
         }
+
+        public static IEnumerable<object[]> TestCasesFor_CrearCompra() { 
+        
+            var CompraSinHerramientas = new CrearCompraDTO { Nombre = "Juan", Apellido = "Valdes", direccionEnvio = "calle", metodoPago = formaPago.Efectivo, HerramientasCompradas = new List<CompraItemDTO>() };
+
+            var CompraSinCantidad = new CrearCompraDTO { Nombre = "Juan", Apellido = "Valdes", direccionEnvio = "calle", metodoPago = formaPago.Efectivo, HerramientasCompradas = new List<CompraItemDTO>() };
+            var CompraItemSinCantidad = new CompraItemDTO { cantidad = 0, herramientaid = 7, nombre = "Martillo", precio = 50, descripcion = "descripcion" };
+            CompraSinCantidad.HerramientasCompradas.Add(CompraItemSinCantidad);
+
+            var CompraSinUsuario = new CrearCompraDTO { Nombre = " ", Apellido = "Valdes", direccionEnvio = "calle", metodoPago = formaPago.Efectivo, HerramientasCompradas = new List<CompraItemDTO>() };
+            var CompraItem = new CompraItemDTO { cantidad = 1, herramientaid = 7, nombre = "Martillo", precio = 50, descripcion = "descripcion" };
+            CompraSinUsuario.HerramientasCompradas.Add(CompraItem);
+
+            var CompraConHerramientaNoExistente = new CrearCompraDTO { Nombre = "Juan", Apellido = "Valdes", direccionEnvio = "calle", metodoPago = formaPago.Efectivo, HerramientasCompradas = new List<CompraItemDTO>() };
+            var CompraItemConHerramientaNE = new CompraItemDTO { cantidad = 1, herramientaid = 0, nombre = "Martillo", precio = 50, descripcion = "descripcion" };
+            CompraConHerramientaNoExistente.HerramientasCompradas.Add(CompraItemConHerramientaNE);
+
+            var allTest = new List<object[]>
+            {
+                new object[] { CompraSinHerramientas,  "Error! Debes incluir al menos una herramienta " },
+                new object[] { CompraSinCantidad, "Error! La cantidad debe ser mayor que 0" },
+                new object[] { CompraSinUsuario, "Error! Usuario no registrado" },
+                new object[] { CompraConHerramientaNoExistente, "Error! La herramienta con ese id no existe" }
+            };
+
+            return allTest;
+            
+
+        }
+
+
+        [Theory]
+        [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
+        [MemberData(nameof(TestCasesFor_CrearCompra))]
+        public async Task CrearCompra_error_test(CrearCompraDTO crearcompra, string errorExpected) {
+
+            //Arrange
+            var mock = new Mock<ILogger<ComprasController>>();
+            ILogger<ComprasController> logger = mock.Object;
+
+            var controller = new ComprasController(_context, logger);
+
+
+            //Act
+            var result = await controller.CrearCompra(crearcompra);
+
+            //Assert
+
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var problemDetails = Assert.IsType<ValidationProblemDetails>(badRequestResult.Value);
+
+            var errorActual = problemDetails.Errors.First().Value[0];
+
+            Assert.StartsWith(errorExpected, errorActual);
+        
+        }
+
+
 
         [Fact]
         [Trait("LevelTesting", "Unit Testing")]

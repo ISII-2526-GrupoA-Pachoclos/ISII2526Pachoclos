@@ -69,7 +69,7 @@ namespace AppForSEII2526.API.Controllers
 
             if (Crearcompra.HerramientasCompradas.Count == 0)
             {
-                ModelState.AddModelError("CompraItem", "Error! Debes incluir al menos un  ");
+                ModelState.AddModelError("CompraItem", "Error! Debes incluir al menos una herramienta ");
             }
             else 
             { 
@@ -108,19 +108,9 @@ namespace AppForSEII2526.API.Controllers
                 })
                 .ToList();
 
-            foreach (var herr in Crearcompra.HerramientasCompradas) 
-            { 
-                var herramientaaux = Herramientas.FirstOrDefault(h => h.nombre == herr.nombre);
-                if (herramientaaux == null)
-                {
-                    ModelState.AddModelError("Herramienta", $"Error! La herramienta con Id {herr.herramientaid} no existe");
-                }
+           
 
-
-            }
-
-            if (ModelState.ErrorCount > 0)
-                return BadRequest(new ValidationProblemDetails(ModelState));
+            
 
             var ComprasItems = new List<ComprarItem>();
 
@@ -135,14 +125,17 @@ namespace AppForSEII2526.API.Controllers
 
             foreach (var item in Crearcompra.HerramientasCompradas)
             {
-                var herramienta = herramientasAux.First(h => h.id == item.herramientaid);
+                var herramienta = herramientasAux.FirstOrDefault(h => h.id == item.herramientaid);
 
 
                 if (herramienta == null)
                 {
-                    ModelState.AddModelError("Herramienta", $"Error! La herramienta con Id {item.herramientaid} no existe");
+                    ModelState.AddModelError("Herramienta", "Error! La herramienta con ese id no existe");
                     continue;
                 }
+
+                
+
 
                 
 
@@ -151,6 +144,7 @@ namespace AppForSEII2526.API.Controllers
                 compra.CompraItems.Add(CompraItem);
                 compra.precioTotal += herramienta.precio * item.cantidad;
             }
+            
 
             if (ModelState.ErrorCount > 0)
             {
