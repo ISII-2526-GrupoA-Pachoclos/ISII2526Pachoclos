@@ -208,12 +208,10 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             var reparacionDetalle = Assert.IsType<ReparacionDetalleDTO>(createdResult.Value);
 
             // Verificar propiedades básicas
-            // Assert.True(reparacionDetalle.id > 0); // ID generado automáticamente
             Assert.Equal(_nombreCliente, reparacionDetalle.nombre);
             Assert.Equal(_apellidosCliente, reparacionDetalle.apellido);
             Assert.Equal(fechaEntrega.Date, reparacionDetalle.fechaEntrega);
             Assert.Equal(fechaRecogidaEsperada.Date, reparacionDetalle.fechaRecogida);
-            Assert.Equal(metodoPago.PayPal, reparacionDetalle.metodoPago);
             Assert.Equal(precioTotalEsperado, reparacionDetalle.precioTotal);
 
             // Verificar herramientas

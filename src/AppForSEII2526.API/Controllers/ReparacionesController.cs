@@ -33,12 +33,10 @@ namespace AppForSEII2526.API.Controllers
                 .Include(r => r.ReparacionItems)             // Carga los items de la reparación
                     .ThenInclude(i => i.Herramienta) // Carga la herramienta asociada a cada item
                 .Select(r => new ReparacionDetalleDTO(
-                    r.id,
                     r.ApplicationUser.nombre,               // de ApplicationUser
                     r.ApplicationUser.apellido,             // de ApplicationUser
                     r.fechaEntrega,
                     r.fechaRecogida,
-                    r.metodoPago,
                     r.precioTotal,
                     r.ReparacionItems.Select(i => new ReparacionItemDTO(
                         i.Herramientaid,
@@ -237,12 +235,10 @@ namespace AppForSEII2526.API.Controllers
 
             // Construir el DTO de respuesta
             var reparacionDetalle = new ReparacionDetalleDTO(
-                id: reparacion.id,
                 nombre: reparacion.ApplicationUser.nombre,
                 apellido: reparacion.ApplicationUser.apellido,
                 fechaEntrega: reparacion.fechaEntrega,
                 fechaRecogida: reparacion.fechaRecogida,
-                metodoPago: reparacion.metodoPago,
                 precioTotal: reparacion.precioTotal,
                 herramientasAReparar: reparacion.ReparacionItems.Select(ri => new ReparacionItemDTO(
                     herramientaId: ri.Herramientaid,
@@ -255,52 +251,6 @@ namespace AppForSEII2526.API.Controllers
 
             // 201 de exito
             return CreatedAtAction("GetDetalles_Reparacion", new { id = reparacion.id }, reparacionDetalle);
-
-            /*
-            EJEMPLO VALIDO:
-            {
-              "nombreC": "pibi",
-              "apellidos": "ronaldo",
-              "numTelefono": "9876543210",
-              "metodoPago": "PayPal",
-              "fechaEntrega": "2025-11-10",
-              "herramientas": [
-                {
-                  "herramientaId": 4,
-                  "precio": 10.0,
-                  "nombreHerramienta": "Llave Inglesa",
-                  "descripcion": "Mango roto y oxidada",
-                  "cantidad": 3
-                },
-                {
-                  "herramientaId": 5,
-                  "precio": 7.0,
-                  "nombreHerramienta": "Destornillador",
-                  "descripcion": "Punta desgastada",
-                  "cantidad": 2
-                }
-              ]
-            }
-
-
-            EJEMPLO NO VALIDO:
-            {
-              "nombreC": "usuario",
-              "apellidos": "falso",
-              "numTelefono": "1234567890",
-              "metodoPago": "Efectivo",
-              "fechaEntrega": "2025-11-01",
-              "herramientas": [
-                {
-                  "herramientaId": 5,
-                  "precio": 7.0,
-                  "nombreHerramienta": "Destornillador",
-                  "descripcion": "No funciona",
-                  "cantidad": 1
-            }
-            ]
-            }
-            */
         }
     }
 }

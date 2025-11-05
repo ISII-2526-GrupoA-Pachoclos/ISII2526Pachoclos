@@ -158,7 +158,6 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 apellido: "Pérez",
                 fechaEntrega: new DateTime(2024, 1, 15),
                 fechaRecogida: new DateTime(2024, 1, 25),
-                metodoPago: metodoPago.TarjetaCredito,
                 precioTotal: 1f, // Se calculará en la verificación
                 herramientasAReparar: herramientasEsperadas
             );
@@ -176,7 +175,6 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             Assert.Equal(reparacionEsperada.apellido, reparacionActual.apellido);
             Assert.Equal(reparacionEsperada.fechaEntrega, reparacionActual.fechaEntrega);
             Assert.Equal(reparacionEsperada.fechaRecogida, reparacionActual.fechaRecogida);
-            Assert.Equal(reparacionEsperada.metodoPago, reparacionActual.metodoPago);
 
             // assert items
             Assert.Equal(reparacionEsperada.HerramientasAReparar.Count, reparacionActual.HerramientasAReparar.Count);
