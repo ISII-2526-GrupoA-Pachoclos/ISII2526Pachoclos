@@ -25,6 +25,24 @@
         {
             CrearOfertaItem = new List<CrearOfertaItemDTO>();
         }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is CrearOfertaDTO dTO &&
+                   FechaInicio == dTO.FechaInicio &&
+                   FechaFin == dTO.FechaFin &&
+                   Porcentaje == dTO.Porcentaje &&
+                   nombre == dTO.nombre &&
+                   TiposMetodoPago == dTO.TiposMetodoPago &&
+                   TiposDirigidaOferta == dTO.TiposDirigidaOferta &&
+                   CrearOfertaItem.SequenceEqual(dTO.CrearOfertaItem);
+
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(FechaInicio, FechaFin, Porcentaje, nombre, TiposMetodoPago, TiposDirigidaOferta, CrearOfertaItem);
+        }
     }
 }
 

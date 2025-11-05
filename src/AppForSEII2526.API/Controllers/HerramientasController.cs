@@ -19,7 +19,7 @@ namespace AppForSEII2526.API.Controllers
         }
 
 
-
+        /*
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<Herramienta>), (int)HttpStatusCode.OK)]
@@ -29,7 +29,7 @@ namespace AppForSEII2526.API.Controllers
             return Ok(herramientas);
 
         }
-        
+        */
 
         /*
         [HttpGet]

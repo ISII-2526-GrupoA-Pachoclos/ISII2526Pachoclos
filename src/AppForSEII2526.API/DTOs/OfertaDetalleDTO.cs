@@ -46,6 +46,7 @@
                    nombreUsuario == dTO.nombreUsuario &&
                    metodoPago == dTO.metodoPago &&
                    tiposDirigidaOferta == dTO.tiposDirigidaOferta;
+                   HerramientasAOfertar.SequenceEqual(dTO.HerramientasAOfertar);
         }
 
         public override int GetHashCode()
