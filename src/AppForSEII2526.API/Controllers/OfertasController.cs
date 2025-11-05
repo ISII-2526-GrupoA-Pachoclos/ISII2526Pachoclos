@@ -22,40 +22,164 @@ namespace AppForSEII2526.API.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        [ProducesResponseType(typeof(IList<OfertaDetalleDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(OfertaDetalleDTO), (int)HttpStatusCode.OK)]
         public async Task<ActionResult> GetDetalles_Oferta(int id)
         {
-            var ofertas = await _context.Oferta
-                .Where(o => o.Id == id)
+            // Cargar la entidad con sus relaciones
+            var ofertaEntity = await _context.Oferta
+                .Include(o => o.ApplicationUser)
                 .Include(o => o.ofertaItems)
                     .ThenInclude(oi => oi.herramienta)
-                .Select(o => new OfertaDetalleDTO(
-                    o.Id,
-                    o.fechaInicio,
-                    o.fechaFin,
-                    o.fechaOferta,
-                    o.metodoPago,
-                    o.paraSocio,
-                    o.ofertaItems.Select(oi => new OfertaItemDTO(
-                        oi.herramienta.id,
-                        oi.herramienta.nombre,
-                        oi.herramienta.material,
-                        oi.herramienta.fabricante.nombre,
-                        oi.herramienta.precio,
-                        oi.herramienta.precio * (100f - oi.porcentaje) / 100
-                    )).ToList()
-                ))
-                .FirstOrDefaultAsync();
+                        .ThenInclude(h => h.fabricante)
+                .FirstOrDefaultAsync(o => o.Id == id);
 
-            
-            if (ofertas == null)
+            if (ofertaEntity == null)
                 return NotFound();
 
-            var precioTotal = ofertas.HerramientasAOfertar?.Sum(i => i.precioOferta) ?? 0f;
 
-            return Ok(new { detalle = ofertas, precioTotal });
-            
-            
+            // Mapear en memoria de forma defensiva para evitar NullReference en tests
+            var ofertaDto = new OfertaDetalleDTO(
+                ofertaEntity.fechaInicio,
+                ofertaEntity.fechaFin,
+                ofertaEntity.fechaOferta,
+                ofertaEntity.ApplicationUser?.nombre ?? string.Empty,
+                ofertaEntity.metodoPago,
+                ofertaEntity.paraSocio,
+                ofertaEntity.ofertaItems?
+                    .Select(oi => new OfertaItemDTO(
+                        oi.herramienta?.nombre ?? string.Empty,
+                        oi.herramienta?.material ?? string.Empty,
+                        oi.herramienta?.fabricante?.nombre ?? string.Empty,
+                        oi.herramienta?.precio ?? 0f,
+                        (oi.herramienta?.precio ?? 0f) * (100f - oi.porcentaje) / 100f
+                    ))
+                    .ToList() ?? new List<OfertaItemDTO>()
+            );
+
+            return Ok(ofertaDto);
         }
+
+
+
+        [HttpPost]
+        [ProducesResponseType(typeof(OfertaDetalleDTO), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
+        public async Task<ActionResult> CrearOferta(CrearOfertaDTO crearOfertaDTO)
+        {
+            // Validaciones de fechas
+            if (crearOfertaDTO.FechaInicio < DateTime.Today)
+                ModelState.AddModelError("FechaInicio", "La fecha de inicio debe ser posterior o igual a la fecha actual.");
+
+            if (crearOfertaDTO.FechaInicio >= crearOfertaDTO.FechaFin)
+                ModelState.AddModelError("FechaFin", "La fecha de fin debe ser posterior a la fecha de inicio.");
+
+            if (crearOfertaDTO.CrearOfertaItem == null || crearOfertaDTO.CrearOfertaItem.Count == 0)
+                ModelState.AddModelError("CrearOfertaItem", "Debe agregar al menos una herramienta a la oferta.");
+
+            if (!ModelState.IsValid)
+                return BadRequest(new ValidationProblemDetails(ModelState));
+
+            // Obtener usuario (en un caso real, esto vendría del contexto de autenticación)
+            var usuario = await _context.ApplicationUser.FirstOrDefaultAsync();
+            if (usuario == null)
+            {
+                ModelState.AddModelError("Usuario", "No se encontró un usuario válido.");
+                return BadRequest(new ValidationProblemDetails(ModelState));
+            }
+
+            var herramientaIds = crearOfertaDTO.CrearOfertaItem
+                .Select(i => i.herramientaid)
+                .Distinct()
+                .ToList();
+
+            var herramientasEnDB = await _context.Herramienta
+                .Include(h => h.fabricante)
+                .Where(h => herramientaIds.Contains(h.id))
+                .ToDictionaryAsync(h => h.id);
+
+            // Validar que todas las herramientas existen
+            foreach (var itemDTO in crearOfertaDTO.CrearOfertaItem)
+            {
+                if (!herramientasEnDB.ContainsKey(itemDTO.herramientaid))
+                {
+                    ModelState.AddModelError("CrearOfertaItem", $"La herramienta con id {itemDTO.herramientaid} no existe.");
+                }
+                else if (itemDTO.porcentaje <= 0 || itemDTO.porcentaje > 100)
+                {
+                    var herramienta = herramientasEnDB[itemDTO.herramientaid];
+                    ModelState.AddModelError("CrearOfertaItem", $"El porcentaje {itemDTO.porcentaje}% de '{herramienta.nombre}' debe estar entre 1 y 100.");
+                }
+            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(new ValidationProblemDetails(ModelState));
+
+            // Crear la oferta
+            var ofertaNueva = new Oferta
+            {
+                fechaInicio = crearOfertaDTO.FechaInicio,
+                fechaFin = crearOfertaDTO.FechaFin,
+                fechaOferta = DateTime.Today,
+                metodoPago = crearOfertaDTO.TiposMetodoPago,
+                paraSocio = crearOfertaDTO.TiposDirigidaOferta,
+                ofertaItems = new List<OfertaItem>(),
+                ApplicationUser = usuario
+            };
+
+            // Crear items de oferta
+            foreach (var itemDTO in crearOfertaDTO.CrearOfertaItem)
+            {
+                var herramienta = herramientasEnDB[itemDTO.herramientaid];
+                float precioFinal = herramienta.precio * (1 - (itemDTO.porcentaje / 100.0f));
+
+                var nuevoItem = new OfertaItem
+                {
+                    porcentaje = itemDTO.porcentaje,
+                    precioFinal = precioFinal,
+                    oferta = ofertaNueva,
+                    herramienta = herramienta,
+                    herramientaid = herramienta.id
+                };
+
+                ofertaNueva.ofertaItems.Add(nuevoItem);
+            }
+
+            _context.Oferta.Add(ofertaNueva);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al guardar la oferta");
+                return Conflict($"Error al guardar la oferta: {ex.Message}");
+            }
+
+            // Crear DTO de respuesta
+            var ofertaDetail = new OfertaDetalleDTO(
+                ofertaNueva.fechaInicio,
+                ofertaNueva.fechaFin,
+                ofertaNueva.fechaOferta,
+                ofertaNueva.ApplicationUser?.nombre ?? string.Empty,
+                ofertaNueva.metodoPago,
+                ofertaNueva.paraSocio,
+                ofertaNueva.ofertaItems.Select(oi => new OfertaItemDTO(
+                    oi.herramienta.nombre,
+                    oi.herramienta.material,
+                    oi.herramienta.fabricante.nombre,
+                    oi.herramienta.precio,
+                    oi.precioFinal
+                )).ToList()
+            );
+
+            return CreatedAtAction(
+                nameof(GetDetalles_Oferta),
+                new { id = ofertaNueva.Id },
+                ofertaDetail
+            );
+        }
+
     }
 }
