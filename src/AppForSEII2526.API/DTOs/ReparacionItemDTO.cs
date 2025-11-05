@@ -9,13 +9,14 @@ namespace AppForSEII2526.API.DTOs
         }
 
         public ReparacionItemDTO(int herramientaId, float precio, string nombreHerramienta, 
-            string? descripcion, int cantidad)
+            string? descripcion, int cantidad, string? tiempoReparacion)
         {
             HerramientaId = herramientaId;
             this.precio = precio;
             this.nombreHerramienta = nombreHerramienta;
             this.descripcion = descripcion;
             this.cantidad = cantidad;
+            this.tiempoReparacion = tiempoReparacion;
         }
 
         [Key]
@@ -33,6 +34,8 @@ namespace AppForSEII2526.API.DTOs
 
         [Required, Range(1, int.MaxValue, ErrorMessage = "La cantidad debe ser un número positivo mayor que 0.")]
         public int cantidad { get; set; }
+
+        public string? tiempoReparacion { get; set; }
 
         public override bool Equals(object? obj)
         {

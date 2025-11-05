@@ -9,10 +9,11 @@ namespace AppForSEII2526.API.DTOs
         {
         }
 
-        public ReparacionDetalleDTO(string nombre, string apellido, DateTime fechaEntrega,
+        public ReparacionDetalleDTO(int id, string nombre, string apellido, DateTime fechaEntrega,
             DateTime fechaRecogida, float? precioTotal,
             IList<ReparacionItemDTO> herramientasAReparar)
         {
+            this.id = id;
             this.nombre = nombre;
             this.apellido = apellido;
             this.fechaEntrega = fechaEntrega;
@@ -20,6 +21,9 @@ namespace AppForSEII2526.API.DTOs
             HerramientasAReparar = herramientasAReparar;
             this.precioTotal = HerramientasAReparar.Sum(i => i.precio * i.cantidad);
         }
+        [Key]
+        public int id { get; set; }
+
 
         [Required, StringLength(50, ErrorMessage = "El nombre no puede tener más de 50 caracteres.")]
         public string nombre { get; set; }
@@ -38,16 +42,19 @@ namespace AppForSEII2526.API.DTOs
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float? precioTotal { get; set; }
 
+
+
         public IList<ReparacionItemDTO> HerramientasAReparar { get; set; }
 
         public override bool Equals(object? obj)
         {
             return obj is ReparacionDetalleDTO other &&
+                    id == other.id &&
                     nombre == other.nombre &&
                     apellido == other.apellido &&
                     fechaEntrega == other.fechaEntrega &&
                     precioTotal == other.precioTotal &&
-                    HerramientasAReparar == other.HerramientasAReparar;
+                    HerramientasAReparar.SequenceEqual(other.HerramientasAReparar);
         }
         public override int GetHashCode()
         {

@@ -33,6 +33,7 @@ namespace AppForSEII2526.API.Controllers
                 .Include(r => r.ReparacionItems)             // Carga los items de la reparación
                     .ThenInclude(i => i.Herramienta) // Carga la herramienta asociada a cada item
                 .Select(r => new ReparacionDetalleDTO(
+                    r.id,
                     r.ApplicationUser.nombre,               // de ApplicationUser
                     r.ApplicationUser.apellido,             // de ApplicationUser
                     r.fechaEntrega,
@@ -43,7 +44,8 @@ namespace AppForSEII2526.API.Controllers
                         i.Herramienta.precio,
                         i.Herramienta.nombre,
                         i.descripcion,
-                        i.cantidad
+                        i.cantidad,
+                        i.Herramienta.tiempoReparacion
                     )).ToList()
                 ))
                 .FirstOrDefaultAsync();
@@ -165,12 +167,6 @@ namespace AppForSEII2526.API.Controllers
                 {
                     if (dias > maxDiasReparacion) maxDiasReparacion = dias;
                 }
-                else
-                {
-                    // formato erroneo = + 0 dias
-                    _logger.LogWarning($"Formato inválido en tiempoReparacion para herramienta ID {dbTool.id}: '{dbTool.tiempoReparacion}'." +
-                        $" Se asume 0 días.");
-                }
             }
 
             var fechaRecogida = reparacionParaCrear.fechaEntrega.AddDays(maxDiasReparacion);
@@ -217,9 +213,7 @@ namespace AppForSEII2526.API.Controllers
 
             // === guardar cambios ===
 
-            await _context.SaveChangesAsync();
-
-            /*
+            
             try
             {
                 await _context.SaveChangesAsync();
@@ -229,12 +223,13 @@ namespace AppForSEII2526.API.Controllers
                 _logger.LogError(ex, "Error al guardar la reparación.");
                 return Conflict("Error al guardar la reparación. Por favor, inténtelo de nuevo más tarde.");
             }
-            */
+            
 
             // === RESPUESTA ===
 
             // Construir el DTO de respuesta
             var reparacionDetalle = new ReparacionDetalleDTO(
+                id: reparacion.id,
                 nombre: reparacion.ApplicationUser.nombre,
                 apellido: reparacion.ApplicationUser.apellido,
                 fechaEntrega: reparacion.fechaEntrega,
@@ -245,7 +240,8 @@ namespace AppForSEII2526.API.Controllers
                     precio: ri.precio,
                     nombreHerramienta: ri.Herramienta.nombre,
                     descripcion: ri.descripcion,
-                    cantidad: ri.cantidad
+                    cantidad: ri.cantidad,
+                    tiempoReparacion: ri.Herramienta.tiempoReparacion
                 )).ToList()
             );
 
