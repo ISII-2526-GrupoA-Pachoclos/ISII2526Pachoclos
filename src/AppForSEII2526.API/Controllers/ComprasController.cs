@@ -10,11 +10,14 @@ namespace AppForSEII2526.API.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<ComprasController> _logger;
+        
 
         public ComprasController(ApplicationDbContext context, ILogger<ComprasController> logger)
         {
+            
             _context = context;
             _logger = logger;
+            _logger.LogInformation("ComprasController initialized");
         }
 
         [HttpGet]
@@ -48,7 +51,7 @@ namespace AppForSEII2526.API.Controllers
                 .FirstOrDefaultAsync();
             if (compra == null)
             {
-                _logger.LogWarning("No se ha encontrado la compra con Id {Id}", id);
+                _logger.LogError("No se ha encontrado la compra con Id {Id}", id);
                 return NotFound();
             }
             return Ok(compra);
