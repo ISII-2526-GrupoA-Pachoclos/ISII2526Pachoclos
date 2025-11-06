@@ -50,8 +50,18 @@ namespace AppForSEII2526.UT.ComprasController_test
 
         }
 
-        public static IEnumerable<object?[]> TestCasesFor_GetDetalles_Compra()
-        {
+        
+       
+
+        [Fact]
+        [Trait("Database", "WithoutFixture")]
+        [Trait("LevelTesting", "Unit Testing")]
+        public async Task GetDetalles_CompraSuccess_Test() {
+
+            //Arrange 
+            
+            var mock = new Mock<ILogger<ComprasController>>();
+            ILogger<ComprasController> logger = mock.Object;
 
             var compraItemDTO = new List<CompraItemDTO> {
 
@@ -60,35 +70,19 @@ namespace AppForSEII2526.UT.ComprasController_test
 
             };
 
-            var compraDetalleDTO = new CompraDetalleDTO { NombreCliente= "Juan", ApellidosCliente="Valdes", direccionEnvio = "calle", precioTotal = 50, fechaCompra = new DateTime(2015, 01, 01), HerramientasCompradas = compraItemDTO };
+            var expectedCompra = new CompraDetalleDTO { NombreCliente = "Juan", ApellidosCliente = "Valdes", direccionEnvio = "calle", precioTotal = 50, fechaCompra = new DateTime(2015, 01, 01), HerramientasCompradas = compraItemDTO };
 
-            
-
-            var Test = new List<object?[]>
-            {
-                new object?[] {1, compraDetalleDTO }
-            };
-            return Test;
-
-
-        }
-
-        [Theory]
-        [MemberData(nameof(TestCasesFor_GetDetalles_Compra))]
-        [Trait("Database", "WithoutFixure")]
-        [Trait("LevelTesting", "Unit Testing")]
-        public async Task GetDetalles_Compra_Test(int id, CompraDetalleDTO expectedCompra)
-        {
-            //Arrange
-            var controller = new ComprasController(_context, null);
+            var controller = new ComprasController(_context, logger);
 
             //Act
             var result = await controller.GetDetalles_Compra(1);
 
             //Assert
+
             var okResult = Assert.IsType<OkObjectResult>(result);
             var comprasDTOsActual = Assert.IsAssignableFrom<CompraDetalleDTO>(okResult.Value);
             Assert.Equal(expectedCompra, comprasDTOsActual);
+
 
 
 
