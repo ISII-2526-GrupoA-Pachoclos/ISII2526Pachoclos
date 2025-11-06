@@ -59,6 +59,9 @@ namespace AppForSEII2526.API.Controllers
                 return NotFound();
             }
 
+            _logger.LogInformation("Reparación con ID {ReparacionId} encontrada. Cliente: {ClienteNombre} {ClienteApellido}, Precio total: {PrecioTotal}",
+               id, reparacion.nombre, reparacion.apellido, reparacion.precioTotal);
+
             return Ok(reparacion);
         }
 
@@ -75,21 +78,29 @@ namespace AppForSEII2526.API.Controllers
             // Flujo Alternativo 1: fecha de entrega <= hoy ??
             if (reparacionParaCrear.fechaEntrega.Date < DateTime.Today)
             {
+                _logger.LogError("Validación fallida: La fecha de entrega debe ser igual o posterior a hoy. Fecha recibida: {FechaEntrega}",
+                     reparacionParaCrear.fechaEntrega);
                 ModelState.AddModelError("fechaEntrega", "La fecha de entrega debe ser igual o posterior a hoy.");
             }
 
             // Flujo Alternativo 3 y 5: al menos una herramienta y cantidad >= 1 (cantidad ya validada en el DTO)
             if (reparacionParaCrear.Herramientas == null || reparacionParaCrear.Herramientas.Count == 0)
             {
+                _logger.LogError("Validación fallida: Debe incluir al menos una herramienta para reparar.");
                 ModelState.AddModelError("Herramientas", "Debe incluir al menos una herramienta para reparar.");
             }
             else
             {
+                _logger.LogInformation("Validando {CantidadHerramientas} herramientas para reparar.",
+                    reparacionParaCrear.Herramientas.Count);
+
                 // Validación extra (ya validad en el DTO): cantidad > 0
                 foreach (var item in reparacionParaCrear.Herramientas)
                 {
                     if (item.cantidad <= 0)
                     {
+                        _logger.LogError("Validación fallida: La cantidad de la herramienta '{NombreHerramienta}' debe ser mayor que 0.",
+                            item.nombreHerramienta);
                         ModelState.AddModelError("Herramientas", $"La cantidad de la herramienta " +
                             $"'{item.nombreHerramienta}' debe ser mayor que 0.");
                     }
@@ -99,6 +110,8 @@ namespace AppForSEII2526.API.Controllers
             // Validación extra para el enum metodoPago
             if (!Enum.IsDefined(typeof(metodoPago), reparacionParaCrear.metodoPago))
             {
+                _logger.LogError("Validación fallida: El método de pago '{MetodoPago}' no es válido.",
+                    reparacionParaCrear.metodoPago);
                 ModelState.AddModelError("metodoPago",
                     "El método de pago no es válido. Valores permitidos: 0 (Efectivo), 1 (TarjetaCredito), 2 (PayPal).");
             }
@@ -110,8 +123,13 @@ namespace AppForSEII2526.API.Controllers
 
             if (cliente == null)
             {
+                _logger.LogError("Validación fallida: El cliente '{NombreC} {Apellidos}' no está registrado en el sistema.",
+                    reparacionParaCrear.nombreC, reparacionParaCrear.apellidos);
                 ModelState.AddModelError("Cliente", "El cliente no está registrado en el sistema.");
             }
+
+            _logger.LogInformation("Cliente '{NombreC} {Apellidos}' encontrado en la base de datos.",
+                reparacionParaCrear.nombreC, reparacionParaCrear.apellidos);
 
             // === Validación de herramientas ===
 
@@ -138,6 +156,8 @@ namespace AppForSEII2526.API.Controllers
                 
                 if (dbTool == null)
                 {
+                    _logger.LogError("Validación fallida: La herramienta con ID {HerramientaId} no existe en la base de datos.",
+                        item.HerramientaId);
                     ModelState.AddModelError("Herramientas", $"La herramienta con ID {item.HerramientaId} no existe.");
                 }
                 else
@@ -145,15 +165,22 @@ namespace AppForSEII2526.API.Controllers
                     // nombre enviado = nombre en BD ??
                     if (!string.Equals(dbTool.nombre, item.nombreHerramienta))
                     {
+                        _logger.LogError("Validación fallida: El nombre de la herramienta '{NombreHerramienta}' no coincide con el ID {HerramientaId}. " +
+                            "La herramienta con ese ID se llama '{NombreBD}'.",
+                            item.nombreHerramienta, item.HerramientaId, dbTool.nombre);
                         ModelState.AddModelError("Herramientas",
                             $"El nombre de la herramienta '{item.nombreHerramienta}' no coincide con el ID {item.HerramientaId}. " +
                             $"La herramienta con ese ID se llama '{dbTool.nombre}'.");
                     }
+
+                    _logger.LogInformation("Herramienta con ID {HerramientaId} y nombre '{NombreHerramienta}' validada correctamente.",
+                        item.HerramientaId, item.nombreHerramienta);
                 }
             }
 
             if (ModelState.ErrorCount > 0) // comprobar errores acumulados
             {
+                _logger.LogError("Errores de validación encontrados. No se puede crear la reparación.");
                 return BadRequest(new ValidationProblemDetails(ModelState));
             }
 
@@ -174,6 +201,9 @@ namespace AppForSEII2526.API.Controllers
 
             var fechaRecogida = reparacionParaCrear.fechaEntrega.AddDays(maxDiasReparacion);
 
+            _logger.LogInformation("Fecha de recogida calculada: {FechaRecogida} (máximo tiempo de reparación: {MaxDias} días).",
+                fechaRecogida, maxDiasReparacion);
+
             // === Creación de la entidad Reparacion y sus ítems ===
 
             // crear reparacion
@@ -193,6 +223,9 @@ namespace AppForSEII2526.API.Controllers
                 .Where(h => herramientaIds.Contains(h.id)) // todas las herramientas que esten en los ids anteriores
                 .ToListAsync();
 
+            _logger.LogInformation("Creando ítems de reparación para {CantidadHerramientas} herramientas.",
+                reparacionParaCrear.Herramientas.Count);
+
             // reparacionitem para cada herramienta
             foreach (var item in reparacionParaCrear.Herramientas)
             {
@@ -209,8 +242,13 @@ namespace AppForSEII2526.API.Controllers
                 };
                 reparacion.ReparacionItems.Add(reparacionItem);
                 precioTotal += herramienta.precio * item.cantidad;
+
+                _logger.LogInformation("Ítem de reparación creado: Herramienta ID {HerramientaId}, Cantidad {Cantidad}, Precio unitario {PrecioUnitario}.",
+                    herramienta.id, item.cantidad, herramienta.precio);
             }
             reparacion.precioTotal = precioTotal;
+
+            _logger.LogInformation("Precio total de la reparación calculado: {PrecioTotal}.", precioTotal);
 
             _context.Reparacion.Add(reparacion); // marcado como entidad a insertar
 
@@ -219,6 +257,7 @@ namespace AppForSEII2526.API.Controllers
             
             try
             {
+                _logger.LogInformation("Guardando la reparación en la base de datos.");
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -247,6 +286,8 @@ namespace AppForSEII2526.API.Controllers
                     tiempoReparacion: ri.Herramienta.tiempoReparacion
                 )).ToList()
             );
+
+            _logger.LogInformation("Reparación creada con éxito. ID: {ReparacionId}", reparacion.id);
 
             // 201 de exito
             return CreatedAtAction("GetDetalles_Reparacion", new { id = reparacion.id }, reparacionDetalle);
