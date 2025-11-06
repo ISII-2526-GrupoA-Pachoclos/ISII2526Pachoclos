@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ISII2526Pachoclos.LogViewer
 {
-    public class LogEntry
+    public class LogEntry // Mismos atributos que en RabbitMQLogger
     {
         public DateTime Timestamp { get; set; }
         public string LogLevel { get; set; } = string.Empty;
