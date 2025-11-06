@@ -19,6 +19,7 @@ namespace AppForSEII2526.API.Controllers
         {
             _context = context;
             _logger = logger;
+            _logger.LogInformation("ReparacionesController instantiated.");
         }
 
         // Obtiene el detalle de una reparación por su ID. Corresponde al paso
@@ -27,6 +28,8 @@ namespace AppForSEII2526.API.Controllers
         [ProducesResponseType(typeof(ReparacionDetalleDTO), (int)HttpStatusCode.OK)]
         public async Task<ActionResult> GetDetalles_Reparacion(int id)
         {
+            _logger.LogInformation("Solicitando detalles de reparación con ID: {ReparacionId}", id);
+
             var reparacion = await _context.Reparacion
                 .Where(r => r.id == id)
                 .Include(r => r.ApplicationUser)           // Carga ApplicationUser
@@ -52,7 +55,7 @@ namespace AppForSEII2526.API.Controllers
 
             if (reparacion == null)
             {
-                _logger.LogWarning($"Reparación no encontrada.");
+                _logger.LogError($"Reparación no encontrada.");
                 return NotFound();
             }
 
