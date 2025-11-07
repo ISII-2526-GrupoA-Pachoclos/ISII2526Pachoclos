@@ -18,6 +18,8 @@ namespace AppForSEII2526.API.Controllers
         {
             _context = context;
             _logger = logger;
+            //uso de logger para registrar la inicialización del servicio
+            _logger.LogInformation("OfertasController initialized");
         }
 
         [HttpGet]
@@ -34,7 +36,11 @@ namespace AppForSEII2526.API.Controllers
                 .FirstOrDefaultAsync(o => o.Id == id);
 
             if (ofertaEntity == null)
+            {
+                _logger.LogError("No se ha encontrado la oferta con Id {OfertaId}", id);
                 return NotFound();
+            }
+                
 
 
             // Mapear en memoria de forma defensiva para evitar NullReference en tests
