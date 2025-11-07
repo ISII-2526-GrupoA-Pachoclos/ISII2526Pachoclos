@@ -9,21 +9,21 @@ VALUES
 SET IDENTITY_INSERT [dbo].[fabricante] ON;
 INSERT INTO [dbo].[fabricante] ([id], [nombre]) 
 VALUES 
-(1, N'Paco')
-(2, N'Jose')
-(3, N'Ana')
-(4, N'Duviso')
-(5, N'Ferreteria Florencio')
+(1, N'Paco'),
+(2, N'Jose'),
+(3, N'Ana'),
+(4, N'Duviso'),
+(5, N'Ferreteria Florencio');
 SET IDENTITY_INSERT [dbo].[fabricante] OFF;
 
 -- 3. TERCERO: Herramienta (depende de fabricante)
 SET IDENTITY_INSERT [dbo].[Herramienta] ON;
 INSERT INTO [dbo].[Herramienta] ([id], [material], [nombre], [precio], [tiempoReparacion], [fabricanteid]) 
 VALUES 
-(1, N'Hierro', N'Llave Inglesa', 12, N'10 dias', 1)
-(2, N'Acero', N'Destornillador', 7, N'7 dias', 3)
-(3, N'Madera', N'Martillo', 6, N'5 dias', 2)
-(4, N'varios', N'Motosierra', 150, N'20 dias', 2)
+(1, N'Hierro', N'Llave Inglesa', 12, N'10 dias', 1),
+(2, N'Acero', N'Destornillador', 7, N'7 dias', 3),
+(3, N'Madera', N'Martillo', 6, N'5 dias', 2),
+(4, N'varios', N'Motosierra', 150, N'20 dias', 2);
 SET IDENTITY_INSERT [dbo].[Herramienta] OFF;
 
 -- 4. CUARTO: Compra (depende de ApplicationUser)
@@ -50,8 +50,8 @@ VALUES
 SET IDENTITY_INSERT [dbo].[Oferta] ON;
 INSERT INTO [dbo].[Oferta] ([Id], [fechaInicio], [fechaFin], [fechaOferta], [ApplicationUserId], [metodoPago], [paraSocio]) 
 VALUES 
-(1, N'2025-11-17 00:00:00', N'2025-12-25 00:00:00', N'2025-11-30 00:00:00', N'1', 2, 1)
-(2, N'2025-11-17 00:00:00', N'2025-12-25 00:00:00', N'2025-11-04 18:39:29', N'1', 0, 1)
+(1, N'2025-11-17 00:00:00', N'2025-12-25 00:00:00', N'2025-11-30 00:00:00', N'1', 2, 1),
+(2, N'2025-11-17 00:00:00', N'2025-12-25 00:00:00', N'2025-11-04 18:39:29', N'1', 0, 1);
 SET IDENTITY_INSERT [dbo].[Oferta] OFF;
 
 -- 7. SÉPTIMO: OfertaItem (depende de Oferta y Herramienta)
@@ -64,8 +64,8 @@ VALUES
 SET IDENTITY_INSERT [dbo].[Reparacion] ON;
 INSERT INTO [dbo].[Reparacion] ([id], [fechaEntrega], [fechaRecogida], [precioTotal], [metodoPago], [ApplicationUserId]) 
 VALUES 
-(1, N'2025-10-20 10:30:00', N'2025-10-25 15:45:00', 15, 1, N'1')
-(2, '2025-11-05 09:00:00', '2025-11-12 09:00:00', 14, 2, N'2')
+(1, N'2025-10-20 10:30:00', N'2025-10-25 15:45:00', 15, 1, N'1'),
+(2, '2025-11-05 09:00:00', '2025-11-12 09:00:00', 14, 2, N'2'),
 (3, '2025-11-10 14:00:00', '2025-11-20 14:00:00', 45, 0, N'3')
 SET IDENTITY_INSERT [dbo].[Reparacion] OFF;
 
