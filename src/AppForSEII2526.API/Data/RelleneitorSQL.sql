@@ -7,7 +7,7 @@ VALUES
 
 -- 2. SEGUNDO: fabricante (necesario para herramientas)
 SET IDENTITY_INSERT [dbo].[fabricante] ON;
-INSERT INTO [dbo].[fabricante] ([id], [nombre]) 
+INSERT INTO [dbo].[fabricante] ([id], [nombre])  
 VALUES 
 (1, N'Paco'),
 (2, N'Jose'),
