@@ -77,7 +77,7 @@ namespace AppForSEII2526.UT.HerramientasController_test
             var controller = new HerramientasController(_context, null);
 
             // Act
-            var result = await controller.GetHerramientasParaReparar_conTodosLosDatos_DTO(filtroNombre, filtroTiempoReparacion);
+            var result = await controller.GetHerramientasParaRepararconTodosLosDatosDTO(filtroNombre, filtroTiempoReparacion);
 
             // Assert
             // Verificar que el resultado es Ok

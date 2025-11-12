@@ -25,7 +25,7 @@ namespace AppForSEII2526.API.Controllers
         // 7 del caso de uso "Reparar herramientas". -> GET del Detalle
         [HttpGet]
         [ProducesResponseType(typeof(ReparacionDetalleDTO), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult> GetDetalles_Reparacion(int id)
+        public async Task<ActionResult> GetDetallesReparacion(int id)
         {
             var reparacion = await _context.Reparacion
                 .Where(r => r.id == id)

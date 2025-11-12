@@ -117,7 +117,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             var controller = new ReparacionesController(_context, logger);
 
             // Act - ID que no existe
-            var result = await controller.GetDetalles_Reparacion(999999999);
+            var result = await controller.GetDetallesReparacion(999999999);
 
             // Assert
             Assert.IsType<NotFoundResult>(result);
@@ -165,7 +165,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
             );
 
             // Act
-            var result = await controller.GetDetalles_Reparacion(1);
+            var result = await controller.GetDetallesReparacion(1);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);

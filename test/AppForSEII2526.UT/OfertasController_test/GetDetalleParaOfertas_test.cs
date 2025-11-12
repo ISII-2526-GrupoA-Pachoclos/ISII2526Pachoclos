@@ -90,7 +90,7 @@ namespace AppForSEII2526.UT.OfertasController_test
             var controller = new OfertasController(_context, mock.Object);
 
             // Act
-            var result = await controller.GetDetalles_Oferta(999); // ID que no existe
+            var result = await controller.GetDetallesOferta(999); // ID que no existe
 
             // Assert
             Assert.IsType<NotFoundResult>(result);
@@ -120,7 +120,7 @@ namespace AppForSEII2526.UT.OfertasController_test
             );
 
             // Act
-            var result = await controller.GetDetalles_Oferta(_ofertaId);
+            var result = await controller.GetDetallesOferta(_ofertaId);
 
             // Assert 
             var okResult = Assert.IsType<OkObjectResult>(result);
