@@ -23,7 +23,7 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(OfertaDetalleDTO), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult> GetDetalles_Oferta(int id)
+        public async Task<ActionResult> GetDetallesOferta(int id)
         {
             // Cargar la entidad con sus relaciones
             var ofertaEntity = await _context.Oferta
@@ -175,7 +175,7 @@ namespace AppForSEII2526.API.Controllers
             );
 
             return CreatedAtAction(
-                nameof(GetDetalles_Oferta),
+                nameof(GetDetallesOferta),
                 new { id = ofertaNueva.Id },
                 ofertaDetail
             );

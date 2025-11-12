@@ -75,7 +75,7 @@ namespace AppForSEII2526.UT.ComprasController_test
             var controller = new ComprasController(_context, logger);
 
             //Act
-            var result = await controller.GetDetalles_Compra(1);
+            var result = await controller.GetDetallesCompra(1);
 
             //Assert
 
@@ -100,7 +100,7 @@ namespace AppForSEII2526.UT.ComprasController_test
 
             var controller = new ComprasController(_context, logger);
 
-            var result = await controller.GetDetalles_Compra(0);
+            var result = await controller.GetDetallesCompra(0);
 
             Assert.IsType<NotFoundResult>(result);
 

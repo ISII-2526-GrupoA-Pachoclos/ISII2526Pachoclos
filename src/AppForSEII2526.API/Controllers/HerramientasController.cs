@@ -46,7 +46,7 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<HerramientasParaComprarDTO>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult> GetHerramientasParaComprar_conTodosLosDatos_DTO(float? filtroPrecio, string? filtroMaterial) {
+        public async Task<ActionResult> GetHerramientasParaComprarconTodosLosDatosDTO(float? filtroPrecio, string? filtroMaterial) {
             
             var herramientas = await _context.Herramienta
                 .Include(h => h.fabricante)
@@ -79,7 +79,7 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<HerramientasParaRepararDTO>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult> GetHerramientasParaReparar_conTodosLosDatos_DTO(string? filtroNombre, string? filtroTiempoReparacion)
+        public async Task<ActionResult> GetHerramientasParaRepararconTodosLosDatosDTO(string? filtroNombre, string? filtroTiempoReparacion)
         {
             var herramientas = await _context.Herramienta
                 .Include(herramienta => herramienta.fabricante)
@@ -110,7 +110,7 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<HerramientasParaOfertasDTO>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult> GetHerramientasParaOferta_conTodosLosDatos_DTO(float? filtroPrecio, string? filtroFabricante)
+        public async Task<ActionResult> GetHerramientasParaOfertaconTodosLosDatosDTO(float? filtroPrecio, string? filtroFabricante)
         {
             // normalizar filtroFabricante para comparación segura
             var filtroFabricanteNorm = filtroFabricante?.Trim().ToLower();

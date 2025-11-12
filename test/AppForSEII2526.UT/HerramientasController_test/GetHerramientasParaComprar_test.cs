@@ -76,7 +76,7 @@ namespace AppForSEII2526.UT.HerramientasController_test
             var controller = new HerramientasController(_context, null);
 
             //Act
-            var result = await controller.GetHerramientasParaComprar_conTodosLosDatos_DTO(filtroPrecio, filtroMaterial);
+            var result = await controller.GetHerramientasParaComprarconTodosLosDatosDTO(filtroPrecio, filtroMaterial);
 
             //Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
