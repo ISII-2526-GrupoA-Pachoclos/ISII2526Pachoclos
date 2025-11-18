@@ -246,7 +246,7 @@ namespace AppForSEII2526.API.Controllers
             );
 
             // 201 de exito
-            return CreatedAtAction("GetDetalles_Reparacion", new { id = reparacion.id }, reparacionDetalle);
+            return CreatedAtAction("GetDetallesReparacion", new { id = reparacion.id }, reparacionDetalle);
         }
     }
 }
