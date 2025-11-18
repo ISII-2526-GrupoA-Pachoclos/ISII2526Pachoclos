@@ -46,12 +46,13 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<HerramientasParaComprarDTO>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult> GetHerramientasParaComprarconTodosLosDatosDTO(float? filtroPrecio, string? filtroMaterial) {
+        public async Task<ActionResult> GetHerramientasParaComprarconTodosLosDatosDTO(string? filtroMaterial, int? precioMin, int? precioMax) {
             
             var herramientas = await _context.Herramienta
                 .Include(h => h.fabricante)
-                .Where(h => (h.precio <= filtroPrecio || (filtroPrecio==null))
-                && (h.material.Contains(filtroMaterial) ||  (filtroMaterial==null))
+                .Where(h => ((precioMin == null || h.precio >= precioMin))
+                && (precioMax == null || h.precio <= precioMax)
+                && ((filtroMaterial == null || h.material.Contains(filtroMaterial)))
                 )
                 .OrderBy(h => h.nombre)
                 .Select(h => new HerramientasParaComprarDTO(h.id, h.nombre, h.material, h.fabricante.nombre, h.precio))

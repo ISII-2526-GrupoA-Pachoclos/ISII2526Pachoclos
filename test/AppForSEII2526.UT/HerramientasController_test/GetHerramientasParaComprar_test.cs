@@ -47,20 +47,17 @@ namespace AppForSEII2526.UT.HerramientasController_test
             var HerramientasDTOsTC2 = new List<HerramientasParaComprarDTO>() { HerramientasDTOs[0] }
                 .ToList();
 
-            var HerramientasDTOsTC3 = new List<HerramientasParaComprarDTO>() { HerramientasDTOs[0], HerramientasDTOs[1] }
-                .OrderBy(h => h.nombre)
+            var HerramientasDTOsTC3 = new List<HerramientasParaComprarDTO>() { HerramientasDTOs[0] }
                 .ToList();
 
-            var allTest = new List<object[]>
+            var allTest = new List<object?[]>
             {
-                new object[] { null, null, HerramientasDTOsTC1 },
-                new object[] { 60f, null, HerramientasDTOsTC2 },
-                new object[] { null, "Madera", HerramientasDTOsTC3 }
-            };
+                new object?[] { null, null, null,  HerramientasDTOsTC1 },
+                new object?[] { null, null, 60,  HerramientasDTOsTC2 },
+                new object?[] { "Madera", null, 60, HerramientasDTOsTC3 },
+                new object?[] { "Acero", 80, 100, new List<HerramientasParaComprarDTO>() }
+             };
             return allTest;
-
-
-
         }
 
 
@@ -68,7 +65,7 @@ namespace AppForSEII2526.UT.HerramientasController_test
         [MemberData(nameof(TestCasesFor_GetHerramientasParaComprar_conTodosLosDatos_DTO))]
         [Trait("Database", "WithoutFixure")]
         [Trait("LevelTesting", "Unit Testing")]
-        public async Task GetHerramientasParaComprar_conTodosLosDatos_DTO_Test(float? filtroPrecio, string? filtroMaterial, IList<HerramientasParaComprarDTO> expectedHerramientas)
+        public async Task GetHerramientasParaComprar_conTodosLosDatos_DTO_Test(string? filtroMaterial, int? precioMin, int? precioMax, IList<HerramientasParaComprarDTO> expectedHerramientas)
         {
 
 
@@ -76,7 +73,7 @@ namespace AppForSEII2526.UT.HerramientasController_test
             var controller = new HerramientasController(_context, null);
 
             //Act
-            var result = await controller.GetHerramientasParaComprarconTodosLosDatosDTO(filtroPrecio, filtroMaterial);
+            var result = await controller.GetHerramientasParaComprarconTodosLosDatosDTO(filtroMaterial, precioMin, precioMax);
 
             //Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
