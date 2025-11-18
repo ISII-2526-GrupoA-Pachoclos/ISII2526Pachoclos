@@ -93,6 +93,12 @@ namespace AppForSEII2526.API.Controllers
                 }
             }
 
+            if (reparacionParaCrear.fechaEntrega.DayOfWeek == DayOfWeek.Sunday || 
+                reparacionParaCrear.fechaEntrega.DayOfWeek == DayOfWeek.Saturday)
+            {
+                ModelState.AddModelError("fechaEntrega", "La fecha de entrega no puede ser en fin de semana. VAYA VAGOS");
+            }
+
             // Validación extra para el enum metodoPago
             if (!Enum.IsDefined(typeof(metodoPago), reparacionParaCrear.metodoPago))
             {

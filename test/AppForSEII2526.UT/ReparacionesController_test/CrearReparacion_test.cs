@@ -136,6 +136,16 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 _nombreCliente, _apellidosCliente, _numTelefono, (metodoPago)99, // Valor inválido
                 DateTime.Today.AddDays(1), herramientasMetodoPagoInvalido);
 
+            // Caso 8: fecha entrega en fin de semana
+            var herramientasFindeSemana = new List<ReparacionItemDTO>
+            {
+                new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 1, "10 dias")
+            };
+            var reparacionFindeSemana = new ReparacionParaCrearDTO(
+                _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.PayPal,
+                new DateTime(2024, 6, 15), // Sábado
+                herramientasFindeSemana);
+
             var allTests = new List<object[]>
             {
                 new object[] { reparacionSinHerramientas, "Debe incluir al menos una herramienta para reparar." },
@@ -145,6 +155,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 new object[] { reparacionCantidadCero, $"La cantidad de la herramienta '{_herramienta1Nombre}' debe ser mayor que 0." },
                 new object[] { reparacionNombreIncorrecto, $"El nombre de la herramienta 'Nombre Incorrecto' no coincide con el ID 4." },
                 new object[] { reparacionMetodoPagoInvalido, "El método de pago no es válido. Valores permitidos: 0 (Efectivo), 1 (TarjetaCredito), 2 (PayPal)." },
+                new object[] { reparacionFindeSemana, "La fecha de entrega no puede ser en fin de semana. VAYA VAGOS" }
             };
 
             return allTests;
