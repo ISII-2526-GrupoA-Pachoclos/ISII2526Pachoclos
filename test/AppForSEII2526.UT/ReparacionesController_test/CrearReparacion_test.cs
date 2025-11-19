@@ -79,7 +79,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
         {
             // Caso 1: Sin herramientas
             var reparacionSinHerramientas = new ReparacionParaCrearDTO(
-                _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.PayPal,
+                _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.Efectivo,
                 DateTime.Today.AddDays(1), new List<ReparacionItemDTO>());
 
             // Caso 2: Fecha de entrega anterior a hoy
@@ -88,7 +88,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 3, "10 dias")
             };
             var reparacionFechaAnterior = new ReparacionParaCrearDTO(
-                _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.PayPal,
+                _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.Efectivo,
                 DateTime.Today.AddDays(-1), herramientasFechaAnterior);
 
             // Caso 3: Cliente no registrado
@@ -106,7 +106,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 new ReparacionItemDTO(999, 10.0f, "Herramienta Inexistente", "Descripción", 1, "10 dias")
             };
             var reparacionHerramientaNoExiste = new ReparacionParaCrearDTO(
-                _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.PayPal,
+                _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.Efectivo,
                 DateTime.Today.AddDays(1), herramientasNoExiste);
 
             // Caso 5: Cantidad <= 0
@@ -115,7 +115,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 0, "10 dias")
             };
             var reparacionCantidadCero = new ReparacionParaCrearDTO(
-                _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.PayPal,
+                _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.Efectivo,
                 DateTime.Today.AddDays(1), herramientasCantidadCero);
 
             // Caso 6: Nombre de herramienta no coincide con ID
@@ -124,7 +124,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 new ReparacionItemDTO(4, 10.0f, "Nombre Incorrecto", "Mango roto", 1, "10 dias")
             };
             var reparacionNombreIncorrecto = new ReparacionParaCrearDTO(
-                _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.PayPal,
+                _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.Efectivo,
                 DateTime.Today.AddDays(1), herramientasNombreIncorrecto);
 
             // Caso 7: Método de pago inválido
@@ -142,9 +142,32 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 1, "10 dias")
             };
             var reparacionFindeSemana = new ReparacionParaCrearDTO(
-                _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.PayPal,
+                _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.Efectivo,
                 new DateTime(2024, 6, 15), // Sábado
                 herramientasFindeSemana);
+
+            // Caso 9: Pago con paypal
+            var herramientasPaypal = new List<ReparacionItemDTO>
+            {
+                new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 1, "10 dias")
+            };
+            var reparacionPaypal = new ReparacionParaCrearDTO(
+                _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.PayPal,
+                DateTime.Today.AddDays(1), herramientasPaypal);
+
+            // Caso 10: no se pueden reparar mas de 5 herramientas
+            var herramientasMasDeCinco = new List<ReparacionItemDTO>
+            {
+                new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 6, "10 dias"),
+                new ReparacionItemDTO(5, 7.0f, _herramienta2Nombre, "Punta desgastada", 1, "7 dias"),
+                new ReparacionItemDTO(6, 15.0f, "Martillo", "Cabeza suelta", 1, "formato_invalido"),
+                new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 1, "10 dias"),
+                new ReparacionItemDTO(5, 7.0f, _herramienta2Nombre, "Punta desgastada", 1, "7 dias"),
+                new ReparacionItemDTO(6, 15.0f, "Martillo", "Cabeza suelta", 1, "formato_invalido") // Sexta herramienta
+            };
+            var reparacionMasDeCinco = new ReparacionParaCrearDTO(
+                _nombreCliente, _apellidosCliente, _numTelefono, metodoPago.Efectivo,
+                DateTime.Today.AddDays(1), herramientasMasDeCinco);
 
             var allTests = new List<object[]>
             {
@@ -155,7 +178,9 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 new object[] { reparacionCantidadCero, $"La cantidad de la herramienta '{_herramienta1Nombre}' debe ser mayor que 0." },
                 new object[] { reparacionNombreIncorrecto, $"El nombre de la herramienta 'Nombre Incorrecto' no coincide con el ID 4." },
                 new object[] { reparacionMetodoPagoInvalido, "El método de pago no es válido. Valores permitidos: 0 (Efectivo), 1 (TarjetaCredito), 2 (PayPal)." },
-                new object[] { reparacionFindeSemana, "La fecha de entrega no puede ser en fin de semana. VAYA VAGOS" }
+                new object[] { reparacionFindeSemana, "La fecha de entrega no puede ser en fin de semana. VAYA VAGOS" },
+                new object[] { reparacionPaypal, "El método de pago PayPal no está disponible actualmente." },
+                new object[] { reparacionMasDeCinco, "No se pueden reparar más de 5 unidades de la herramienta 'Llave Inglesa'." }
             };
 
             return allTests;

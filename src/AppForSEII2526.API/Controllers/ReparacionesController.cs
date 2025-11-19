@@ -105,6 +105,16 @@ namespace AppForSEII2526.API.Controllers
                 ModelState.AddModelError("fechaEntrega", "La fecha de entrega no puede ser en fin de semana. VAYA VAGOS");
             }
 
+            if (reparacionParaCrear.metodoPago == metodoPago.PayPal)
+            {
+                ModelState.AddModelError("metodoPago", "El método de pago PayPal no está disponible actualmente.");
+            }
+
+            if (reparacionParaCrear.Herramientas != null && reparacionParaCrear.Herramientas.Count > 5)
+            {
+                ModelState.AddModelError("Herramientas", "No se pueden reparar más de 5 herramientas en una sola reparación.");
+            }
+
             // Validación extra para el enum metodoPago
             if (!Enum.IsDefined(typeof(metodoPago), reparacionParaCrear.metodoPago))
             {
