@@ -36,11 +36,12 @@ namespace AppForSEII2526.UT.HerramientasController_test
 
         public static IEnumerable<object?[]> TestCasesFor_GetHerramientasParaReparar_conTodosLosDatos_DTO()
         {
+            float iva = 1.21f;
             var herramientasDTOs = new List<HerramientasParaRepararDTO>()
             {
-                new HerramientasParaRepararDTO(1, "Madera", "Martillo", 15,  "2 dias", "Pepe"),
-                new HerramientasParaRepararDTO(2, "Metal", "Destornillador", 10, "1 dia", "Ana"),
-                new HerramientasParaRepararDTO(3, "Metal", "Llave inglesa", 20, "3 dias", "Luis"),
+                new HerramientasParaRepararDTO(1, "Madera", "Martillo", 15,  "2 dias", "Pepe", 15 * iva),
+                new HerramientasParaRepararDTO(2, "Metal", "Destornillador", 10, "1 dia", "Ana", 10 * iva),
+                new HerramientasParaRepararDTO(3, "Metal", "Llave inglesa", 20, "3 dias", "Luis", 20 * iva),
             };
 
             // Caso sin filtros: ahora esperamos todos los elementos (ordenados por nombre)

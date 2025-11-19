@@ -82,6 +82,7 @@ namespace AppForSEII2526.API.Controllers
         [ProducesResponseType(typeof(IList<HerramientasParaRepararDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult> GetHerramientasParaRepararconTodosLosDatosDTO(string? filtroNombre, string? filtroTiempoReparacion, string? filtroFabricante)
         {
+            float iva = 1.21f;
             var herramientas = await _context.Herramienta
                 .Include(herramienta => herramienta.fabricante)
                 .Where(h => h.nombre.Contains(filtroNombre) || (filtroNombre == null)
@@ -89,7 +90,7 @@ namespace AppForSEII2526.API.Controllers
                  && (filtroFabricante == null || h.fabricante.nombre.Contains(filtroFabricante))
                 ).OrderBy(herramienta => herramienta.nombre)
                 .Select(h => new HerramientasParaRepararDTO (h.id, h.material, h.nombre, 
-                    h.precio, h.tiempoReparacion, h.fabricante.nombre))
+                    h.precio, h.tiempoReparacion, h.fabricante.nombre, h.precio * iva))
                 .ToArrayAsync();
             return Ok(herramientas);
         }
