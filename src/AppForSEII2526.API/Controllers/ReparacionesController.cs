@@ -25,6 +25,7 @@ namespace AppForSEII2526.API.Controllers
         // 7 del caso de uso "Reparar herramientas". -> GET del Detalle
         [HttpGet]
         [ProducesResponseType(typeof(ReparacionDetalleDTO), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)] // error de validación de datos
         public async Task<ActionResult> GetDetallesReparacion(int id)
         {
             var reparacion = await _context.Reparacion
@@ -53,6 +54,11 @@ namespace AppForSEII2526.API.Controllers
             if (reparacion == null)
             {
                 _logger.LogWarning($"Reparación no encontrada.");
+                return NotFound();
+            }
+
+            if (reparacion.fechaEntrega > reparacion.fechaRecogida)
+            {
                 return NotFound();
             }
 

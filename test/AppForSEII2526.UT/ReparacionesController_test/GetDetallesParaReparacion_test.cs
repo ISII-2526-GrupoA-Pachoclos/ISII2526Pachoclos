@@ -126,6 +126,23 @@ namespace AppForSEII2526.UT.ReparacionesController_test
         [Fact]
         [Trait("Database", "WithoutFixture")]
         [Trait("LevelTesting", "Unit Testing")]
+        public async Task GetDetalles_Reparacion_FechasBD_test() // reparacion.fechaEntrega > reparacion.fechaRecogida
+        {
+            // Arrange
+            var mockLogger = new Mock<ILogger<ReparacionesController>>();
+            var logger = mockLogger.Object;
+            var controller = new ReparacionesController(_context, logger);
+
+            // Act - reparacion.fechaEntrega > reparacion.fechaRecogida
+            var result = await controller.GetDetallesReparacion(505);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result); 
+        }
+
+        [Fact]
+        [Trait("Database", "WithoutFixture")]
+        [Trait("LevelTesting", "Unit Testing")]
         public async Task GetDetalles_Reparacion_Found_test() // ID que existe
         {
             // Arrange
