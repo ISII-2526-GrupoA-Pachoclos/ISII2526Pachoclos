@@ -80,12 +80,13 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<HerramientasParaRepararDTO>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult> GetHerramientasParaRepararconTodosLosDatosDTO(string? filtroNombre, string? filtroTiempoReparacion)
+        public async Task<ActionResult> GetHerramientasParaRepararconTodosLosDatosDTO(string? filtroNombre, string? filtroTiempoReparacion, string? filtroFabricante)
         {
             var herramientas = await _context.Herramienta
                 .Include(herramienta => herramienta.fabricante)
                 .Where(h => h.nombre.Contains(filtroNombre) || (filtroNombre == null)
                  && (h.tiempoReparacion.Equals(filtroTiempoReparacion) || filtroTiempoReparacion == null)
+                 && (filtroFabricante == null || h.fabricante.nombre.Contains(filtroFabricante))
                 ).OrderBy(herramienta => herramienta.nombre)
                 .Select(h => new HerramientasParaRepararDTO (h.id, h.material, h.nombre, 
                     h.precio, h.tiempoReparacion, h.fabricante.nombre))

@@ -59,6 +59,7 @@ namespace AppForSEII2526.UT.HerramientasController_test
                 new object[] { null, null, herramientasDTOsTC1 }, // TC1: Sin filtros -> todos ordenados por nombre herramienta
                 new object[] { "Destornillador", null, herramientasDTOsTC2 }, // TC2: Filtro por nombre herramienta
                 new object[] { null, "3 dias", herramientasDTOsTC3 }, // TC3: Filtro por tiempo de reparacion
+                new object[] { null, null, "Ana", herramientasDTOsTC2 }, // TC4: Filtro por fabricante
             };
 
             return allTest;
@@ -70,14 +71,14 @@ namespace AppForSEII2526.UT.HerramientasController_test
         [Trait("Database", "WithoutFixture")]
         [Trait("LevelTesting", "Unit Testing")]
         public async Task GetHerramientasParaReparar_conTodosLosDatos_DTO_Test(string? filtroNombre, 
-            string? filtroTiempoReparacion,
+            string? filtroTiempoReparacion, string? filtroFabricante,
             IList<HerramientasParaRepararDTO> herramientasEsperadas)
         {
             // Arrange
             var controller = new HerramientasController(_context, null);
 
             // Act
-            var result = await controller.GetHerramientasParaRepararconTodosLosDatosDTO(filtroNombre, filtroTiempoReparacion);
+            var result = await controller.GetHerramientasParaRepararconTodosLosDatosDTO(filtroNombre, filtroTiempoReparacion, filtroFabricante);
 
             // Assert
             // Verificar que el resultado es Ok
