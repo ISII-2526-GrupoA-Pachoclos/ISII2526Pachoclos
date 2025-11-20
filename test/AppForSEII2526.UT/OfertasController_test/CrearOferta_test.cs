@@ -132,6 +132,16 @@ namespace AppForSEII2526.UT.OfertasController_test
             };
             OfertaSinUsuario.CrearOfertaItem.Add(OfertaItemValido);
 
+            //Modificación Examen Sprint 2
+            var DuracionOferta = new CrearOfertaDTO
+            {
+                FechaInicio = DateTime.Today.AddDays(1),
+                FechaFin = DateTime.Today.AddDays(5),
+                TiposMetodoPago = tiposMetodoPago.Tarjeta,
+                TiposDirigidaOferta = tiposDirigidaOferta.Socios,
+                CrearOfertaItem = new List<CrearOfertaItemDTO>()
+            };
+
             var allTest = new List<object[]>
             {
                 new object[] { OfertaSinHerramientas, "Debe agregar al menos una herramienta a la oferta" },
@@ -140,7 +150,8 @@ namespace AppForSEII2526.UT.OfertasController_test
                 new object[] { OfertaPorcentajeCero, "El porcentaje 0% de 'Martillo' debe estar entre 1 y 100" },
                 new object[] { OfertaPorcentajeExcesivo, "El porcentaje 101% de 'Martillo' debe estar entre 1 y 100" },
                 new object[] { OfertaHerramientaNoExistente, "La herramienta con id 999 no existe" },
-                new object[] { OfertaSinUsuario, "No se encontró un usuario válido" }
+                new object[] { OfertaSinUsuario, "No se encontró un usuario válido" },
+                new object[] {DuracionOferta, "¡Error, la oferta debe durar al menos 1 semana!" }
             };
 
             return allTest;
