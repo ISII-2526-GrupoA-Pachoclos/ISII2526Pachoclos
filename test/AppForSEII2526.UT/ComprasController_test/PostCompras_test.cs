@@ -67,12 +67,18 @@ namespace AppForSEII2526.UT.ComprasController_test
             var CompraItemConHerramientaNE = new CompraItemDTO { cantidad = 1, herramientaid = 0, nombre = "Martillo", precio = 50, descripcion = "descripcion" };
             CompraConHerramientaNoExistente.HerramientasCompradas.Add(CompraItemConHerramientaNE);
 
+            var CompraConCantidad = new CrearCompraDTO { Nombre = "Juan", Apellido = "Valdes", direccionEnvio = "calle", metodoPago = formaPago.Efectivo, HerramientasCompradas = new List<CompraItemDTO>() };
+            var CompraItemConCantidad = new CompraItemDTO { cantidad = 3, herramientaid = 7, nombre = "Martillo", precio = 50 };
+            CompraConCantidad.HerramientasCompradas.Add(CompraItemConCantidad);
+
+
             var allTest = new List<object[]>
             {
                 new object[] { CompraSinHerramientas,  "Error! Debes incluir al menos una herramienta " },
                 new object[] { CompraSinCantidad, "Error! La cantidad debe ser mayor que 0" },
                 new object[] { CompraSinUsuario, "Error! Usuario no registrado" },
-                new object[] { CompraConHerramientaNoExistente, "Error! La herramienta con ese id no existe" }
+                new object[] { CompraConHerramientaNoExistente, "Error! La herramienta con ese id no existe" },
+                new object[] { CompraConCantidad, "Error! Estas comprando demasiadas herramientas sin descripcion" }
             };
 
             return allTest;

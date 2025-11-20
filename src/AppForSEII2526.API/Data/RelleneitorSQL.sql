@@ -45,7 +45,7 @@ VALUES
 (2, 2, 2, N'Destornillador (2 uds) - Compra en tienda', 7),
 (3, 3, 3, N'Martillo (3 uds) - Oferta especial', 15);
 */
-
+/*
 -- 6. SEXTO: Oferta (depende de ApplicationUser)
 SET IDENTITY_INSERT [dbo].[Oferta] ON;
 INSERT INTO [dbo].[Oferta] ([Id], [fechaInicio], [fechaFin], [fechaOferta], [ApplicationUserId], [metodoPago], [paraSocio]) 
@@ -77,7 +77,7 @@ VALUES
 (3, 3, 3, N'Cabeza floja y mango agrietado', 15);
 
 -- 10. DÉCIMO: alquilar (depende de ApplicationUser)
-/*
+
 SET IDENTITY_INSERT [dbo].[alquilar] ON;
 INSERT INTO [dbo].[alquilar] ([id], [direccionEnvio], [fechaAlquiler], [fechaInicio], [fechaFin], [precioTotal], [metodoPago], [applicationUserId]) 
 VALUES 
