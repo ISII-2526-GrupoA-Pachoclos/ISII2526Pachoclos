@@ -23,11 +23,14 @@ jobs:
         with:
           dotnet-version: '8.x'
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      - name: Restore dependencies (solo API)
+        run: dotnet restore src/AppForSEII2526.API/AppForSEII2526.API.csproj
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+      - name: Build with dotnet (solo API)
+        run: dotnet build src/AppForSEII2526.API/AppForSEII2526.API.csproj --configuration Release --no-restore
+
+      - name: dotnet publish (solo API)
+        run: dotnet publish src/AppForSEII2526.API/AppForSEII2526.API.csproj -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
