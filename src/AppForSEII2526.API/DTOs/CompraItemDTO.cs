@@ -13,8 +13,8 @@ namespace AppForSEII2526.API.DTOs
         [Required, StringLength(50, ErrorMessage="No puede tener mas de 50 caracteres", MinimumLength=1)]
         public string nombre { get; set; }
 
-        [Required]
-        public string descripcion { get; set; }
+        
+        public string? descripcion { get; set; }
 
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float precio { get; set; }

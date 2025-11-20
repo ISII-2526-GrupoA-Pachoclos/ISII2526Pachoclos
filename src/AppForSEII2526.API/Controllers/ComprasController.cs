@@ -79,6 +79,13 @@ namespace AppForSEII2526.API.Controllers
                     {
                         ModelState.AddModelError("Cantidad", "Error! La cantidad debe ser mayor que 0");
                     }
+
+                    if (item.cantidad == 3 && item.descripcion == "") {
+
+                        ModelState.AddModelError("Cantidad", "Error! Estas comprando demasiadas herramientas sin descripcion");
+
+
+                    }
                 }
 
 
