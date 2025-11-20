@@ -68,7 +68,7 @@ namespace AppForSEII2526.UT.ComprasController_test
             CompraConHerramientaNoExistente.HerramientasCompradas.Add(CompraItemConHerramientaNE);
 
             var CompraConCantidad = new CrearCompraDTO { Nombre = "Juan", Apellido = "Valdes", direccionEnvio = "calle", metodoPago = formaPago.Efectivo, HerramientasCompradas = new List<CompraItemDTO>() };
-            var CompraItemConCantidad = new CompraItemDTO { cantidad = 3, herramientaid = 7, nombre = "Martillo", precio = 50 };
+            var CompraItemConCantidad = new CompraItemDTO { cantidad = 3, herramientaid = 7, nombre = "Martillo", precio = 50, descripcion="" };
             CompraConCantidad.HerramientasCompradas.Add(CompraItemConCantidad);
 
 
