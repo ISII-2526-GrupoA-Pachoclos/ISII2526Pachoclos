@@ -77,8 +77,16 @@ namespace AppForSEII2526.API.Controllers
             if (crearOfertaDTO.CrearOfertaItem == null || crearOfertaDTO.CrearOfertaItem.Count == 0)
                 ModelState.AddModelError("CrearOfertaItem", "Debe agregar al menos una herramienta a la oferta.");
 
+
+            //Modificación Examen Sprint 2
+            if (crearOfertaDTO.FechaFin < crearOfertaDTO.FechaInicio.AddDays(7))
+                ModelState.AddModelError("FechaFin", "¡Error, la oferta debe durar al menos 1 semana!");
+
+
             if (!ModelState.IsValid)
                 return BadRequest(new ValidationProblemDetails(ModelState));
+
+            
 
             // Obtener usuario (en un caso real, esto vendría del contexto de autenticación)
             var usuario = await _context.ApplicationUser.FirstOrDefaultAsync();
