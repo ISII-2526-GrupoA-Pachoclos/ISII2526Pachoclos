@@ -6,7 +6,7 @@ name: CD appforseii2526api
 on:
   push:
     branches: 
-      - CI-Pachoclos # rama donde se hara ci-cd
+      - Copia-Marcos-CI-Pachoclos # rama donde se hara ci-cd
 #      - development # rama principal
 #    paths:
 #      - 'src/AppForSEII2526.API**'
