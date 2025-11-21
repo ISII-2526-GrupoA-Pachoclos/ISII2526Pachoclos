@@ -1,7 +1,46 @@
 ﻿@page "/"
+@*Espacio de nombres del cliente generado con NSwag*@
+@using AppForSEII2526.Web.API;
+@*Este es el servicio que se ha definido como HttpClient en Program.cs*@
+@inject AppForHerramientasAPIClient ApiClient;
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+<br>
+<br>
+
+@if (_herramientas == null)
+{
+    <p><em>Cargando...</em></p>
+
+}
+else foreach(var herramienta in _herramientas)
+    {
+        
+
+        @herramienta.Nombre
+        <br>
+        @herramienta.Fabricante
+        <br>
+        <br>
+
+
+    }
+
+
+
+
+@code{
+    private ICollection<HerramientasParaComprarDTO> _herramientas;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _herramientas = await ApiClient.GetHerramientasParaComprarconTodosLosDatosDTOAsync(null, null);
+    }
+
+
+}

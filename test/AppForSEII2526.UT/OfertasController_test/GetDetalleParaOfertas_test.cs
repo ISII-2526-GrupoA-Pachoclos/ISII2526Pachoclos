@@ -11,125 +11,141 @@ namespace AppForSEII2526.UT.OfertasController_test
 {
     public class GetDetalleParaOferta_test : AppForSEII25264SqliteUT
     {
+        private readonly int _ofertaId;
+        private readonly DateTime _fechaInicio;
+        private readonly DateTime _fechaFin;
+        private readonly DateTime _fechaOferta;
+
         public GetDetalleParaOferta_test()
         {
-            // Datos de prueba: fabricantes
+            // Usar fechas explícitas sin hora para evitar problemas con SQLite
+            _fechaInicio = new DateTime(2024, 1, 1);
+            _fechaFin = new DateTime(2024, 12, 31);
+            _fechaOferta = new DateTime(2024, 1, 1);
+
             var fabricantes = new List<fabricante>()
             {
-                new fabricante { nombre = "Pepe" },
-                new fabricante { nombre = "Ana" },
-                new fabricante { nombre = "Luis" },
+                new fabricante { id = 1, nombre = "Pepe" },
+                new fabricante { id = 2, nombre = "Ana" },
+                new fabricante { id = 3, nombre = "Luis" },
             };
 
-            // Añadimos fabricantes y herramientas primero para que tengan ids
             var herramientas = new List<Herramienta>()
             {
-                new Herramienta("Martillo", "Acero", 15.9f, "", fabricantes[0]),
-                new Herramienta("Destornillador", "Acero", 5.5f, "", fabricantes[1]),
-                new Herramienta("Brocas", "Metal", 8.0f, "", fabricantes[2])
+                new Herramienta { id = 1, nombre = "Martillo", material = "Acero", precio = 15.9f, tiempoReparacion = "1 día", fabricante = fabricantes[0] },
+                new Herramienta { id = 2, nombre = "Destornillador", material = "Acero", precio = 5.5f, tiempoReparacion = "5 horas", fabricante = fabricantes[1] },
+                new Herramienta { id = 3, nombre = "Brocas", material = "Metal", precio = 8.0f, tiempoReparacion = "30 minutos", fabricante = fabricantes[2] }
             };
 
-            _context.AddRange(fabricantes);
-            _context.AddRange(herramientas);
-            _context.SaveChanges();
-
-            // Ahora creamos los OfertaItem vinculados a las herramientas ya persistidas
-            var ofertaItems = new List<OfertaItem>()
+            var usuario = new ApplicationUser
             {
-                new OfertaItem { porcentaje = 25, precioFinal = 11.93f, herramienta = herramientas[0], herramientaid = herramientas[0].id },
-                new OfertaItem { porcentaje = 10, precioFinal = 4.95f, herramienta = herramientas[1], herramientaid = herramientas[1].id },
-                new OfertaItem { porcentaje = 20, precioFinal = 6.4f, herramienta = herramientas[2], herramientaid = herramientas[2].id }
+                Id = "2",
+                nombre = "Juan",
+                apellido = "Pérez",
+                correoElectronico = "juan@gmail.com",
+                numTelefono = "123456789"
             };
 
-            // Creamos la oferta
             var oferta = new Oferta
             {
-                fechaInicio = DateTime.UtcNow.AddDays(30),
-                fechaFin = DateTime.UtcNow.AddDays(60),
-                fechaOferta = DateTime.UtcNow,
+                Id = 1,
+                fechaInicio = _fechaInicio,
+                fechaFin = _fechaFin,
+                fechaOferta = _fechaOferta,
                 metodoPago = tiposMetodoPago.Efectivo,
                 paraSocio = tiposDirigidaOferta.Clientes,
-                ofertaItems = ofertaItems
+                ofertaItems = new List<OfertaItem>(),
+                ApplicationUser = usuario
             };
 
-            // Añadimos oferta (con sus items) y guardamos
+            var ofertaItem = new OfertaItem
+            {
+                ofertaId = 1,
+                herramientaid = 1,
+                porcentaje = 25,
+                precioFinal = 15.9f * 0.75f, // = 11.925f
+                oferta = oferta,
+                herramienta = herramientas[0]
+            };
+
+            oferta.ofertaItems.Add(ofertaItem);
+            _ofertaId = oferta.Id;
+
+            // Guardar en orden correcto para mantener relaciones
+            _context.AddRange(fabricantes);
+            _context.AddRange(herramientas);
+            _context.ApplicationUser.Add(usuario);
             _context.Add(oferta);
+            _context.Add(ofertaItem);
             _context.SaveChanges();
         }
 
-        public static IEnumerable<object[]> TestCasesFor_GetDetalleParaOferta_Ok()
-        {
-            // Debe coincidir con lo que se inserta en el constructor:
-            var ofertaItemsDTO = new List<OfertaItemDTO>()
-            {
-                new OfertaItemDTO(1, "Martillo", "Acero", "Pepe", 15.9f, 11.93f),
-                new OfertaItemDTO(2, "Destornillador", "Acero", "Ana", 5.5f, 4.95f),
-                new OfertaItemDTO(3, "Brocas", "Metal", "Luis", 8.0f, 6.40f),
-            };
-
-            var ofertaDetalleEsperada = new OfertaDetalleDTO(
-                1,
-                DateTime.UtcNow.AddDays(30),
-                DateTime.UtcNow.AddDays(60),
-                DateTime.UtcNow,
-                tiposMetodoPago.Efectivo,
-                tiposDirigidaOferta.Clientes,
-                ofertaItemsDTO
-            );
-
-            return new List<object[]>
-            {
-                new object[] { 1, ofertaDetalleEsperada }
-            };
-        }
-
-        [Theory]
-        [MemberData(nameof(TestCasesFor_GetDetalleParaOferta_Ok))]
-        public async Task GetDetalleParaOferta_Ok(int ofertaId, OfertaDetalleDTO expectedDTO)
+        [Fact]
+        [Trait("Database", "WithoutFixture")]
+        [Trait("LevelTesting", "Unit Testing")]
+        public async Task GetDetalleParaOferta_NotFound()
         {
             // Arrange
-            var controller = new OfertasController(_context, null);
+            var mock = new Mock<ILogger<OfertasController>>();
+            var controller = new OfertasController(_context, mock.Object);
 
             // Act
-            var actionResult = await controller.GetDetalles_Oferta(ofertaId);
+            var result = await controller.GetDetallesOferta(999); // ID que no existe
 
-            // Assert: 200 OK y DTO
-            var okResult = Assert.IsType<OkObjectResult>(actionResult);
-            var value = okResult.Value!;
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
 
-            // Si controller devuelve { detalle = ofertas, precioTotal = n }, extraer detalle
-            OfertaDetalleDTO actualDTO;
-            var detalleProp = value.GetType().GetProperty("detalle");
-            if (detalleProp != null)
-            {
-                actualDTO = Assert.IsType<OfertaDetalleDTO>(detalleProp.GetValue(value));
-            }
-            else
-            {
-                // Si la acción devolviera directamente el DTO
-                actualDTO = Assert.IsType<OfertaDetalleDTO>(value);
-            }
+        [Fact]
+        [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
+        public async Task GetDetalleParaOferta_Found_test()
+        {
+            // Arrange
+            var mock = new Mock<ILogger<OfertasController>>();
+            var controller = new OfertasController(_context, mock.Object);
 
-            // Después usar actualDTO como antes
-            Assert.Equal(expectedDTO.Id, actualDTO.Id);
-            Assert.Equal(expectedDTO.metodoPago, actualDTO.metodoPago);
-            Assert.Equal(expectedDTO.tiposDirigidaOferta, actualDTO.tiposDirigidaOferta);
+            // Construir el DTO esperado
+            var expectedOferta = new OfertaDetalleDTO(
+                 _fechaInicio,
+                 _fechaFin,
+                 _fechaOferta,
+                 "Juan",
+                 tiposMetodoPago.Efectivo,
+                 tiposDirigidaOferta.Clientes,
+                 new List<OfertaItemDTO>
+                 {
+                    new OfertaItemDTO("Martillo", "Acero", "Pepe", 15.9f, 11.925f) // ← Valor correcto
+                 }
+            );
 
-            // Comparar items (ignorar posibles diferencias menores en timestamps)
-            Assert.Equal(expectedDTO.HerramientasAOfertar.Count, actualDTO.HerramientasAOfertar.Count);
+            // Act
+            var result = await controller.GetDetallesOferta(_ofertaId);
 
-            foreach (var esperado in expectedDTO.HerramientasAOfertar)
-            {
-                var match = actualDTO.HerramientasAOfertar.FirstOrDefault(a =>
-                    string.Equals(a.nombre, esperado.nombre, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(a.material, esperado.material, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(a.fabricante, esperado.fabricante, StringComparison.OrdinalIgnoreCase) &&
-                    Math.Abs(a.precio - esperado.precio) < 0.01f &&
-                    Math.Abs(a.precioOferta - esperado.precioOferta) < 0.01f
-                );
+            // Assert 
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var ofertaDTOActual = Assert.IsType<OfertaDetalleDTO>(okResult.Value);
 
-                Assert.NotNull(match);
-            }
+            // Comparar fechas (usar Date para evitar problemas de hora)
+            Assert.Equal(expectedOferta.fechaInicio.Date, ofertaDTOActual.fechaInicio.Date);
+            Assert.Equal(expectedOferta.fechaFin.Date, ofertaDTOActual.fechaFin.Date);
+            Assert.Equal(expectedOferta.fechaOferta.Date, ofertaDTOActual.fechaOferta.Date);
+
+            Assert.Equal(expectedOferta.nombreUsuario, ofertaDTOActual.nombreUsuario);
+            Assert.Equal(expectedOferta.metodoPago, ofertaDTOActual.metodoPago);
+            Assert.Equal(expectedOferta.tiposDirigidaOferta, ofertaDTOActual.tiposDirigidaOferta);
+
+            // Comparar items
+            Assert.Single(ofertaDTOActual.HerramientasAOfertar);
+
+            var expectedItem = expectedOferta.HerramientasAOfertar[0];
+            var actualItem = ofertaDTOActual.HerramientasAOfertar[0];
+
+            Assert.Equal(expectedItem.nombre, actualItem.nombre);
+            Assert.Equal(expectedItem.material, actualItem.material);
+            Assert.Equal(expectedItem.fabricante, actualItem.fabricante);
+            Assert.Equal(expectedItem.precio, actualItem.precio);
+            Assert.Equal(expectedItem.precioOferta, actualItem.precioOferta);
         }
     }
 }

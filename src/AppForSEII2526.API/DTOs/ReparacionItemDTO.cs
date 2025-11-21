@@ -9,19 +9,20 @@ namespace AppForSEII2526.API.DTOs
         }
 
         public ReparacionItemDTO(int herramientaId, float precio, string nombreHerramienta, 
-            string? descripcion, int cantidad)
+            string? descripcion, int cantidad, string? tiempoReparacion)
         {
             HerramientaId = herramientaId;
             this.precio = precio;
             this.nombreHerramienta = nombreHerramienta;
             this.descripcion = descripcion;
             this.cantidad = cantidad;
+            this.tiempoReparacion = tiempoReparacion;
         }
 
         [Key]
         public int HerramientaId { get; set; }
 
-        [Required, Range(0.01, float.MaxValue, ErrorMessage = "El precio debe ser un valor positivo.")]
+        [Required, Range(0.001, float.MaxValue, ErrorMessage = "El precio debe ser un valor positivo mayor que 0.001.")]
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float precio { get; set; }
 
@@ -31,8 +32,10 @@ namespace AppForSEII2526.API.DTOs
         [StringLength(50, ErrorMessage = "No puede tener mas de 50 caracteres.", MinimumLength = 4)]
         public string? descripcion { get; set; }
 
-        [Required, Range(1, int.MaxValue, ErrorMessage = "El id debe ser un número positivo mayor que 0.")]
+        [Required, Range(1, int.MaxValue, ErrorMessage = "La cantidad debe ser un número positivo mayor que 0.")]
         public int cantidad { get; set; }
+
+        public string? tiempoReparacion { get; set; }
 
         public override bool Equals(object? obj)
         {

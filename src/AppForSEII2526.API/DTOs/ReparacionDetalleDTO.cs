@@ -10,7 +10,7 @@ namespace AppForSEII2526.API.DTOs
         }
 
         public ReparacionDetalleDTO(int id, string nombre, string apellido, DateTime fechaEntrega,
-            DateTime fechaRecogida, metodoPago metodoPago, float? precioTotal,
+            DateTime fechaRecogida, float? precioTotal,
             IList<ReparacionItemDTO> herramientasAReparar)
         {
             this.id = id;
@@ -18,13 +18,12 @@ namespace AppForSEII2526.API.DTOs
             this.apellido = apellido;
             this.fechaEntrega = fechaEntrega;
             this.fechaRecogida = fechaRecogida;
-            this.metodoPago = metodoPago;
             HerramientasAReparar = herramientasAReparar;
             this.precioTotal = HerramientasAReparar.Sum(i => i.precio * i.cantidad);
         }
-
         [Key]
         public int id { get; set; }
+
 
         [Required, StringLength(50, ErrorMessage = "El nombre no puede tener más de 50 caracteres.")]
         public string nombre { get; set; }
@@ -40,11 +39,10 @@ namespace AppForSEII2526.API.DTOs
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime fechaRecogida { get; set; }
 
-        [Required(ErrorMessage = "El método de pago es obligatorio.")]
-        public metodoPago metodoPago { get; set; }
-
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float? precioTotal { get; set; }
+
+
 
         public IList<ReparacionItemDTO> HerramientasAReparar { get; set; }
 
@@ -55,13 +53,12 @@ namespace AppForSEII2526.API.DTOs
                     nombre == other.nombre &&
                     apellido == other.apellido &&
                     fechaEntrega == other.fechaEntrega &&
-                    metodoPago == other.metodoPago &&
                     precioTotal == other.precioTotal &&
-                    HerramientasAReparar == other.HerramientasAReparar;
+                    HerramientasAReparar.SequenceEqual(other.HerramientasAReparar);
         }
         public override int GetHashCode()
         {
-            return HashCode.Combine(id, nombre, apellido, fechaEntrega, metodoPago, precioTotal, HerramientasAReparar);
+            return HashCode.Combine(nombre, apellido, fechaEntrega, precioTotal, HerramientasAReparar);
         }
     }
 }
