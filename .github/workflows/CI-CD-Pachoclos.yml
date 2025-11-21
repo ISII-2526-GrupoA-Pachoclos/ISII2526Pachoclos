@@ -29,11 +29,11 @@ jobs:
      
 
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
+      
+      - uses: actions/checkout@v4
 
 
-      - name: Set up .NET
+      - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
@@ -45,7 +45,7 @@ jobs:
           dotnet restore ${{ env.UT }}
           
 
-      - name: Build the solution
+      - name: Build with dotnet
         run: |
             dotnet build ${{ env.API }} --configuration Release --no-restore
            
@@ -55,8 +55,34 @@ jobs:
       - name: Run unit tests with report
         run: dotnet test ${{ env.UT }} --configuration Release --no-build --logger "trx;LogFileName=TestResults.trx"
 
-      - name: Upload test results
+      - name : dotnet publish
+        run: dotnet publish ${{ env.API }} -c Release -o "${{env.DOTNET_ROOT}}//myapp"
+
+       
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: TestResults
-          path: ./test/AppForSEII2526.UT/TestResults/TestResults.trx        
+          name: .net -app
+          path: ${{env.DOTNET_ROOT}}//myapp
+          
+
+  deploy:
+   runs-on: windows-latest
+   needs: build
+   steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net -app
+
+      - name : Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: "appforseii2526api"
+          slot-name: "Production"
+
+          package: .
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_CLIENTID_7D6A9E6513104D7B99C1930DB296DC1A }}
+          
+
