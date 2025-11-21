@@ -6,7 +6,7 @@ name: Build and deploy ASP.Net Core app to Azure Web App - Pachoclos
 on:
   push:
     branches:
-      - Copia-CI-Pachoclos-Adrian
+      - CI-Pachoclos
       
   workflow_dispatch:
 jobs:
@@ -51,27 +51,22 @@ jobs:
   deploy:
     runs-on: windows-latest
     needs: build
-    permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
 
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: .net-app
-      
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_7D6A9E6513104D7B99C1930DB296DC1A }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BE33E743ADDD4E36B76330E6B6214EE5 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_C4C08E2B96FA4366B1DCF36C063189E9 }}
+        - name: Download artifact from build job
+          uses: actions/download-artifact@v4
+          with:
+                name: .net-app
+        - name: Deploy to Azure WebApp
+          id: deploy-to-webapp
+          uses: azure/webapps-deploy@v3
+          with:
+            app-name: 'Pachoclos'
+            slot-name: 'Production'
+            package: .
+            publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7D6A9E6513104D7B99C1930DB296DC1A }}
+            
+  
 
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'Pachoclos'
-          slot-name: 'Production'
-          package: .
+    
+    
