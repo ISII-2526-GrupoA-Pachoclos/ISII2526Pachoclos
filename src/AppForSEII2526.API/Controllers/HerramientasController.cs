@@ -19,7 +19,7 @@ namespace AppForSEII2526.API.Controllers
         }
 
 
-
+        /*
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<Herramienta>), (int)HttpStatusCode.OK)]
@@ -29,7 +29,7 @@ namespace AppForSEII2526.API.Controllers
             return Ok(herramientas);
 
         }
-        
+        */
 
         /*
         [HttpGet]
@@ -46,7 +46,7 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<HerramientasParaComprarDTO>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult> GetHerramientasParaComprar_conTodosLosDatos_DTO(float? filtroPrecio, string? filtroMaterial) {
+        public async Task<ActionResult> GetHerramientasParaComprarconTodosLosDatosDTO(float? filtroPrecio, string? filtroMaterial) {
             
             var herramientas = await _context.Herramienta
                 .Include(h => h.fabricante)
@@ -79,13 +79,13 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<HerramientasParaRepararDTO>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult> GetHerramientasParaReparar_conTodosLosDatos_DTO(string? filtroNombre, string? filtroTiempoReparacion)
+        public async Task<ActionResult> GetHerramientasParaRepararconTodosLosDatosDTO(string? filtroNombre, string? filtroTiempoReparacion)
         {
             var herramientas = await _context.Herramienta
                 .Include(herramienta => herramienta.fabricante)
                 .Where(h => h.nombre.Contains(filtroNombre) || (filtroNombre == null)
                  && (h.tiempoReparacion.Equals(filtroTiempoReparacion) || filtroTiempoReparacion == null)
-                ).OrderBy(herramienta => herramienta.fabricante.nombre)
+                ).OrderBy(herramienta => herramienta.nombre)
                 .Select(h => new HerramientasParaRepararDTO (h.id, h.material, h.nombre, 
                     h.precio, h.tiempoReparacion, h.fabricante.nombre))
                 .ToArrayAsync();
@@ -110,15 +110,18 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<HerramientasParaOfertasDTO>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult> GetHerramientasParaOferta_conTodosLosDatos_DTO(float? filtroPrecio, string? filtroFabricante)
+        public async Task<ActionResult> GetHerramientasParaOfertaconTodosLosDatosDTO(float? filtroPrecio, string? filtroFabricante)
         {
+            // normalizar filtroFabricante para comparación segura
+            var filtroFabricanteNorm = filtroFabricante?.Trim().ToLower();
+
             var herramientas = await _context.Herramienta
                 .Include(h => h.fabricante)
-                .Where(h => (filtroPrecio == null || h.precio <= filtroPrecio) &&
-                    (filtroFabricante == null || h.fabricante.nombre == filtroFabricante)
-                )
-                .OrderBy(herramientas => herramientas.fabricante.nombre)
-                    .ThenBy(herramientas => herramientas.precio)
+                .Where(h => (filtroPrecio == null || h.precio <= filtroPrecio)
+                            && (filtroFabricanteNorm == null
+                                || h.fabricante.nombre.ToLower() == filtroFabricanteNorm))
+                .OrderBy(h => h.fabricante.nombre)
+                    .ThenBy(h => h.precio)
                 .Select(h => new HerramientasParaOfertasDTO(h.id, h.material, h.nombre, h.precio, h.fabricante.nombre))
                 .ToListAsync();
 

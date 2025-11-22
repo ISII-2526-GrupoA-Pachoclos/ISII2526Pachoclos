@@ -4,8 +4,17 @@ namespace AppForSEII2526.API.DTOs
 {
     public class CompraDetalleDTO
     {
-        [Key]
-        public int Id { get; set; }
+        //[Key]
+        //public int Id { get; set; }
+
+        [Required, StringLength(100, ErrorMessage = "No puede tener mas de 100 caracteres.", MinimumLength = 1)]
+        public string NombreCliente { get; set; }
+
+
+        [Required, StringLength(100, ErrorMessage = "No puede tener mas de 100 caracteres.", MinimumLength = 1)]
+        public string ApellidosCliente { get; set; }
+
+
 
         [Required, StringLength(100, ErrorMessage = "No puede tener mas de 100 caracteres.", MinimumLength = 1)]
         public string direccionEnvio { get; set; }
@@ -19,9 +28,11 @@ namespace AppForSEII2526.API.DTOs
 
         public IList<CompraItemDTO> HerramientasCompradas { get; set; }
 
-        public CompraDetalleDTO(int id, string direccionEnvio, DateTime fechaCompra, float? precioTotal, IList<CompraItemDTO> herramientasCompradas)
+        public CompraDetalleDTO( string NombreCliente, string ApellidoCliente, string direccionEnvio, DateTime fechaCompra, float? precioTotal, IList<CompraItemDTO> herramientasCompradas)
         {
-            Id = id;
+            
+            this.NombreCliente = NombreCliente;
+            this.ApellidosCliente = ApellidoCliente;
             this.direccionEnvio = direccionEnvio;
             this.fechaCompra = fechaCompra;
             HerramientasCompradas = herramientasCompradas;
@@ -32,19 +43,29 @@ namespace AppForSEII2526.API.DTOs
         {
         }
 
+       
+
+        protected bool CompareDate(DateTime date1, DateTime date2)
+        {
+            return (date1.Subtract(date2) < new TimeSpan(0, 1, 0));
+        }
+
         public override bool Equals(object? obj)
         {
-            return obj is CompraDetalleDTO dTO &&
-                   Id == dTO.Id &&
-                   direccionEnvio == dTO.direccionEnvio &&
-                   fechaCompra == dTO.fechaCompra &&
-                   precioTotal == dTO.precioTotal &&
-                   EqualityComparer<IList<CompraItemDTO>>.Default.Equals(HerramientasCompradas, dTO.HerramientasCompradas);
+            if (obj is not CompraDetalleDTO dto)
+                return false;
+
+            return  NombreCliente == dto.NombreCliente
+                && ApellidosCliente == dto.ApellidosCliente
+                && precioTotal == dto.precioTotal
+                && CompareDate(fechaCompra, dto.fechaCompra)
+                && direccionEnvio == dto.direccionEnvio
+                && HerramientasCompradas.SequenceEqual(dto.HerramientasCompradas);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, direccionEnvio, fechaCompra, precioTotal, HerramientasCompradas);
+            return HashCode.Combine( precioTotal, fechaCompra, direccionEnvio);
         }
     }
 }

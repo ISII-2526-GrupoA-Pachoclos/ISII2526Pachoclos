@@ -39,11 +39,10 @@ namespace AppForSEII2526.UT.HerramientasController_test
 
             var herramientaDTOsTC1 = new List<HerramientasParaOfertasDTO>() { herramientaDTOs[0], herramientaDTOs[1], herramientaDTOs[2] };
             var herramientaDTOsTC2 = new List<HerramientasParaOfertasDTO>() { herramientaDTOs[1] };
-            var herramientaDTOsTC3 = new List<HerramientasParaOfertasDTO>() { herramientaDTOs[1], herramientaDTOs[2] }; // 5.5 y 8
+            var herramientaDTOsTC3 = new List<HerramientasParaOfertasDTO>() { herramientaDTOs[1], herramientaDTOs[2] };
 
             var allTests = new List<object[]>
             {
-                // (precio, fabricante, expected)
                 new object[] { null, null, herramientaDTOsTC1 },
                 new object[] { null, "Ana", herramientaDTOsTC2 },
                 new object[] { 8.0f, null, herramientaDTOsTC3 }
@@ -62,13 +61,12 @@ namespace AppForSEII2526.UT.HerramientasController_test
             var controller = new HerramientasController(_context, null);
 
             // Act
-            var result = await controller.GetHerramientasParaOferta_conTodosLosDatos_DTO(filtroPrecio, filtroFabricante);
+            var result = await controller.GetHerramientasParaOfertaconTodosLosDatosDTO(filtroPrecio, filtroFabricante);
 
-            // Assert: comprobamos que es Ok y obtenemos la lista
+            // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             var herramientasDTOsActual = Assert.IsAssignableFrom<IList<HerramientasParaOfertasDTO>>(okResult.Value);
 
-            // Comparación robusta: mismo count y cada esperado tiene un match por propiedades (ignora id y orden)
             Assert.Equal(expectedHerramientasOfertadas.Count, herramientasDTOsActual.Count);
 
             foreach (var esperado in expectedHerramientasOfertadas)

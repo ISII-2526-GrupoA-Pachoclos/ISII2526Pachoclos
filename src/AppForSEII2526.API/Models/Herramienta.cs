@@ -13,8 +13,11 @@ namespace AppForSEII2526.API.Models
             alquilarItems = new List<alquilarItem>();
         }
 
+
+
         public Herramienta(int id, string material, string nombre, float precio, string tiempoReparacion, 
             IList<ReparacionItem> reparacionItem, IList<OfertaItem> ofertaItems, IList<ComprarItem> comprarItems, 
+
             fabricante fabricante, IList<alquilarItem> alquilarItems)
         {
             this.id = id;
@@ -28,6 +31,8 @@ namespace AppForSEII2526.API.Models
             this.fabricante = fabricante;
             this.alquilarItems = alquilarItems;
         }
+
+
 
         public Herramienta(int id, string material, string nombre, float precio, fabricante fabricante)
         {
@@ -46,6 +51,7 @@ namespace AppForSEII2526.API.Models
             tiempoReparacion = TiempoReparacion;
             fabricante = Fabricante;
         }
+
 
         [Key]
         public int id { get; set; }
