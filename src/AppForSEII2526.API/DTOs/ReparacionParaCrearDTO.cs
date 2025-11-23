@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using AppForSEII2526.API.Models;
 
 namespace AppForSEII2526.API.DTOs
@@ -32,19 +33,6 @@ namespace AppForSEII2526.API.DTOs
             Herramientas = herramientas;
         }
 
-        // Para el StateContainer
-        public ReparacionParaCrearDTO(string nombreC, string apellidos, string? numTelefono, metodoPago metodoPago, 
-            DateTime fechaEntrega, IList<ReparacionItemDTO> herramientas, float PrecioTotal)
-        {
-            this.nombreC = nombreC;
-            this.apellidos = apellidos;
-            this.numTelefono = numTelefono;
-            this.metodoPago = metodoPago;
-            this.fechaEntrega = fechaEntrega;
-            Herramientas = herramientas;
-            this.PrecioTotal = PrecioTotal;
-        }
-
         [Required, StringLength(50, ErrorMessage = "El nombre no puede tener más de 50 caracteres.")]
         public string nombreC { get; set; }
 
@@ -65,8 +53,17 @@ namespace AppForSEII2526.API.DTOs
         [Required(ErrorMessage = "Debe incluir al menos una herramienta para reparar.")]
         public IList<ReparacionItemDTO> Herramientas { get; set; } = new List<ReparacionItemDTO>();
 
-        [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
-        public float PrecioTotal { get; set; }
+
+        [DisplayName("Precio Total")]
+        [JsonPropertyName("PrecioTotal")]
+        public float PrecioTotal
+        {
+            get
+            {
+                return Herramientas.Sum(h => h.precio * h.cantidad);
+            }
+            // De solo lectura, sin setter
+        }
 
         public override bool Equals(object? obj)
         {
@@ -78,7 +75,6 @@ namespace AppForSEII2526.API.DTOs
                    fechaEntrega == dTO.fechaEntrega &&
                    PrecioTotal == dTO.PrecioTotal &&
                    Herramientas.SequenceEqual(dTO.Herramientas);
-                   
         }
 
         public override int GetHashCode()

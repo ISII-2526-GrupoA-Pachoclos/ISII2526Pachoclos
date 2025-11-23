@@ -14,9 +14,10 @@ namespace AppForSEII2526.Web
         private void NotifyStateChanged() => OnChange?.Invoke();
 
         private void CalcularPrecioTotal()
+        // La propiedad PrecioTotal en ReparacionParaCrearDTO ya calcula automáticamente el precio total sumando
+        // Herramientas.Sum(h => h.precio * h.cantidad), así que aquí solo necesitamos notificar el cambio de estado.
         {
             Reparacion.Herramientas = Reparacion.Herramientas.Where(h => h.Cantidad > 0).ToList();
-            Reparacion.PrecioTotal = Reparacion.Herramientas.Sum(h => h.Precio * h.Cantidad);
             NotifyStateChanged();
         }
 
@@ -66,7 +67,8 @@ namespace AppForSEII2526.Web
         public void BorrarCarritoReparacion()
         {
             Reparacion.Herramientas.Clear();
-            Reparacion.PrecioTotal = 0;
+            // No es necesario poner Reparacion.PrecioTotal = 0,
+            // ya que se calcula automáticamente cuando hacemos Herramientas.Clear()
             NotifyStateChanged();
         }
 
