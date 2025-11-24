@@ -7,29 +7,37 @@ on:
   push:
     branches:
       - CI-Pachoclos
-      
+#      - development
+#    paths:
+#      - 'src/AppForSEEII2526.API**'
   workflow_dispatch:
+
 jobs:
   build:
     runs-on: windows-latest
     permissions:
       contents: read #This is required for actions/checkout
+    
     env:
       API: ./src/AppForSEII2526.API/AppForSEII2526.API.csproj
       UT: ./test/AppForSEII2526.UT/AppForSEII2526.UT.csproj
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out repository code branch development
+        uses: actions/checkout@v4
+        with: 
+            ref: 'CI-Pachoclos'
 
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
-
+       
       - name: Restore dependencies
         run: |
-          dotnet restore ${{ env.API }}
-          dotnet restore ${{ env.UT }}
+          dotnet restore ${{ env.API }} 
+          dotnet restore ${{ env.UT }} 
+
 
       - name: Build with dotnet
         run: |
@@ -37,10 +45,10 @@ jobs:
           dotnet build ${{ env.UT }}  --configuration Release --no-restore
 
       - name: Run unit tests with report
-        run: dotnet test ${{ env.UT }} --configuration Release --no-build --logger "trx;LogFileName=TestsResults.trx"
+        run: dotnet test ${{ env.UT }} --configuration Release --no-build --logger "trx;LogFileName=TestResults.trx"
 
       - name: dotnet publish
-        run: dotnet publish ${{ env.API }} -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+        run: dotnet publish ${{ env.API }}  -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -51,22 +59,28 @@ jobs:
   deploy:
     runs-on: windows-latest
     needs: build
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
     steps:
-        - name: Download artifact from build job
-          uses: actions/download-artifact@v4
-          with:
-                name: .net-app
-        - name: Deploy to Azure WebApp
-          id: deploy-to-webapp
-          uses: azure/webapps-deploy@v3
-          with:
-            app-name: 'Pachoclos'
-            slot-name: 'Production'
-            package: .
-            publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7D6A9E6513104D7B99C1930DB296DC1A }}
-            
-  
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-app
+      
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_7D6A9E6513104D7B99C1930DB296DC1A }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BE33E743ADDD4E36B76330E6B6214EE5 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_C4C08E2B96FA4366B1DCF36C063189E9 }}
 
-    
-    
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'Pachoclos'
+          slot-name: 'Production'
+          package: .
+          
