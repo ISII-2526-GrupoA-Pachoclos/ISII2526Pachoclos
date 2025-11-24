@@ -19,7 +19,7 @@ namespace AppForSEII2526.API.DTOs
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
         public float precio { get; set; }
 
-
+        
 
         public CompraItemDTO(int herramientaid, int cantidad, string nombre, string descripcion, float precio)
         {
@@ -28,6 +28,7 @@ namespace AppForSEII2526.API.DTOs
             this.nombre = nombre;
             this.descripcion = descripcion;
             this.precio = precio;
+            
         }
 
         public CompraItemDTO()

@@ -13,15 +13,6 @@
         {
         }
 
-        public OfertaItemDTO(int herramientaId, string nombre, string material, string fabricante, float precio, float precioOferta)
-        {
-            this.herramientaId = herramientaId;
-            this.nombre = nombre;
-            this.material = material;
-            this.fabricante = fabricante;
-            this.precio = precio;
-            this.precioOferta = precioOferta;
-        }
 
         public OfertaItemDTO(string nombre, string material, string fabricante, float precio, float precioOferta)
         {
