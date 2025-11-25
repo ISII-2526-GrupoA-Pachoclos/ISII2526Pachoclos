@@ -1,4 +1,5 @@
-﻿using System.Security.Policy;
+﻿using System.ComponentModel;
+using System.Security.Policy;
 
 namespace AppForSEII2526.API.DTOs
 {
@@ -21,5 +22,16 @@ namespace AppForSEII2526.API.DTOs
         public formaPago metodoPago { get; set; }
 
         public IList<CompraItemDTO> HerramientasCompradas { get; set; }
+
+        [Display(Name ="Precio Total")]
+        [JsonPropertyName("PrecioTotal")]
+        public float PrecioTotal
+        {
+            get { 
+                return HerramientasCompradas.Sum(ri => ri.precio * ri.cantidad);
+
+            }
+        
+        }
     }
 }
