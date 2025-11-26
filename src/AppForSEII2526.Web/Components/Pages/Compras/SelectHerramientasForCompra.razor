@@ -1,0 +1,72 @@
+﻿@page "/Compras/SelectHerramientasForCompra"
+
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient apiclient
+@inject ILogger<SelectHerramientasForCompra> logger
+
+
+
+<h3>SelectHerramientasForCompra</h3>
+<div class="container-fluid">
+    <div class="row"hidden="@hideErrors">
+        <p>here i will show the errors</p>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <div class="row">
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Title</span>
+                        <input type="text" id="inputTitle" @bind=filtroPrecio class="form-control" placeholder="Title" aria-label="Title" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Genre</span>
+                        <input type="text" id="inputGenre" @bind=filtroNombre class="form-control" placeholder="Genre" aria-label="Genre" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                
+                @if (herramientas == null)
+                {
+                    <p>Cargando herramientas....</p>
+                }
+                else
+                {
+                    <p>number of movies @herramientas.Count</p>
+
+                }
+            </div>
+        </div>
+        <div class="col-2">
+            <p>here i will show the renting cart</p>
+        </div>
+
+    </div>
+
+</div>
+
+@code {
+    private ICollection<HerramientasParaComprarDTO> herramientas;
+    private bool hideErrors { get { return errors.Length == 0; } }
+    private string errors = "";
+    private string filtroNombre { get; set; }
+    private float filtroPrecio { get; set; }
+
+    public async void BuscaHerramientas()
+    {
+        try
+        {
+            herramientas = await apiclient.GetHerramientasParaComprarconTodosLosDatosDTOAsync(filtroPrecio, filtroNombre);
+        }
+        catch (ApiException ex)
+        {
+            logger.LogError($"{DateTime.Now} Error: {ex}");
+            errors = "Error while connecting to the system";
+        }
+        StateHasChanged();
+
+    
+    }
+
+}
