@@ -1,4 +1,6 @@
 ﻿using AppForSEII2526.Web.API;
+using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace AppForSEII2526.Web
 {
@@ -9,17 +11,18 @@ namespace AppForSEII2526.Web
             Herramientas = new List<ReparacionItemDTO>()
         };
 
+        public double PrecioTotal
+        {
+            get
+            {
+                return Reparacion.Herramientas.Sum(h => h.Precio * h.Cantidad);
+            }
+            // De solo lectura, sin setter
+        }
+
         public event Action? OnChange;
 
         private void NotifyStateChanged() => OnChange?.Invoke();
-
-        private void CalcularPrecioTotal()
-        // La propiedad PrecioTotal en ReparacionParaCrearDTO ya calcula automáticamente el precio total sumando
-        // Herramientas.Sum(h => h.precio * h.cantidad), así que aquí solo necesitamos notificar el cambio de estado.
-        {
-            Reparacion.Herramientas = Reparacion.Herramientas.Where(h => h.Cantidad > 0).ToList();
-            NotifyStateChanged();
-        }
 
         public void AddHerramientaToReparar(HerramientasParaRepararDTO herramienta)
         {
@@ -34,7 +37,6 @@ namespace AppForSEII2526.Web
                     Cantidad = 1, // valor inicial por defecto
                     TiempoReparacion = herramienta.TiempoReparacion
                 });
-                CalcularPrecioTotal();
             }
         }
 
@@ -44,7 +46,6 @@ namespace AppForSEII2526.Web
             if (herr != null && nuevaCantidad > 0)
             {
                 herr.Cantidad = nuevaCantidad;
-                CalcularPrecioTotal();
             }
         }
         
@@ -61,7 +62,6 @@ namespace AppForSEII2526.Web
         public void BorrarHerramientaParaReparar(ReparacionItemDTO item)
         {
             Reparacion.Herramientas.Remove(item);
-            CalcularPrecioTotal();
         }
 
         public void BorrarCarritoReparacion()

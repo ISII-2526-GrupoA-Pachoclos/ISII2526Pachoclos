@@ -54,16 +54,7 @@ namespace AppForSEII2526.API.DTOs
         public IList<ReparacionItemDTO> Herramientas { get; set; } = new List<ReparacionItemDTO>();
 
 
-        [DisplayName("Precio Total")]
-        [JsonPropertyName("PrecioTotal")]
-        public float PrecioTotal
-        {
-            get
-            {
-                return Herramientas.Sum(h => h.precio * h.cantidad);
-            }
-            // De solo lectura, sin setter
-        }
+
 
         public override bool Equals(object? obj)
         {
@@ -73,13 +64,12 @@ namespace AppForSEII2526.API.DTOs
                    numTelefono == dTO.numTelefono &&
                    metodoPago == dTO.metodoPago &&
                    fechaEntrega == dTO.fechaEntrega &&
-                   PrecioTotal == dTO.PrecioTotal &&
                    Herramientas.SequenceEqual(dTO.Herramientas);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(nombreC, apellidos, numTelefono, metodoPago, Herramientas, PrecioTotal);
+            return HashCode.Combine(nombreC, apellidos, numTelefono, metodoPago, Herramientas);
         }
     }
 }
