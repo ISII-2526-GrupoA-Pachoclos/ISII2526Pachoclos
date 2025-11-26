@@ -13,7 +13,7 @@
         <p id="ErrorsShown">Errors: @errors</p>
     </div>
     <div class="row">
-        <div class="col-8">
+        <div class="col-12">
             <div class="row">
                 <p>* FILTROS</p>
                 <div class="col">
@@ -59,7 +59,7 @@
                                         <td>@h.Nombre</td>
                                         <td>@h.Material</td>
                                         <td>@h.Fabricante</td>
-                                        <td>@h.Precio</td>
+                                        <td>@h.Precio €</td>
                                         <td>@h.TiempoReparacion</td>
                                         <td>
                                             <button class="btn btn-outline-secondary" id="herramientaForReparar_@h.Nombre" @onclick="@(() => AddHerramienta(h))">Add</button>
@@ -72,19 +72,22 @@
                 }
             </div>
         </div>
-        <div class="col-2">
-            <p>here i will show the renting cart</p>
-            <div class="col-2" hidden="@hideRentingCart">
-                <div class="row">
-                    <h3>Shopping Cart</h3>
-                </div>
-                @foreach (ReparacionItemDTO item in rep.Herramientas)
-                {
-                    <div class="row">
+    </div>
+    <div class="row mt-3" hidden="@hideRentingCart">
+        <div class="col-12">
+            <div class="row">
+                <h3>Shopping Cart</h3>
+            </div>
+            @foreach (ReparacionItemDTO item in rep.Herramientas)
+            {
+                <div class="row mb-2">
+                    <div class="col-auto">
                         <button type="button" class="btn btn-light" id="removeHerramienta_@item.NombreHerramienta" @onclick="@(() => RemoveReparacionItem(item))">x @item.NombreHerramienta - @item.Precio€</button>
                     </div>
-                }
-                <div class="row">
+                </div>
+            }
+            <div class="row mt-2">
+                <div class="col-auto">
                     <button type="button" class="btn btn-primary" id="purchaseHerramientaButton" @onclick=@RepararHerramientas>Reparar Herramientas</button>
                 </div>
             </div>
