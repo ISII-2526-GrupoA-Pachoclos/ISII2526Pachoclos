@@ -34,7 +34,7 @@ namespace AppForSEII2526.Web
             );
         }
 
-        public void EliminarItemOferta(OfertaItemDTO item)
+        public void EliminarItemToOferta(OfertaItemDTO item)
         {
             Oferta.OfertaItem.Remove(item);
         }

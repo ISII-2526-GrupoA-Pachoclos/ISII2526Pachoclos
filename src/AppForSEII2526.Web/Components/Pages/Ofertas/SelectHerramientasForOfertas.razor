@@ -4,12 +4,13 @@
 @inject AppForHerramientasAPIClient apiclient
 @inject ILogger<SelectHerramientasForOfertas> logger
 @inject OfertasStateContainer ofertasState
+@inject NavigationManager navigation
 
 <h3>SelectHerramientasForOfertas</h3>
 
 <div class="container-fluid">
-    <div class="row" hidden= "@hideErrors">
-        <p>here i will show the errors</p>
+    <div class="row alert alert-danger" role="alert" hidden="@hideErrors">
+        <p id="ErrorsShown">Errors: @errors</p>
     </div>
     <div class="row">
         <div class="col-8">
@@ -29,55 +30,103 @@
 
                 </div>
                 <div class="col">
-                    <button type="button" class="btn btn-primary" @onclick=@SearchHerramientas id="searchHerramientas">Search herramientas</button>
+                    <button type="button" class="btn btn-primary" @onclick=@SearchHerramientas id="searchHerramientas">Buscar herramientas</button>
                 </div>
 
             </div>
             <div class="row">
                 @if (herramientas == null)
                 {
-                    <p>Loading herramientas....</p>
+                    <p>Cargando herramientas....</p>
                 }
                 else
                 {
-                    <p>number of herramientas @herramientas.Count</p>
+                <div class="mh-100 table-responsive">
+                    <table class="table table-condensed table-hover" id="TableOfHerramientas">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Material</th>
+                                <th>Fabricante</th>
+                                <th>Precio</th>
+                                
+                                <th>Añadir oferta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var herramienta in herramientas)
+                            {
+                                <tr id="HerramientaData_@herramienta.Nombre">
+                                    <td>@herramienta.Id</td>
+                                    <td>@herramienta.Nombre</td>
+                                    <td>@herramienta.Material</td>
+                                    <td>@herramienta.Fabricante</td>
+                                    <td>@herramienta.Precio</td>
+                                    
+                                    <td>
+                                        <button class="btn btn-outline-secondary" id="herramientaToOfertar_@herramienta.Nombre" @onclick="@(() => AddHerramientas(herramienta))">Add</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
 
                 }
             </div>
         </div>
-        <div class="col-2">
-            <p>here i will show the renting cart</p>
+    <div class="col-2" hidden="@hideRentingCart">
+        <div class="row">
+            <h3>Carrito Ofertas</h3>
+        </div>
+        @foreach (OfertaItemDTO item in ofertas.OfertaItem)
+        {
+            <div class="row">
+                <button type="button" class="btn btn-light" id="removeHerramienta_@item.Nombre" @onclick="@(() => EliminarItemOferta(item))">x @item.Nombre - @item.Precio€</button>
+            </div>
+        }
+        <div class="row">
+            <button type="button" class="btn btn-primary" id="ofertarHerramientaButton" @onclick=@OfertarHerramientas>Ofertar Herramientas</button>
+        </div>
         </div>
 
     </div>
 
 
 @code {
+    private bool hideRentingCart { get { return ofertas.OfertaItem.Count == 0; } }
     private ICollection<HerramientasParaOfertasDTO> herramientas;
     private bool hideErrors { get { return errors.Length == 0; } }
     private string errors = "";
-    private float filtroPrecio { get; set; }
+    private float? filtroPrecio { get; set; }
     private string filtroFabricante { get; set; }
 
-    private CrearOfertasDTO ofertas => ofertasState.Ofertas;
+    private CrearOfertaDTO ofertas => ofertasState.Oferta;
 
     private bool hiddenRentingCart = true;
 
     private void AddHerramientas(HerramientasParaOfertasDTO herramientas) {
-        rentalState.AddHerramientaToOferta(herramientas);
+        ofertasState.AddHerramientaToOferta(herramientas);
     }
 
     private void EliminarItemOferta(OfertaItemDTO item) {
-        rentalState.EliminarOfertaItemToOferta(item);
-        if (oferta.OfertaItems.Count == 0) hiddenRentingCart = true;
+        ofertasState.EliminarItemToOferta(item);
+        if (ofertas.OfertaItem.Count == 0) hiddenRentingCart = true;
     }
+
 
     public async void SearchHerramientas()
     {
+        if (filtroPrecio == 0)
+        {
+            filtroPrecio = null;
+        }
+
         try
         {
             herramientas = await apiclient.GetHerramientasParaOfertaconTodosLosDatosDTOAsync(filtroPrecio, filtroFabricante);
-
+            errors = "";
         }
         catch (ApiException ex)
         {
@@ -85,5 +134,10 @@
             errors = "Error while connecting to the system";
         }
         StateHasChanged();
+    }
+
+    private void OfertarHerramientas()
+    {
+        navigation.NavigateTo("/Ofertas/CrearOferta");
     }
 }
