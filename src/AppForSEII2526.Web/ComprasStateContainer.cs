@@ -11,13 +11,12 @@ namespace AppForSEII2526.Web
             HerramientasCompradas = new List<CompraItemDTO>()
         };
 
-        [Display(Name = "Precio Total")]
-        [JsonPropertyName("PrecioTotal")]
-        public double PrecioTotal
+        
+        public decimal PrecioTotal
         {
             get
             {
-                return Compra.HerramientasCompradas.Sum(ri => ri.Precio * ri.Cantidad);
+                return Convert.ToDecimal(Compra.HerramientasCompradas.Sum(ri => ri.Precio * ri.Cantidad));
 
             }
 
@@ -37,30 +36,24 @@ namespace AppForSEII2526.Web
 
                 }
                 );
-            ComputePrecioTotal();
+            
 
 
 
         }
 
-        public void ComputePrecioTotal()
-        {
-
-            //PrecioTotal = Compra.HerramientasCompradas.Sum(ri => ri.Precio * ri.Cantidad);
-            NotifyStateChanged();
-
-        }
+        
 
         public void EliminarItemCompra(CompraItemDTO item) {
             Compra.HerramientasCompradas.Remove(item);
-            ComputePrecioTotal();
+           
 
         }
 
         public void ClearCarritoCompra() { 
 
             Compra.HerramientasCompradas.Clear();
-            ComputePrecioTotal();
+            
 
 
         }
