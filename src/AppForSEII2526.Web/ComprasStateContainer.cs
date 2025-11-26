@@ -1,12 +1,27 @@
 ﻿using AppForSEII2526.Web.API;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 namespace AppForSEII2526.Web
 {
     public class ComprasStateContainer
     {
+
         public CrearCompraDTO Compra { get; private set; } = new CrearCompraDTO()
         {
             HerramientasCompradas = new List<CompraItemDTO>()
         };
+
+        [Display(Name = "Precio Total")]
+        [JsonPropertyName("PrecioTotal")]
+        public double PrecioTotal
+        {
+            get
+            {
+                return Compra.HerramientasCompradas.Sum(ri => ri.Precio * ri.Cantidad);
+
+            }
+
+        }
 
         public event Action? OnChange;
 
@@ -28,9 +43,10 @@ namespace AppForSEII2526.Web
 
         }
 
-        public void ComputePrecioTotal() { 
-            
-            
+        public void ComputePrecioTotal()
+        {
+
+            //PrecioTotal = Compra.HerramientasCompradas.Sum(ri => ri.Precio * ri.Cantidad);
             NotifyStateChanged();
 
         }
