@@ -1,0 +1,93 @@
+﻿@page "/Reparacion/SelectHerramientasForReparar"
+
+
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient apiclient
+@inject ILogger<SelectHerramientasForReparar> logger
+@inject ReparacionesStateContainer repsState
+
+<h3>SelectHerramientasForReparar</h3>
+<div class="container-fluid">
+    <div class="row" hidden="@hideErrors">
+        <p>here i will show the errors</p>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <div class="row">
+                <p>here i will show the filters</p>
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Title</span>
+                        <input type="text" id="inputTitle" @bind=filtroNombre class="form-control" placeholder="Nombre Herramienta" aria-label="Title" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Genre</span>
+                        <input type="text" id="inputGenre" @bind=filtroTiempoReparacion class="form-control" placeholder="Tiempo de Reparacion" aria-label="Genre" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" @onclick=@SearchHerramientas id="searchHerramientas">Search Herramientas</button>
+                </div>
+            </div>
+            <div class="row">
+                <p>here i will show the list of movies</p>
+                @if (herramientas == null)
+                {
+                    <p>Loading movies....</p>
+                }
+                else
+                {
+                    <p>number of movies @herramientas.Count</p>
+
+                }
+            </div>
+        </div>
+        <div class="col-2">
+            <p>here i will show the renting cart</p>
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+    private ICollection<HerramientasParaRepararDTO> herramientas;
+    private bool hideErrors { get { return errors.Length == 0; } }
+    private string errors = "";
+    private string filtroNombre { get; set; }
+    private string filtroTiempoReparacion { get; set; }
+
+    public async void SearchHerramientas()
+    {
+        try
+        {
+            herramientas = await apiclient.GetHerramientasParaRepararconTodosLosDatosDTOAsync(filtroNombre, filtroTiempoReparacion);
+        }
+        catch (ApiException ex)
+        {
+            logger.LogError($"{DateTime.Now} Error: {ex}");
+            errors = "Error while connecting to the system";
+        }
+        StateHasChanged();
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        SearchHerramientas();
+        return base.OnInitializedAsync();
+    }
+
+    private ReparacionParaCrearDTO rep => repsState.Reparacion;
+
+    private bool hiddenRentingCart = true;
+
+    private void AddHerramienta(HerramientasParaRepararDTO herr)
+    {
+        repsState.AddHerramientaToReparar(herr);
+    }
+
+    
+
+}

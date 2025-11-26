@@ -40,6 +40,8 @@ string? URI2API = builder.Configuration.GetValue(typeof(string), "AppForHerramie
 
 builder.Services.AddScoped<AppForHerramientasAPIClient>(sp => new AppForHerramientasAPIClient(URI2API, new HttpClient()));
 
+builder.Services.AddScoped<AppForSEII2526.Web.ReparacionesStateContainer>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
