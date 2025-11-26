@@ -79,6 +79,13 @@ namespace AppForSEII2526.API.Controllers
                     {
                         ModelState.AddModelError("Cantidad", "Error! La cantidad debe ser mayor que 0");
                     }
+
+                    if (item.cantidad == 3 && item.descripcion == "") {
+
+                        ModelState.AddModelError("Cantidad", "Error! Estas comprando demasiadas herramientas sin descripcion");
+
+
+                    }
                 }
 
 
@@ -168,7 +175,7 @@ namespace AppForSEII2526.API.Controllers
 
             var compraDetalleDTO = new CompraDetalleDTO(user.nombre, user.apellido, compra.direccionEnvio, compra.fechaCompra, compra.precioTotal, Crearcompra.HerramientasCompradas);
 
-            return CreatedAtAction("GetDetalles_Compra", new { id = compra.Id }, compraDetalleDTO);
+            return CreatedAtAction("GetDetallesCompra", new { id = compra.Id }, compraDetalleDTO);
 
 
 

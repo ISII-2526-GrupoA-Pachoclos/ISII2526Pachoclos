@@ -3,6 +3,7 @@ using AppForSEII2526.API.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -98,6 +99,12 @@ namespace AppForSEII2526.API.Controllers
             {
                 ModelState.AddModelError("metodoPago",
                     "El método de pago no es válido. Valores permitidos: 0 (Efectivo), 1 (TarjetaCredito), 2 (PayPal).");
+            }
+
+            // VALIDACIÓN DEL EXAMEN DE PRÁCTICAS DEL SPRINT 2: REVISAR NUMERO DE TELEFONO
+            if(!reparacionParaCrear.numTelefono.StartsWith("+34")) // Comprobamos que empiece por +34
+            {
+                ModelState.AddModelError("numTelefono", "Error!, el teléfono debe empezar por +34"); // Devolver Bad Request
             }
 
             // cliente en la base de datos (AspNetUsers) ??
@@ -246,7 +253,7 @@ namespace AppForSEII2526.API.Controllers
             );
 
             // 201 de exito
-            return CreatedAtAction("GetDetalles_Reparacion", new { id = reparacion.id }, reparacionDetalle);
+            return CreatedAtAction("GetDetallesReparacion", new { id = reparacion.id }, reparacionDetalle);
         }
     }
 }
