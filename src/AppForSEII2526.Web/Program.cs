@@ -41,7 +41,7 @@ string? URI2API = builder.Configuration.GetValue(typeof(string), "AppForHerramie
 
 builder.Services.AddScoped<AppForHerramientasAPIClient>(sp => new AppForHerramientasAPIClient(URI2API, new HttpClient()));
 
-builder.Services.AddScoped<OfertasStateContainer>();
+builder.Services.AddScoped<AppForSEII2526.Web.OfertasStateContainer>();
 
 var app = builder.Build();
 

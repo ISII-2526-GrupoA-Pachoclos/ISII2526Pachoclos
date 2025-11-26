@@ -1,0 +1,89 @@
+﻿@page "/Ofertas/SelectHerramientasForOfertas"
+
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient apiclient
+@inject ILogger<SelectHerramientasForOfertas> logger
+@inject OfertasStateContainer ofertasState
+
+<h3>SelectHerramientasForOfertas</h3>
+
+<div class="container-fluid">
+    <div class="row" hidden= "@hideErrors">
+        <p>here i will show the errors</p>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <div class="row">
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Precio</span>
+                        <input type="text" id="inputTitle" @bind=filtroPrecio class="form-control" placeholder="Precio" aria-label="Precio" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Fabricante</span>
+                        <input type="text" id="inputGenre" @bind=filtroFabricante class="form-control" placeholder="Fabricante" aria-label="Fabricante" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" @onclick=@SearchHerramientas id="searchHerramientas">Search herramientas</button>
+                </div>
+
+            </div>
+            <div class="row">
+                @if (herramientas == null)
+                {
+                    <p>Loading herramientas....</p>
+                }
+                else
+                {
+                    <p>number of herramientas @herramientas.Count</p>
+
+                }
+            </div>
+        </div>
+        <div class="col-2">
+            <p>here i will show the renting cart</p>
+        </div>
+
+    </div>
+
+
+@code {
+    private ICollection<HerramientasParaOfertasDTO> herramientas;
+    private bool hideErrors { get { return errors.Length == 0; } }
+    private string errors = "";
+    private float filtroPrecio { get; set; }
+    private string filtroFabricante { get; set; }
+
+    private CrearOfertasDTO ofertas => ofertasState.Ofertas;
+
+    private bool hiddenRentingCart = true;
+
+    private void AddHerramientas(HerramientasParaOfertasDTO herramientas) {
+        rentalState.AddHerramientaToOferta(herramientas);
+    }
+
+    private void EliminarItemOferta(OfertaItemDTO item) {
+        rentalState.EliminarOfertaItemToOferta(item);
+        if (oferta.OfertaItems.Count == 0) hiddenRentingCart = true;
+    }
+
+    public async void SearchHerramientas()
+    {
+        try
+        {
+            herramientas = await apiclient.GetHerramientasParaOfertaconTodosLosDatosDTOAsync(filtroPrecio, filtroFabricante);
+
+        }
+        catch (ApiException ex)
+        {
+            logger.LogError($"{DateTime.Now} Error: {ex}");
+            errors = "Error while connecting to the system";
+        }
+        StateHasChanged();
+    }
+}

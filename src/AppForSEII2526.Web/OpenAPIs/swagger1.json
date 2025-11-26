@@ -1065,7 +1065,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": {}
+        "additionalProperties": { }
       },
       "formaPago": {
         "enum": [
