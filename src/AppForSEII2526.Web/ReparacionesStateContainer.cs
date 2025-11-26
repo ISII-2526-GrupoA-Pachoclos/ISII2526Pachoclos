@@ -1,4 +1,6 @@
 ﻿using AppForSEII2526.Web.API;
+using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace AppForSEII2526.Web
 {
@@ -8,6 +10,15 @@ namespace AppForSEII2526.Web
         {
             Herramientas = new List<ReparacionItemDTO>()
         };
+
+        public double PrecioTotal
+        {
+            get
+            {
+                return Reparacion.Herramientas.Sum(h => h.Precio * h.Cantidad);
+            }
+            // De solo lectura, sin setter
+        }
 
         public event Action? OnChange;
 
@@ -47,7 +58,7 @@ namespace AppForSEII2526.Web
                 CalcularPrecioTotal();
             }
         }
-
+        
         public void UpdateDescripcionHerramienta(int herramientaId, string nuevaDescripcion)
         {
             var herr = Reparacion.Herramientas.FirstOrDefault(h => h.HerramientaId == herramientaId);
