@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using AppForSEII2526.API.Models;
 
 namespace AppForSEII2526.API.DTOs
@@ -52,6 +53,9 @@ namespace AppForSEII2526.API.DTOs
         [Required(ErrorMessage = "Debe incluir al menos una herramienta para reparar.")]
         public IList<ReparacionItemDTO> Herramientas { get; set; } = new List<ReparacionItemDTO>();
 
+
+
+
         public override bool Equals(object? obj)
         {
             return obj is ReparacionParaCrearDTO dTO &&
@@ -61,7 +65,6 @@ namespace AppForSEII2526.API.DTOs
                    metodoPago == dTO.metodoPago &&
                    fechaEntrega == dTO.fechaEntrega &&
                    Herramientas.SequenceEqual(dTO.Herramientas);
-                   
         }
 
         public override int GetHashCode()

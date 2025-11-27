@@ -17,7 +17,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
     {
         private const string _nombreCliente = "pibi";
         private const string _apellidosCliente = "ronaldo";
-        private const string _numTelefono = "9876543210";
+        private const string _numTelefono = "+349876543210";
 
         private const string _herramienta1Nombre = "Llave Inglesa";
         private const string _herramienta2Nombre = "Destornillador";
@@ -136,6 +136,15 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 _nombreCliente, _apellidosCliente, _numTelefono, (metodoPago)99, // Valor inválido
                 DateTime.Today.AddDays(1), herramientasMetodoPagoInvalido);
 
+            // CASO DEL EXAMEN SPRINT 2: El teléfono no empieza por +34 (y no es nulo por lógica)
+            var herramientasTlfInvalido = new List<ReparacionItemDTO>
+            {
+                new ReparacionItemDTO(4, 10.0f, _herramienta1Nombre, "Mango roto", 1, "10 dias")
+            };
+
+            var reparacionTlfInvalido = new ReparacionParaCrearDTO(_nombreCliente, _apellidosCliente, "1234", // Telefono no empieza por +34
+                metodoPago.Efectivo, herramientasTlfInvalido);
+
             var allTests = new List<object[]>
             {
                 new object[] { reparacionSinHerramientas, "Debe incluir al menos una herramienta para reparar." },
@@ -145,6 +154,7 @@ namespace AppForSEII2526.UT.ReparacionesController_test
                 new object[] { reparacionCantidadCero, $"La cantidad de la herramienta '{_herramienta1Nombre}' debe ser mayor que 0." },
                 new object[] { reparacionNombreIncorrecto, $"El nombre de la herramienta 'Nombre Incorrecto' no coincide con el ID 4." },
                 new object[] { reparacionMetodoPagoInvalido, "El método de pago no es válido. Valores permitidos: 0 (Efectivo), 1 (TarjetaCredito), 2 (PayPal)." },
+                new object[] { reparacionTlfInvalido, "Error!, el teléfono debe empezar por +34" } // Prueba pedida en el examen
             };
 
             return allTests;

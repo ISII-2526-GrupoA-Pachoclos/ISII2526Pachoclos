@@ -65,7 +65,7 @@ namespace AppForSEII2526.UT.OfertasController_test
                 FechaFin = DateTime.Today.AddDays(30),
                 TiposMetodoPago = tiposMetodoPago.Tarjeta,
                 TiposDirigidaOferta = tiposDirigidaOferta.Socios,
-                CrearOfertaItem = new List<CrearOfertaItemDTO>()
+                OfertaItem = new List<OfertaItemDTO>()
             };
 
             var OfertaFechaInicioPasada = new CrearOfertaDTO
@@ -74,10 +74,10 @@ namespace AppForSEII2526.UT.OfertasController_test
                 FechaFin = DateTime.Today.AddDays(30),
                 TiposMetodoPago = tiposMetodoPago.Tarjeta,
                 TiposDirigidaOferta = tiposDirigidaOferta.Socios,
-                CrearOfertaItem = new List<CrearOfertaItemDTO>()
+                OfertaItem = new List<OfertaItemDTO>()
             };
-            var OfertaItemValido = new CrearOfertaItemDTO { herramientaid = 1, porcentaje = 25 };
-            OfertaFechaInicioPasada.CrearOfertaItem.Add(OfertaItemValido);
+            var OfertaItemValido = new OfertaItemDTO { herramientaId = 1, Porcentaje = 25 };
+            OfertaFechaInicioPasada.OfertaItem.Add(OfertaItemValido);
 
             var OfertaFechaFinAnterior = new CrearOfertaDTO
             {
@@ -85,9 +85,9 @@ namespace AppForSEII2526.UT.OfertasController_test
                 FechaFin = DateTime.Today.AddDays(5),
                 TiposMetodoPago = tiposMetodoPago.Tarjeta,
                 TiposDirigidaOferta = tiposDirigidaOferta.Socios,
-                CrearOfertaItem = new List<CrearOfertaItemDTO>()
+                OfertaItem = new List<OfertaItemDTO>()
             };
-            OfertaFechaFinAnterior.CrearOfertaItem.Add(OfertaItemValido);
+            OfertaFechaFinAnterior.OfertaItem.Add(OfertaItemValido);
 
             var OfertaPorcentajeCero = new CrearOfertaDTO
             {
@@ -95,10 +95,10 @@ namespace AppForSEII2526.UT.OfertasController_test
                 FechaFin = DateTime.Today.AddDays(30),
                 TiposMetodoPago = tiposMetodoPago.Tarjeta,
                 TiposDirigidaOferta = tiposDirigidaOferta.Socios,
-                CrearOfertaItem = new List<CrearOfertaItemDTO>()
+                OfertaItem = new List<OfertaItemDTO>()
             };
-            var OfertaItemPorcentajeCero = new CrearOfertaItemDTO { herramientaid = 1, porcentaje = 0 };
-            OfertaPorcentajeCero.CrearOfertaItem.Add(OfertaItemPorcentajeCero);
+            var OfertaItemPorcentajeCero = new OfertaItemDTO { herramientaId = 1, Porcentaje = 0 };
+            OfertaPorcentajeCero.OfertaItem.Add(OfertaItemPorcentajeCero);
 
             var OfertaPorcentajeExcesivo = new CrearOfertaDTO
             {
@@ -106,10 +106,10 @@ namespace AppForSEII2526.UT.OfertasController_test
                 FechaFin = DateTime.Today.AddDays(30),
                 TiposMetodoPago = tiposMetodoPago.Tarjeta,
                 TiposDirigidaOferta = tiposDirigidaOferta.Socios,
-                CrearOfertaItem = new List<CrearOfertaItemDTO>()
+                OfertaItem = new List<OfertaItemDTO>()
             };
-            var OfertaItemPorcentajeExcesivo = new CrearOfertaItemDTO { herramientaid = 1, porcentaje = 101 };
-            OfertaPorcentajeExcesivo.CrearOfertaItem.Add(OfertaItemPorcentajeExcesivo);
+            var OfertaItemPorcentajeExcesivo = new OfertaItemDTO { herramientaId = 1, Porcentaje = 101 };
+            OfertaPorcentajeExcesivo.OfertaItem.Add(OfertaItemPorcentajeExcesivo);
 
             var OfertaHerramientaNoExistente = new CrearOfertaDTO
             {
@@ -117,10 +117,10 @@ namespace AppForSEII2526.UT.OfertasController_test
                 FechaFin = DateTime.Today.AddDays(30),
                 TiposMetodoPago = tiposMetodoPago.Tarjeta,
                 TiposDirigidaOferta = tiposDirigidaOferta.Socios,
-                CrearOfertaItem = new List<CrearOfertaItemDTO>()
+                OfertaItem = new List<OfertaItemDTO>()
             };
-            var OfertaItemHerramientaNE = new CrearOfertaItemDTO { herramientaid = 999, porcentaje = 25 };
-            OfertaHerramientaNoExistente.CrearOfertaItem.Add(OfertaItemHerramientaNE);
+            var OfertaItemHerramientaNE = new OfertaItemDTO { herramientaId = 999, Porcentaje = 25 };
+            OfertaHerramientaNoExistente.OfertaItem.Add(OfertaItemHerramientaNE);
 
             var OfertaSinUsuario = new CrearOfertaDTO
             {
@@ -128,9 +128,19 @@ namespace AppForSEII2526.UT.OfertasController_test
                 FechaFin = DateTime.Today.AddDays(30),
                 TiposMetodoPago = tiposMetodoPago.Tarjeta,
                 TiposDirigidaOferta = tiposDirigidaOferta.Socios,
-                CrearOfertaItem = new List<CrearOfertaItemDTO>()
+                OfertaItem = new List<OfertaItemDTO>()
             };
-            OfertaSinUsuario.CrearOfertaItem.Add(OfertaItemValido);
+            OfertaSinUsuario.OfertaItem.Add(OfertaItemValido);
+
+            //Modificación Examen Sprint 2
+            var DuracionOferta = new CrearOfertaDTO
+            {
+                FechaInicio = DateTime.Today.AddDays(1),
+                FechaFin = DateTime.Today.AddDays(5),
+                TiposMetodoPago = tiposMetodoPago.Tarjeta,
+                TiposDirigidaOferta = tiposDirigidaOferta.Socios,
+                OfertaItem = new List<OfertaItemDTO>()
+            };
 
             var allTest = new List<object[]>
             {
@@ -140,7 +150,8 @@ namespace AppForSEII2526.UT.OfertasController_test
                 new object[] { OfertaPorcentajeCero, "El porcentaje 0% de 'Martillo' debe estar entre 1 y 100" },
                 new object[] { OfertaPorcentajeExcesivo, "El porcentaje 101% de 'Martillo' debe estar entre 1 y 100" },
                 new object[] { OfertaHerramientaNoExistente, "La herramienta con id 999 no existe" },
-                new object[] { OfertaSinUsuario, "No se encontró un usuario válido" }
+                new object[] { OfertaSinUsuario, "No se encontró un usuario válido" },
+                new object[] {DuracionOferta, "¡Error, la oferta debe durar al menos 1 semana!" }
             };
 
             return allTest;
@@ -187,10 +198,10 @@ namespace AppForSEII2526.UT.OfertasController_test
 
             var controller = new OfertasController(_context, logger);
 
-            var ofertaItems = new List<CrearOfertaItemDTO>
+            var ofertaItems = new List<OfertaItemDTO>
             {
-                new CrearOfertaItemDTO { herramientaid = 1, porcentaje = 25 },
-                new CrearOfertaItemDTO { herramientaid = 2, porcentaje = 10 }
+                new OfertaItemDTO { herramientaId = 1, Porcentaje = 25 },
+                new OfertaItemDTO { herramientaId = 2, Porcentaje = 10 }
             };
 
             var ofertaDto = new CrearOfertaDTO
@@ -199,7 +210,7 @@ namespace AppForSEII2526.UT.OfertasController_test
                 FechaFin = DateTime.Today.AddDays(30),
                 TiposMetodoPago = tiposMetodoPago.Tarjeta,
                 TiposDirigidaOferta = tiposDirigidaOferta.Socios,
-                CrearOfertaItem = ofertaItems
+                OfertaItem = ofertaItems
             };
 
             // Act

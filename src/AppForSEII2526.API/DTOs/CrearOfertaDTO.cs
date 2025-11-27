@@ -19,11 +19,11 @@
         public tiposMetodoPago TiposMetodoPago { get; set; }
 
         public tiposDirigidaOferta TiposDirigidaOferta { get; set; }
-        public List<CrearOfertaItemDTO> CrearOfertaItem { get; set; }
+        public IList<OfertaItemDTO> OfertaItem { get; set; }
 
         public CrearOfertaDTO()
         {
-            CrearOfertaItem = new List<CrearOfertaItemDTO>();
+            OfertaItem = new List<OfertaItemDTO>();
         }
 
         public override bool Equals(object? obj)
@@ -35,13 +35,13 @@
                    nombre == dTO.nombre &&
                    TiposMetodoPago == dTO.TiposMetodoPago &&
                    TiposDirigidaOferta == dTO.TiposDirigidaOferta &&
-                   CrearOfertaItem.SequenceEqual(dTO.CrearOfertaItem);
+                   OfertaItem.SequenceEqual(dTO.OfertaItem);
 
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(FechaInicio, FechaFin, Porcentaje, nombre, TiposMetodoPago, TiposDirigidaOferta, CrearOfertaItem);
+            return HashCode.Combine(FechaInicio, FechaFin, Porcentaje, nombre, TiposMetodoPago, TiposDirigidaOferta, OfertaItem);
         }
     }
 }
