@@ -51,7 +51,8 @@ namespace AppForSEII2526.API.Controllers
                         oi.herramienta?.material ?? string.Empty,
                         oi.herramienta?.fabricante?.nombre ?? string.Empty,
                         oi.herramienta?.precio ?? 0f,
-                        (oi.herramienta?.precio ?? 0f) * (100f - oi.porcentaje) / 100f
+                        (oi.herramienta?.precio ?? 0f) * (100f - oi.porcentaje) / 100f,
+                        oi.porcentaje
                     ))
                     .ToList() ?? new List<OfertaItemDTO>()
             );
@@ -74,7 +75,7 @@ namespace AppForSEII2526.API.Controllers
             if (crearOfertaDTO.FechaInicio >= crearOfertaDTO.FechaFin)
                 ModelState.AddModelError("FechaFin", "La fecha de fin debe ser posterior a la fecha de inicio.");
 
-            if (crearOfertaDTO.CrearOfertaItem == null || crearOfertaDTO.CrearOfertaItem.Count == 0)
+            if (crearOfertaDTO.OfertaItem == null || crearOfertaDTO.OfertaItem.Count == 0)
                 ModelState.AddModelError("CrearOfertaItem", "Debe agregar al menos una herramienta a la oferta.");
 
 
@@ -96,8 +97,8 @@ namespace AppForSEII2526.API.Controllers
                 return BadRequest(new ValidationProblemDetails(ModelState));
             }
 
-            var herramientaIds = crearOfertaDTO.CrearOfertaItem
-                .Select(i => i.herramientaid)
+            var herramientaIds = crearOfertaDTO.OfertaItem
+                .Select(i => i.herramientaId)
                 .Distinct()
                 .ToList();
 
@@ -107,16 +108,16 @@ namespace AppForSEII2526.API.Controllers
                 .ToDictionaryAsync(h => h.id);
 
             // Validar que todas las herramientas existen
-            foreach (var itemDTO in crearOfertaDTO.CrearOfertaItem)
+            foreach (var itemDTO in crearOfertaDTO.OfertaItem)
             {
-                if (!herramientasEnDB.ContainsKey(itemDTO.herramientaid))
+                if (!herramientasEnDB.ContainsKey(itemDTO.herramientaId))
                 {
-                    ModelState.AddModelError("CrearOfertaItem", $"La herramienta con id {itemDTO.herramientaid} no existe.");
+                    ModelState.AddModelError("CrearOfertaItem", $"La herramienta con id {itemDTO.herramientaId} no existe.");
                 }
-                else if (itemDTO.porcentaje <= 0 || itemDTO.porcentaje > 100)
+                else if (itemDTO.Porcentaje <= 0 || itemDTO.Porcentaje > 100)
                 {
-                    var herramienta = herramientasEnDB[itemDTO.herramientaid];
-                    ModelState.AddModelError("CrearOfertaItem", $"El porcentaje {itemDTO.porcentaje}% de '{herramienta.nombre}' debe estar entre 1 y 100.");
+                    var herramienta = herramientasEnDB[itemDTO.herramientaId];
+                    ModelState.AddModelError("CrearOfertaItem", $"El porcentaje {itemDTO.Porcentaje}% de '{herramienta.nombre}' debe estar entre 1 y 100.");
                 }
             }
 
@@ -136,14 +137,14 @@ namespace AppForSEII2526.API.Controllers
             };
 
             // Crear items de oferta
-            foreach (var itemDTO in crearOfertaDTO.CrearOfertaItem)
+            foreach (var itemDTO in crearOfertaDTO.OfertaItem)
             {
-                var herramienta = herramientasEnDB[itemDTO.herramientaid];
-                float precioFinal = herramienta.precio * (1 - (itemDTO.porcentaje / 100.0f));
+                var herramienta = herramientasEnDB[itemDTO.herramientaId];
+                float precioFinal = herramienta.precio * (1 - (itemDTO.Porcentaje / 100.0f));
 
                 var nuevoItem = new OfertaItem
                 {
-                    porcentaje = itemDTO.porcentaje,
+                    porcentaje = itemDTO.Porcentaje,
                     precioFinal = precioFinal,
                     oferta = ofertaNueva,
                     herramienta = herramienta,
@@ -178,7 +179,8 @@ namespace AppForSEII2526.API.Controllers
                     oi.herramienta.material,
                     oi.herramienta.fabricante.nombre,
                     oi.herramienta.precio,
-                    oi.precioFinal
+                    oi.precioFinal,
+                    oi.porcentaje
                 )).ToList()
             );
 
