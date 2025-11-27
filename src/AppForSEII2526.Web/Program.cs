@@ -44,6 +44,7 @@ builder.Services.AddScoped<AppForHerramientasAPIClient>(sp => new AppForHerramie
 
 builder.Services.AddScoped<ReparacionesStateContainer>();
 builder.Services.AddScoped<ComprasStateContainer>();
+builder.Services.AddScoped<AppForSEII2526.Web.OfertasStateContainer>();
 
 
 var app = builder.Build();

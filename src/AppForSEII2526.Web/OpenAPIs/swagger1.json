@@ -617,7 +617,6 @@
       "CompraItemDTO": {
         "required": [
           "cantidad",
-          "descripcion",
           "nombre"
         ],
         "type": "object",
@@ -636,8 +635,8 @@
             "type": "string"
           },
           "descripcion": {
-            "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "precio": {
             "type": "number",
@@ -716,26 +715,12 @@
           "tiposDirigidaOferta": {
             "$ref": "#/components/schemas/tiposDirigidaOferta"
           },
-          "crearOfertaItem": {
+          "ofertaItem": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CrearOfertaItemDTO"
+              "$ref": "#/components/schemas/OfertaItemDTO"
             },
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CrearOfertaItemDTO": {
-        "type": "object",
-        "properties": {
-          "herramientaid": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "porcentaje": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -906,6 +891,12 @@
           "precioOferta": {
             "type": "number",
             "format": "float"
+          },
+          "porcentaje": {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "integer",
+            "format": "currency"
           }
         },
         "additionalProperties": false

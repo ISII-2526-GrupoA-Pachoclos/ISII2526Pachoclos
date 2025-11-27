@@ -115,7 +115,7 @@ namespace AppForSEII2526.UT.OfertasController_test
                  tiposDirigidaOferta.Clientes,
                  new List<OfertaItemDTO>
                  {
-                    new OfertaItemDTO("Martillo", "Acero", "Pepe", 15.9f, 11.925f) // ← Valor correcto
+                    new OfertaItemDTO("Martillo", "Acero", "Pepe", 15.9f, 11.925f, 50) // ← Valor correcto
                  }
             );
 
