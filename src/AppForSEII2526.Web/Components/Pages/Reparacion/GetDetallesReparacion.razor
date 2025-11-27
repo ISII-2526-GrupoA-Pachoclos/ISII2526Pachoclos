@@ -1,5 +1,4 @@
-﻿
-@using AppForSEII2526.Web.API
+﻿@using AppForSEII2526.Web.API
 
 @page "/Reparacion/GetDetallesReparacion"
 
@@ -10,12 +9,30 @@
 
 <h3>GetDetallesHerramientasForReparar</h3>
 
-@attribute [Authorize]
+@*@attribute [Authorize]*@
 
-@if (rep==null)
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon1">ID Reparación</span>
+                <input type="number" id="inputReparacionID" @bind=filtroReparacionID class="form-control" placeholder="
+                    Ingrese ID de Reparación" aria-label="ID Reparación" aria-describedby="basic-addon1">
+                <button type="button" class="btn btn-primary" @onclick=@BuscarReparacion id="buscarReparacion">Buscar Reparación</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row alert alert-danger" role="alert" hidden="@string.IsNullOrEmpty(error)">
+        <p id="ErrorsShown">@error</p>
+    </div>
+</div>
+
+@if (rep == null && string.IsNullOrEmpty(error))
 {
-    <p>@error</p>
-}else
+    <p>Ingrese un ID de reparación para buscar...</p>
+}
+else if (rep != null)
 {
     <table class="table table-borderless table-sm">
         <tr>
@@ -69,16 +86,39 @@
     [Parameter]
     [SupplyParameterFromQuery]
     public int ReparacionID { get; set; }
+
+    private int filtroReparacionID { get; set; }
     private ReparacionDetalleDTO rep;
     private string error = "";
 
+    /*
     [CascadingParameter]
     private Task<AuthenticationState>? authenticationState { get; set; }
+    */
 
     protected override async Task OnInitializedAsync()
     {
+        // Si viene el ReparacionID por parámetro de la barra de busqueda, lo usamos
+        if (ReparacionID > 0)
+        {
+            filtroReparacionID = ReparacionID;
+            await BuscarReparacion();
+        }
+    }
+
+    private async Task BuscarReparacion()
+    {
+        error = "";
+        rep = null;
+
+        if (filtroReparacionID <= 0)
+        {
+            error = "Por favor ingrese un ID de reparación válido (mayor a 0)";
+            return;
+        }
 
         //we check the user is logged in
+        /*
         string userName = "";
         if (authenticationState is not null)
         {
@@ -94,20 +134,32 @@
                 }
             }
         }
+        */
 
         try
         {
-            rep = await apiclient.GetDetallesReparacionAsync(ReparacionID);
+            rep = await apiclient.GetDetallesReparacionAsync(filtroReparacionID);
         }
         catch (ApiException exception)
         {
             rep = null;
+            error = $"Error al cargar la reparación con ID {filtroReparacionID}: {exception.Message}";
+            StateHasChanged();
+            return;
         }
-        if ((rep == null) || (rep.Nombre != userName))
+
+        if (rep == null)
         {
-            error = $"Error! No estas autorizado a ver esta reparacion o no existe la reparacion con id={ReparacionID}";
+            error = $"No existe una reparación con id={filtroReparacionID}";
         }
+        /*
+        else if (rep.Nombre != userName)
+        {
+            error = $"Error! No estás autorizado a ver esta reparación con id={filtroReparacionID}";
+            rep = null;
+        }
+        */
 
-
+        StateHasChanged();
     }
 }
