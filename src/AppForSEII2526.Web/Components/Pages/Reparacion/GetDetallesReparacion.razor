@@ -1,0 +1,113 @@
+﻿
+@using AppForSEII2526.Web.API
+
+@page "/Reparacion/GetDetallesReparacion"
+
+@using Microsoft.AspNetCore.Authorization
+@inject AppForHerramientasAPIClient apiclient
+
+
+
+<h3>GetDetallesHerramientasForReparar</h3>
+
+@attribute [Authorize]
+
+@if (rep==null)
+{
+    <p>@error</p>
+}else
+{
+    <table class="table table-borderless table-sm">
+        <tr>
+            <th>Nombre y Apellidos</th>
+            <td id="NameSurname">@rep.Nombre @rep.Apellido</td>
+        </tr>
+        <tr>
+            <th>Fecha de Entrega</th>
+            <td id="FechaEntrega">@rep.FechaEntrega.ToString("dd/MM/yyyy hh:mm:ss")</td>
+        </tr>
+        <tr>
+            <th>Fecha de Recogida</th>
+            <td id="FechaRecogida">@rep.FechaRecogida.DateTime.ToString("dd/MM/yyyy")</td>
+        </tr>
+    </table>
+
+
+    <h4>Herramientas a Reparar</h4>
+    <table class="table" id="HerramientasAReparar">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Descripcion</th>
+                <th>Tiempo de Reparacion</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ReparacionItemDTO item in rep.HerramientasAReparar)
+            {
+                <tr id="RentalItem_@item.NombreHerramienta">
+                    <td>@item.NombreHerramienta</td>
+                    <td>@item.Cantidad</td>
+                    <td>@item.Precio €</td>
+                    <td>@item.Descripcion</td>
+                    <td>@item.TiempoReparacion</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            @*colspan is used to state that TWO columns are collapsed*@
+        <th scope="row" colspan="2" class="text-end">Precio Total</th>
+        <td id="TotalPrice">@rep.PrecioTotal €</td>
+        </tfoot>
+
+    </table>
+}
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int ReparacionID { get; set; }
+    private ReparacionDetalleDTO rep;
+    private string error = "";
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        //we check the user is logged in
+        string userName = "";
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            //we retrieve the id of the user logged in
+            if (user is not null)
+            {
+                if (user.Identity is not null && user.Identity.IsAuthenticated && user.IsInRole("User"))
+                {
+                    userName = user.Identity.Name;
+                }
+            }
+        }
+
+        try
+        {
+            rep = await apiclient.GetDetallesReparacionAsync(ReparacionID);
+        }
+        catch (ApiException exception)
+        {
+            rep = null;
+        }
+        if ((rep == null) || (rep.Nombre != userName))
+        {
+            error = $"Error! No estas autorizado a ver esta reparacion o no existe la reparacion con id={ReparacionID}";
+        }
+
+
+    }
+}
