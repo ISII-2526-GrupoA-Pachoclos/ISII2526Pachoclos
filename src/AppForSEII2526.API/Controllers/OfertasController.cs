@@ -46,14 +46,16 @@ namespace AppForSEII2526.API.Controllers
                 ofertaEntity.metodoPago,
                 ofertaEntity.paraSocio,
                 ofertaEntity.ofertaItems?
-                    .Select(oi => new OfertaItemDTO(
-                        oi.herramienta?.nombre ?? string.Empty,
-                        oi.herramienta?.material ?? string.Empty,
-                        oi.herramienta?.fabricante?.nombre ?? string.Empty,
-                        oi.herramienta?.precio ?? 0f,
-                        (oi.herramienta?.precio ?? 0f) * (100f - oi.porcentaje) / 100f,
-                        oi.porcentaje
-                    ))
+                    .Select(oi => new OfertaItemDTO
+                    {
+                        herramientaId = oi.herramientaid,
+                        nombre = oi.herramienta?.nombre ?? string.Empty,
+                        material = oi.herramienta?.material ?? string.Empty,
+                        fabricante = oi.herramienta?.fabricante?.nombre ?? string.Empty,
+                        precio = oi.herramienta?.precio ?? 0f,
+                        precioOferta = (oi.herramienta?.precio ?? 0f) * (100f - oi.porcentaje) / 100f,
+                        Porcentaje = oi.porcentaje
+                    })
                     .ToList() ?? new List<OfertaItemDTO>()
             );
 
@@ -174,14 +176,16 @@ namespace AppForSEII2526.API.Controllers
                 ofertaNueva.ApplicationUser?.nombre ?? string.Empty,
                 ofertaNueva.metodoPago,
                 ofertaNueva.paraSocio,
-                ofertaNueva.ofertaItems.Select(oi => new OfertaItemDTO(
-                    oi.herramienta.nombre,
-                    oi.herramienta.material,
-                    oi.herramienta.fabricante.nombre,
-                    oi.herramienta.precio,
-                    oi.precioFinal,
-                    oi.porcentaje
-                )).ToList()
+                ofertaNueva.ofertaItems.Select(oi => new OfertaItemDTO
+                {
+                    herramientaId = oi.herramientaid,
+                    nombre = oi.herramienta.nombre,
+                    material = oi.herramienta.material,
+                    fabricante = oi.herramienta.fabricante.nombre,
+                    precio = oi.herramienta.precio,
+                    precioOferta = oi.precioFinal,
+                    Porcentaje = oi.porcentaje
+                }).ToList()
             );
 
             return CreatedAtAction(
