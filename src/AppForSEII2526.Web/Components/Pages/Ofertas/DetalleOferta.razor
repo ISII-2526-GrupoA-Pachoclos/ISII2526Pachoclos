@@ -1,0 +1,166 @@
+﻿@page "/Ofertas/DetalleOfertas"
+
+@using AppForSEII2526.Web.API
+@using Microsoft.AspNetCore.Authorization
+@inject AppForHerramientasAPIClient apiclient
+
+<h3>DetalleOferta</h3>
+
+ @* @attribute [Authorize] *@
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon1">ID Oferta</span>
+                <input type="number" id="inputOfertaID" @bind=filtroOfertaID class="form-control" placeholder="Ingrese ID de Oferta" aria-label="ID Oferta" aria-describedby="basic-addon1">
+                <button type="button" class="btn btn-primary" @onclick=@BuscarOferta id="buscarOferta">Buscar Oferta</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row alert alert-danger" role="alert" hidden="@string.IsNullOrEmpty(error)">
+        <p id="ErrorsShown">@error</p>
+    </div>
+</div>
+
+@if (oferta == null && string.IsNullOrEmpty(error))
+{
+    <p>Ingrese un ID de oferta para buscar...</p>
+}
+else if (oferta != null)
+{
+    <table class="table table-borderless table-sm">
+        <tr>
+            <th>Fecha Inicio</th>
+            <td id="FechaInicio">@oferta.FechaInicio.ToString("dd/MM/yyyy hh:mm:ss") </td>
+        </tr>
+        <tr>
+            <th>Fecha Fin</th>
+            <td id="FechaFin">@oferta.FechaFin.ToString("dd/MM/yyyy hh:mm:ss")</td>
+        </tr>
+        <tr>
+            <th>Fecha Oferta</th>
+            <td id="FechaOferta">@oferta.FechaOferta.ToString("dd/MM/yyyy hh:mm:ss")</td>
+        </tr>
+        <tr>
+            <th>Metodo Pago</th>
+            <td id="MetodoPago">@oferta.MetodoPago</td>
+        </tr>
+        <tr>
+            <th>Tipos Dirigida Oferta</th>
+            <td id="TiposDirigidaOferta">@oferta.TiposDirigidaOferta</td>
+        </tr>
+        <tr>
+            <th>Oferta Items</th>
+            <td id="OfertaItems">@oferta.HerramientasAOfertar.Count</td>
+        </tr>
+    </table>
+
+    <h4>Herramientas Ofertadas</h4>
+
+    <table class="table" id="DetalleOferta">
+        <thead>
+            <tr>
+                <th scope="col">ID Herramienta</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Material</th>
+                <th scope="col">Fabricante</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Porcentaje</th>
+                <th scope="col">Precio Oferta</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (OfertaItemDTO item in oferta.HerramientasAOfertar)
+            {
+                <tr id="RentalItem_@item.HerramientaId">
+                    <td>@item.HerramientaId</td>
+                    <td>@item.Nombre</td>
+                    <td>@item.Material</td>
+                    <td>@item.Fabricante</td>
+                    <td>@item.Precio €</td>
+                    <td>@item.Porcentaje %</td>
+                    <td>@item.PrecioOferta €</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int OfertaID { get; set; }
+    
+    private int filtroOfertaID { get; set; }
+    private OfertaDetalleDTO oferta;
+    private string error = "";
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Si viene el OfertaID por parámetro de query, lo usamos
+        if (OfertaID > 0)
+        {
+            filtroOfertaID = OfertaID;
+            await BuscarOferta();
+        }
+    }
+
+    private async Task BuscarOferta()
+    {
+        error = "";
+        oferta = null;
+
+        if (filtroOfertaID <= 0)
+        {
+            error = "Por favor ingrese un ID de oferta válido (mayor a 0)";
+            return;
+        }
+
+        //we check the user is logged in
+        string nombreUsuario = "";
+        /*
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            //we retrieve the id of the user logged in
+            if (user is not null)
+            {
+                if (user.Identity is not null && user.Identity.IsAuthenticated && user.IsInRole("User"))
+                {
+                    nombreUsuario = user.Identity.Name;
+                }
+            }
+        }
+        */
+
+        try
+        {
+            oferta = await apiclient.GetDetallesOfertaAsync(filtroOfertaID);
+        }
+        catch (ApiException exception)
+        {
+            oferta = null;
+            error = $"Error al cargar la oferta con ID {filtroOfertaID}: {exception.Message}";
+            StateHasChanged();
+            return;
+        }
+        
+        if (oferta == null)
+        {
+            error = $"No existe una oferta con id={filtroOfertaID}";
+        }
+        
+
+        StateHasChanged();
+    }
+
+}
