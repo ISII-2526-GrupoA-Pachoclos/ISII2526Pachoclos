@@ -27,7 +27,13 @@
                 <div class="col">
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">Fabricante</span>
-                        <input type="text" id="inputGenre" @bind=filtroFabricante class="form-control" placeholder="Fabricante" aria-label="Fabricante" aria-describedby="basic-addon1">
+                        <select class="form-select" aria-label="Default select" @bind="fabricanteSelected" id="fabricanteSelected">
+                            <option value="All" selected>All</option>
+                            @foreach (string fabricanteNombre in fabricantes)
+                            {
+                                <option value="@fabricanteNombre" id="fabricanteSelected_@fabricanteNombre">@fabricanteNombre</option>
+                            }
+                        </select>
                     </div>
                 </div>
 
@@ -98,6 +104,8 @@
 
 
 @code {
+    private string fabricanteSelected;
+    private ICollection<string>? fabricantes = new List<string>();
     private bool hideRentingCart { get { return ofertas.OfertaItem.Count == 0; } }
     private ICollection<HerramientasParaOfertasDTO> herramientas;
     private bool hideErrors { get { return errors.Length == 0; } }
@@ -121,6 +129,8 @@
 
     public async void SearchHerramientas()
     {
+        filtroFabricante = fabricanteSelected == "All" ? null : fabricanteSelected;
+
         if (filtroPrecio == 0)
         {
             filtroPrecio = null;
@@ -139,10 +149,20 @@
         StateHasChanged();
     }
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
+        try
+        {
+            fabricantes = await apiclient.GetFabricantesAsync(null);
+        }
+        catch (ApiException ex)
+        {
+            if (fabricantes == null) fabricantes = new List<string>() { "All", };
+            logger.LogError("Error! There was an error while connecting to the GetFabricantesAsync service");
+        }
         SearchHerramientas();
-        return base.OnInitializedAsync();
+
+        // return base.OnInitializedAsync();
     }
 
     private void OfertarHerramientas()
