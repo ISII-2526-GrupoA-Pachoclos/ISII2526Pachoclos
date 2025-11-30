@@ -1,10 +1,13 @@
 ﻿@page "/Ofertas/SelectHerramientasForOfertas"
 
+@using Microsoft.AspNetCore.Authorization
 @using AppForSEII2526.Web.API
 @inject AppForHerramientasAPIClient apiclient
 @inject ILogger<SelectHerramientasForOfertas> logger
 @inject OfertasStateContainer ofertasState
 @inject NavigationManager navigation
+
+@* @attribute [Authorize] *@
 
 <h3>SelectHerramientasForOfertas</h3>
 
