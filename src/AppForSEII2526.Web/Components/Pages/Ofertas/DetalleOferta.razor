@@ -122,11 +122,11 @@ else if (oferta != null)
         if (OfertaID > 0)
         {
             filtroOfertaID = OfertaID;
-            await BuscarOferta();
+            BuscarOferta();
         }
     }
 
-    private async Task BuscarOferta()
+    private async void BuscarOferta()
     {
         error = "";
         oferta = null;
