@@ -19,9 +19,17 @@
         </div>
     </div>
 
-    <div class="row alert alert-danger" role="alert" hidden="@string.IsNullOrEmpty(error)">
-        <p id="ErrorsShown">@error</p>
-    </div>
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong><i class="bi bi-exclamation-triangle-fill"></i> Error</strong>
+                    <p class="mb-0 mt-2" id="ErrorsShown">@error</p>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 @if (oferta == null && string.IsNullOrEmpty(error))
@@ -85,6 +93,12 @@ else if (oferta != null)
                 </tr>
             }
         </tbody>
+        <tfoot>
+            <tr class="table-light">
+                <td colspan="6" class="text-end fw-semibold">Total:</td>
+                <td class="fw-bold text-primary" id="PrecioTotal">@CalcularPrecioTotal().ToString("F2") €</td>
+            </tr>
+        </tfoot>
     </table>
 }
 
@@ -108,18 +122,18 @@ else if (oferta != null)
         if (OfertaID > 0)
         {
             filtroOfertaID = OfertaID;
-            await BuscarOferta();
+            BuscarOferta();
         }
     }
 
-    private async Task BuscarOferta()
+    private async void BuscarOferta()
     {
         error = "";
         oferta = null;
 
         if (filtroOfertaID <= 0)
         {
-            error = "Por favor ingrese un ID de oferta válido (mayor a 0)";
+            error = "Por favor ingrese un ID de oferta válido (mayor a 0).";
             return;
         }
 
@@ -145,22 +159,34 @@ else if (oferta != null)
         try
         {
             oferta = await apiclient.GetDetallesOfertaAsync(filtroOfertaID);
+            
+            if (oferta == null)
+            {
+                error = $"No se encontró ninguna oferta con el ID {filtroOfertaID}.";
+            }
         }
         catch (ApiException exception)
         {
             oferta = null;
-            error = $"Error al cargar la oferta con ID {filtroOfertaID}: {exception.Message}";
-            StateHasChanged();
-            return;
+            
+            if (exception.StatusCode == 404)
+            {
+                error = $"No existe una oferta con el ID {filtroOfertaID}.";
+            }
+            else
+            {
+                error = $"No se pudo cargar la oferta. Por favor, inténtelo de nuevo más tarde.";
+            }
         }
-        
-        if (oferta == null)
-        {
-            error = $"No existe una oferta con id={filtroOfertaID}";
-        }
-        
 
         StateHasChanged();
     }
 
+    private decimal CalcularPrecioTotal()
+    {
+        if (oferta?.HerramientasAOfertar == null)
+            return 0;
+
+        return (decimal)oferta.HerramientasAOfertar.Sum(item => item.PrecioOferta);
+    }
 }
