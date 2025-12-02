@@ -20,6 +20,45 @@
             </div>
         </div>
     </div>
+    
+    <div class="mh-100 table-responsive">
+        <table class="table table-condensed table-hover" id="TablaDeOfertaItems">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Material</th>
+                    <th>Precio</th>
+                    <th>Descripcion</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Metodo de Pago</th>
+                    <th>Dirigida Oferta</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in oferta.OfertaItem)
+                {
+                    <tr id="MovieData_@item.Nombre">
+                        <td>@item.Material</td>
+                        <td>@item.Precio</td>
+                        <td>@item.Porcentaje</td>
+                        <td>@oferta.FechaInicio</td>
+                        <td>@oferta.FechaFin</td>
+                        <td>@oferta.TiposMetodoPago</td>
+                        <td>
+                            <InputSelect @bind-Value="oferta.TiposDirigidaOferta" class="form-control" id="@($"OfertaDirigida_{item.Nombre}")">
+                                @foreach (var value in Enum.GetValues(typeof(TiposDirigidaOferta)))
+                                {
+                                    <option value="@value">@value</option>
+                                }
+                            </InputSelect>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    
 </EditForm>
 
 @* modal popup para comprobar si el usuario quiere proceder a crear la oferta *@
