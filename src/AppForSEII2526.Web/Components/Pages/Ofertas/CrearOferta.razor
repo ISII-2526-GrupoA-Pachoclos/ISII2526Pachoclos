@@ -1,5 +1,6 @@
 ﻿@page "/Ofertas/CrearOferta"
 
+@using AppForSEII2526.Web.Components.Shared
 @using AppForSEII2526.Web.API
 @inject AppForHerramientasAPIClient apiclient
 @inject ILogger<CrearOferta> logger
@@ -21,11 +22,32 @@
     </div>
 </EditForm>
 
+@* modal popup para comprobar si el usuario quiere proceder a crear la oferta *@
+@if (DialogIsOpen)
+{
+    <Dialog Caption="Crear ofertas"
+    Message="¿Quieres proceder a crear la oferta?"
+    OnClose="@OnDialogClose"
+    Type=Dialog.Category.SaveNot>
+    </Dialog>
+}
+
 @code {
+    private bool DialogIsOpen;
+
     private CrearOfertaDTO oferta => ofertasState.Oferta;
 
     private void OpenDialog()
     {
-        
+        DialogIsOpen = true;
+    }
+
+    private async Task OnDialogClose(bool isOk)
+    {
+        DialogIsOpen = false;
+        if (isOk)
+        {
+            //Procesar la información introducida por el usuario si es válida
+        }
     }
 }
