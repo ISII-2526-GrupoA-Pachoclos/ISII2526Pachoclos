@@ -59,7 +59,7 @@
     <h4>Oferta Detalle</h4>
     <p><b>Fecha desde:</b> @oferta.FechaInicio.ToString("dd/MM/yyyy") <b>hasta:</b> @oferta.FechaFin.ToString("dd/MM/yyyy")</p>
     <p>
-        <b>Total price:</b> @CosteTotal €
+        <b>Precio Total Oferta:</b> @CosteTotal €
         <button class="btn btn-outline-primary" type="submit" @onclick="ModifyOfertaItems" id="ModifyHerramientas">
             Modificar Herramientas
         </button>
@@ -114,8 +114,7 @@
     {
         get
         {
-            int dias = (oferta.FechaFin.DateTime - oferta.FechaInicio.DateTime).Days;
-            double precio = oferta.OfertaItem.Sum(ri => ri.Precio * dias);
+            double precio = oferta.OfertaItem.Sum(ri => ri.Precio * (1 - (ri.Porcentaje) /100));
             return Convert.ToDecimal(precio);
         }
     }
