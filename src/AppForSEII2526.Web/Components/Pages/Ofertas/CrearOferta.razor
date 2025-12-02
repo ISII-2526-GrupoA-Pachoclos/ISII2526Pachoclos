@@ -32,19 +32,19 @@
                 <label for="FechaFin">Fecha Fin</label>
             </div>
         </div>
+    </div>
+    <div class="row g-2">
         <div class="col-md">
-            <div class="form-floating mb-3">
-                <InputSelect @bind-Value="oferta.TiposMetodoPago" class="form-control" id="MetodoPago">
-                    @foreach (var value in Enum.GetValues(typeof(TiposMetodoPago)))
-                    {
-                        <option value="@value">@value</option>
-                    }
+            <div class="form-floating">
+                @*Un drop menú para seleccionar el metodo de pago*@
+                <InputSelect class="form-select" @bind-Value="@oferta.TiposMetodoPago" id="MetodoPago">
+                    <option value="@MetodoPago.TarjetaCredito" default> TarjetaCredito</option>
+                    <option value="@MetodoPago.PayPal"> PayPal</option>
+                    <option value="@MetodoPago.Efectivo"> Efectivo</option>
                 </InputSelect>
-                <label for="MetodoPago">Metodo Pago</label>
+                <label for="MetodoPago">Metodo de Pago</label>
             </div>
         </div>
-    </div>
-
         <div class="col-md">
             <div class="form-floating">
                 @*Este boton se usa para preguntar al usuario si quiere proceder con la creación de ofertas*@
@@ -53,6 +53,7 @@
                 </button>
             </div>
         </div>
+    </div>
     
     <div class="mh-100 table-responsive">
         <table class="table table-condensed table-hover" id="TablaDeOfertaItems">
@@ -72,12 +73,11 @@
                         <td>@item.Material</td>
                         <td>@item.Precio</td>
                         <td>
-                            <InputSelect @bind-Value="oferta.TiposDirigidaOferta" class="form-control" id="@($"OfertaDirigida_{item.Nombre}")">
-                                @foreach (var value in Enum.GetValues(typeof(TiposDirigidaOferta)))
-                                {
-                                    <option value="@value">@value</option>
-                                }
+                            <InputSelect class="form-select" @bind-Value="@oferta.TiposDirigidaOferta" id="DirigidaOferta">
+                                <option value="@TiposDirigidaOferta.Clientes" default> Clientes</option>
+                                <option value="@TiposDirigidaOferta.Socios"> Socios</option>
                             </InputSelect>
+                            <label for="DirigidaOferta">Dirigida Oferta</label>
                         </td>
                     </tr>
                 }
@@ -100,7 +100,6 @@
 @code {
     private bool DialogIsOpen;
 
-    private object? errors;
     private CrearOfertaDTO oferta => ofertasState.Oferta;
 
     private void OpenDialog()
