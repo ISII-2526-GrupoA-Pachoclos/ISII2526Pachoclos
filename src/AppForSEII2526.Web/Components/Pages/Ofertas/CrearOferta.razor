@@ -5,8 +5,27 @@
 @inject ILogger<CrearOferta> logger
 @inject OfertasStateContainer ofertasState
 
-<h3>CrearOferta</h3>
+<h3>Crear Oferta</h3>
+
+<EditForm Model="oferta" OnValidSubmit="OpenDialog">
+    <div class="row">
+
+        <div class="col-md">
+            <div class="form-floating">
+                @*Este boton se usa para preguntar al usuario si quiere proceder con la creación de ofertas*@
+                <button class="btn btn-primary" type="submit" id="Submit">
+                    Crea la oferta de tus herramientas
+                </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
 
 @code {
     private CrearOfertaDTO oferta => ofertasState.Oferta;
+
+    private void OpenDialog()
+    {
+        
+    }
 }
