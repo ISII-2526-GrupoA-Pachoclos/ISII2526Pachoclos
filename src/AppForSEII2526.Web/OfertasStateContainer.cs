@@ -29,6 +29,7 @@ namespace AppForSEII2526.Web
                     HerramientaId = herramienta.Id,
                     Nombre = herramienta.Nombre,
                     Material = herramienta.Material,
+                    Fabricante = herramienta.Fabricante,
                     Precio = (float)herramienta.Precio
                 }
             );

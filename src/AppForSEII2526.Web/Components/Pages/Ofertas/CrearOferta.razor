@@ -149,7 +149,7 @@
                 {
                     var ofertado = await apiclient.CrearOfertaAsync(oferta);
                     ofertasState.OfertaProcesada();
-                    navigation.NavigateTo($"/Ofertas/DetalleOferta/?id={ofertado.Id}");
+                    navigation.NavigateTo($"/Ofertas/DetalleOferta/?Id={ofertado.Id}");
                 }
                 catch(ApiException<ValidationProblemDetails> apiexceptionvalidation)
                 {
@@ -170,7 +170,7 @@
             }
         }
     }
-
+    /*
     protected override async Task OnInitializedAsync()
     {
         if (authenticationState is not null)
@@ -182,11 +182,11 @@
             {
                 if (user.Identity is not null && user.Identity.IsAuthenticated)
                 {
-                    oferta.Nombre = user.Identity.Name;
+                    oferta. = user.Identity.Name;
                 }
             }
         }
-    }
+    }*/
     
     [CascadingParameter]
     private Task<AuthenticationState>? authenticationState { get; set; }
