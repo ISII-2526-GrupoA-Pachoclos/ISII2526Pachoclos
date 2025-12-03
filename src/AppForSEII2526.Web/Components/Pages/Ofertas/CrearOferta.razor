@@ -17,6 +17,9 @@
         <DataAnnotationsValidator />
         <ValidationSummary class="row alert alert-danger" />
     </div>
+    <div class="row alert alert-danger" role="alert" hidden="@hideErrors">
+        <p id="ErrorsShown">Errors: @messageError</p>
+    </div>
     <div class="row g-3">
         <div class="col-md">
             <div class="form-floating mb-3">
@@ -111,8 +114,9 @@
 }
 
 @code {
+    private string messageError = "";
+    private bool hideErrors { get { return messageError.Length == 0; }}
     private bool DialogIsOpen;
-
     private decimal CosteTotal
     {
         get
@@ -139,6 +143,31 @@
         if (isOk)
         {
             //Procesar la información introducida por el usuario si es válida
+            if (oferta.OfertaItem.Count > 0)
+            {
+                try
+                {
+                    var ofertado = await apiclient.CrearOfertaAsync(oferta);
+                    ofertasState.OfertaProcesada();
+                    navigation.NavigateTo($"/Ofertas/DetalleOferta/?id={ofertado.Id}");
+                }
+                catch(ApiException<ValidationProblemDetails> apiexceptionvalidation)
+                {
+                    if (apiexceptionvalidation.Result.Errors.Values != null)
+                    {
+                        messageError = "";
+                        foreach (var errors in apiexceptionvalidation.Result.Errors.Values)
+                            //https://learn.microsoft.com/en-us/dotnet/api/system.string.join?view=net-7.0
+                            messageError = string.Join("(*) ", messageError, string.Join(" (*) ", errors));
+                    }
+                }
+                catch (ApiException apiexception)
+                {
+                    //we need to inform user that there was some other error while processing the request
+                    messageError = "Error mientras se procesaba su solicitud, por favor prueba más tarde!";
+
+                }
+            }
         }
     }
 
