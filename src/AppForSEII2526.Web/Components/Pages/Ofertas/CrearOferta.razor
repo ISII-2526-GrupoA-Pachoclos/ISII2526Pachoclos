@@ -38,10 +38,10 @@
         <div class="col-md">
             <div class="form-floating">
                 @*Un drop menú para seleccionar el metodo de pago*@
-                <InputSelect class="form-select" @bind-Value="@oferta.TiposMetodoPago" id="MetodoPago">
-                    <option value="@MetodoPago.TarjetaCredito" default> TarjetaCredito</option>
-                    <option value="@MetodoPago.PayPal"> PayPal</option>
-                    <option value="@MetodoPago.Efectivo"> Efectivo</option>
+                <InputSelect class="form-select" @bind-Value="@oferta.TiposMetodoPago" id="TiposMetodoPago">
+                    <option value="@TiposMetodoPago.Tarjeta" default> Tarjeta</option>
+                    <option value="@TiposMetodoPago.PayPal"> PayPal</option>
+                    <option value="@TiposMetodoPago.Efectivo"> Efectivo</option>
                 </InputSelect>
                 <label for="MetodoPago">Metodo de Pago</label>
             </div>
