@@ -1,0 +1,194 @@
+﻿@page "/Ofertas/CrearOferta"
+
+@inject NavigationManager navigation
+@using AppForSEII2526.Web.Components.Shared
+@using AppForSEII2526.Web.API
+@using Microsoft.AspNetCore.Authorization
+@inject AppForHerramientasAPIClient apiclient
+@inject ILogger<CrearOferta> logger
+@inject OfertasStateContainer ofertasState
+
+@* @attribute [Authorize] *@
+
+<h3>Crear Oferta</h3>
+
+<EditForm Model="oferta" OnValidSubmit="OpenDialog">
+    <div class="row">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="row alert alert-danger" />
+    </div>
+    <div class="row alert alert-danger" role="alert" hidden="@hideErrors">
+        <p id="ErrorsShown">Errors: @messageError</p>
+    </div>
+    <div class="row g-3">
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputNumber @bind-Value="oferta.Porcentaje" class="form-control" id="Porcentaje" />
+                <label for="Porcentaje">Porcentaje </label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputDate @bind-Value="oferta.FechaInicio" class="form-control" id="FechaInicio" />
+                <label for="FechaInicio">Fecha Inicio </label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputDate @bind-Value="oferta.FechaFin" class="form-control" id="FechaFin" />
+                <label for="FechaFin">Fecha Fin</label>
+            </div>
+        </div>
+    </div>
+    <div class="row g-2">
+        <div class="col-md">
+            <div class="form-floating">
+                @*Un drop menú para seleccionar el metodo de pago*@
+                <InputSelect class="form-select" @bind-Value="@oferta.TiposMetodoPago" id="TiposMetodoPago">
+                    <option value="@TiposMetodoPago.Tarjeta" default> Tarjeta</option>
+                    <option value="@TiposMetodoPago.PayPal"> PayPal</option>
+                    <option value="@TiposMetodoPago.Efectivo"> Efectivo</option>
+                </InputSelect>
+                <label for="TiposMetodoPago">Metodo de Pago</label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating">
+                @*Este boton se usa para preguntar al usuario si quiere proceder con la creación de ofertas*@
+                <button class="btn btn-primary" type="submit" id="Submit">
+                    Crea la oferta de tus herramientas
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <h4>Oferta Detalle</h4>
+    <p><b>Fecha desde:</b> @oferta.FechaInicio.ToString("dd/MM/yyyy") <b>hasta:</b> @oferta.FechaFin.ToString("dd/MM/yyyy")</p>
+    <p>
+        <b>Precio Total Oferta:</b> @CosteTotal €
+        <button class="btn btn-outline-primary" type="submit" @onclick="ModifyOfertaItems" id="ModifyHerramientas">
+            Modificar Herramientas
+        </button>
+    </p>
+    
+    <div class="mh-100 table-responsive">
+        <table class="table table-condensed table-hover" id="TablaDeOfertaItems">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Material</th>
+                    <th>Precio</th>
+                    <th>Dirigida Oferta</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in oferta.OfertaItem)
+                {
+                    <tr id="MovieData_@item.Nombre">
+                        <td>@item.Nombre</td>
+                        <td>@item.Material</td>
+                        <td>@item.Precio</td>
+                        <td>
+                            <InputSelect class="form-select" @bind-Value="@oferta.TiposDirigidaOferta" id="DirigidaOferta">
+                                <option value="@TiposDirigidaOferta.Clientes" default> Clientes</option>
+                                <option value="@TiposDirigidaOferta.Socios"> Socios</option>
+                            </InputSelect>
+                            <label for="DirigidaOferta">Dirigida Oferta</label>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    
+</EditForm>
+
+@* modal popup para comprobar si el usuario quiere proceder a crear la oferta *@
+@if (DialogIsOpen)
+{
+    <Dialog Caption="Crear ofertas"
+    Message="¿Quieres proceder a crear la oferta?"
+    OnClose="@OnDialogClose"
+    Type=Dialog.Category.SaveNot>
+    </Dialog>
+}
+
+@code {
+    private string messageError = "";
+    private bool hideErrors { get { return messageError.Length == 0; }}
+    private bool DialogIsOpen;
+    private decimal CosteTotal
+    {
+        get
+        {
+            double precio = oferta.OfertaItem.Sum(ri => (ri.Precio) * (100f - ri.Porcentaje) / 100f);
+            return Convert.ToDecimal(precio);
+        }
+    }
+    private void ModifyOfertaItems()
+    {
+        navigation.NavigateTo("/Ofertas/SelectHerramientasForOfertas");
+    }
+
+    private CrearOfertaDTO oferta => ofertasState.Oferta;
+
+    private void OpenDialog()
+    {
+        DialogIsOpen = true;
+    }
+
+    private async Task OnDialogClose(bool isOk)
+    {
+        DialogIsOpen = false;
+        if (isOk)
+        {
+            //Procesar la información introducida por el usuario si es válida
+            if (oferta.OfertaItem.Count > 0)
+            {
+                try
+                {
+                    var ofertado = await apiclient.CrearOfertaAsync(oferta);
+                    ofertasState.OfertaProcesada();
+                    navigation.NavigateTo($"/Ofertas/DetalleOferta/?Id={ofertado.Id}");
+                }
+                catch(ApiException<ValidationProblemDetails> apiexceptionvalidation)
+                {
+                    if (apiexceptionvalidation.Result.Errors.Values != null)
+                    {
+                        messageError = "";
+                        foreach (var errors in apiexceptionvalidation.Result.Errors.Values)
+                            //https://learn.microsoft.com/en-us/dotnet/api/system.string.join?view=net-7.0
+                            messageError = string.Join("(*) ", messageError, string.Join(" (*) ", errors));
+                    }
+                }
+                catch (ApiException apiexception)
+                {
+                    //we need to inform user that there was some other error while processing the request
+                    messageError = "Error mientras se procesaba su solicitud, por favor prueba más tarde!";
+
+                }
+            }
+        }
+    }
+    /*
+    protected override async Task OnInitializedAsync()
+    {
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            if (user is not null)
+            {
+                if (user.Identity is not null && user.Identity.IsAuthenticated)
+                {
+                    oferta. = user.Identity.Name;
+                }
+            }
+        }
+    }*/
+    
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+}

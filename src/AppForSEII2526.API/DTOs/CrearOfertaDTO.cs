@@ -14,7 +14,6 @@
 
         [Range(1, 100, ErrorMessage = "Establece un porcentaje entre 1 y 100")]
         public int Porcentaje { get; set; }
-        public string nombre { get; set; }
 
         public tiposMetodoPago TiposMetodoPago { get; set; }
 
@@ -32,7 +31,6 @@
                    FechaInicio == dTO.FechaInicio &&
                    FechaFin == dTO.FechaFin &&
                    Porcentaje == dTO.Porcentaje &&
-                   nombre == dTO.nombre &&
                    TiposMetodoPago == dTO.TiposMetodoPago &&
                    TiposDirigidaOferta == dTO.TiposDirigidaOferta &&
                    OfertaItem.SequenceEqual(dTO.OfertaItem);
@@ -41,7 +39,7 @@
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(FechaInicio, FechaFin, Porcentaje, nombre, TiposMetodoPago, TiposDirigidaOferta, OfertaItem);
+            return HashCode.Combine(FechaInicio, FechaFin, Porcentaje, TiposMetodoPago, TiposDirigidaOferta, OfertaItem);
         }
     }
 }
