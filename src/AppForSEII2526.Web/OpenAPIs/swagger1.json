@@ -628,6 +628,10 @@
         ],
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
           "nombreCliente": {
             "maxLength": 100,
             "minLength": 1,
@@ -681,6 +685,10 @@
             "maxLength": 50,
             "minLength": 1,
             "type": "string"
+          },
+          "material": {
+            "type": "string",
+            "nullable": true
           },
           "descripcion": {
             "type": "string",
@@ -746,12 +754,6 @@
           "fechaFin": {
             "type": "string",
             "format": "date"
-          },
-          "porcentaje": {
-            "maximum": 100,
-            "minimum": 1,
-            "type": "integer",
-            "format": "int32"
           },
           "tiposMetodoPago": {
             "$ref": "#/components/schemas/tiposMetodoPago"
@@ -1056,9 +1058,7 @@
             "type": "string"
           },
           "numTelefono": {
-            "maxLength": 50,
-            "minLength": 1,
-            "pattern": "^\\+?\\d{10,15}$",
+            "pattern": "^(\\+?\\d{10,15})?$",
             "type": "string",
             "nullable": true
           },
@@ -1113,7 +1113,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": { }
+        "additionalProperties": {}
       },
       "formaPago": {
         "enum": [

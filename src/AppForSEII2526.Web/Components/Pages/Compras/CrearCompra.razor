@@ -85,7 +85,7 @@
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    @*<th>Material</th>*@
+                    <th>Material</th>
                     <th>Precio</th>
                     <th>Cantidad</th>
                     <th>Description</th>
@@ -96,7 +96,7 @@
                 {
                     <tr id="MovieData_@item.Nombre">
                         <td>@item.Nombre</td>
-                        @*@<td>@item.material</td>*@
+                        <td>@item.Material</td>
                         <td>@item.Precio</td>
                         <td><InputNumber @bind-Value="item.Cantidad" class="form-control" id="@($"cantidad_{item.Herramientaid}")" /></td>
                         <td><InputText @bind-Value="item.Descripcion" class="form-control" id="@($"description_{item.Herramientaid}")" /></td>
@@ -164,7 +164,7 @@
                 {
                     var compra = await apiclient.CrearCompraAsync(nuevaCompra);
                     comprasStateContainer.ClearCarritoCompra();
-                    navigation.NavigateTo($"/Compras/GetDetallesCompra");
+                    navigation.NavigateTo($"/Compras/GetDetallesCompra/?CompraID={compra.Id}");
                 }
                 catch (ApiException<ValidationProblemDetails> apiexceptionvalidation)
                 {
