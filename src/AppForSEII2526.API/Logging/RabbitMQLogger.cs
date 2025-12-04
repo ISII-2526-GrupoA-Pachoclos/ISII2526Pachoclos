@@ -92,7 +92,7 @@ public class RabbitMQLogger : ILogger, IDisposable
 
             _channel.BasicPublish(
                 exchange: _config.Exchange,
-                routingKey: "",
+                routingKey: "log."+logLevel.ToString(),
                 basicProperties: _properties,
                 body: body);
 

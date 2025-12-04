@@ -19,15 +19,16 @@ namespace ISII2526Pachoclos.LogViewer
         private readonly string _exchangeName;
         private readonly IConnection _connection;
         private readonly IModel _channel;
+        private readonly string _routingKey;
 
-
-        public Subscriber(string hostName, int port, string userName, string password, string exchangeName)
+        public Subscriber(string hostName, int port, string userName, string password, string exchangeName, string routingkey)
         {
             _hostName = hostName;
             _port = port;
             _userName = userName;
             _password = password;
             _exchangeName = exchangeName;
+            _routingKey = routingkey;
 
             var factory = new ConnectionFactory
             {
@@ -46,7 +47,7 @@ namespace ISII2526Pachoclos.LogViewer
             try
             {
                 // 1. Declarar el exchange (debe coincidir con el del publicador)
-                _channel.ExchangeDeclare(_exchangeName, ExchangeType.Fanout, durable: true);
+                _channel.ExchangeDeclare(_exchangeName, ExchangeType.Topic, durable: true);
 
                 // 2. Declarar cola temporal/exclusiva
                 var tempQueue = _channel.QueueDeclare(
@@ -56,12 +57,13 @@ namespace ISII2526Pachoclos.LogViewer
                     autoDelete: true);
 
                 var queueName = tempQueue.QueueName;
-
+                
+ 
                 // 3. Vincular la cola al exchange
                 _channel.QueueBind(
                     queue: queueName,
                     exchange: _exchangeName,
-                    routingKey: ""); // routing key vacia para fanout
+                    routingKey: _routingKey); // routing key vacia para fanout
 
                 Console.WriteLine($" [*] Esperando logs en la cola: {queueName}");
                 Console.WriteLine($" [*] Exchange: {_exchangeName}, Host: {_hostName}:{_port}");

@@ -26,6 +26,7 @@ namespace AppForSEII2526.API.Controllers
         public async Task<ActionResult> GetDetalles_Compra(int id)
         {
 
+            _logger.LogInformation("Obteniendo detalles de la compra");
             var compra = await _context.Compra
                 .Where(c => c.Id == id)
                 .Include(c => c.ApplicationUser)
@@ -54,6 +55,8 @@ namespace AppForSEII2526.API.Controllers
                 _logger.LogError("No se ha encontrado la compra con Id {Id}", id);
                 return NotFound();
             }
+
+            _logger.LogInformation("Detalles de la compra obtenidos correctamente");
             return Ok(compra);
 
 
@@ -70,8 +73,10 @@ namespace AppForSEII2526.API.Controllers
         public async Task<ActionResult> CrearCompra(CrearCompraDTO Crearcompra)
         {
 
+
             if (Crearcompra.HerramientasCompradas.Count == 0)
             {
+                _logger.LogError("Error, no hay erramientas añadidas");
                 ModelState.AddModelError("CompraItem", "Error! Debes incluir al menos una herramienta ");
             }
             else 
@@ -80,6 +85,7 @@ namespace AppForSEII2526.API.Controllers
                 {
                     if (item.cantidad <= 0)
                     {
+                        _logger.LogError("Error, la cantidad debe ser mayor que 0");
                         ModelState.AddModelError("Cantidad", "Error! La cantidad debe ser mayor que 0");
                     }
                 }
@@ -91,6 +97,7 @@ namespace AppForSEII2526.API.Controllers
                 var user = _context.ApplicationUser.FirstOrDefault(au => au.nombre == Crearcompra.Nombre);
 
             if (user == null)
+                _logger.LogError("Error, usuario no registrado");
                 ModelState.AddModelError("ApplicationUser", "Error! Usuario no registrado");
 
 
@@ -133,6 +140,7 @@ namespace AppForSEII2526.API.Controllers
 
                 if (herramienta == null)
                 {
+                    _logger.LogError("Error, la herramienta con id {Id} no existe", item.herramientaid);
                     ModelState.AddModelError("Herramienta", "Error! La herramienta con ese id no existe");
                     continue;
                 }
@@ -170,6 +178,8 @@ namespace AppForSEII2526.API.Controllers
             }
 
             var compraDetalleDTO = new CompraDetalleDTO(user.nombre, user.apellido, compra.direccionEnvio, compra.fechaCompra, compra.precioTotal, Crearcompra.HerramientasCompradas);
+
+            _logger.LogInformation("Compra realizada correctamente");
 
             return CreatedAtAction("GetDetalles_Compra", new { id = compra.Id }, compraDetalleDTO);
 

@@ -56,7 +56,9 @@ namespace AppForSEII2526.API.Controllers
                 .OrderBy(h => h.nombre)
                 .Select(h => new HerramientasParaComprarDTO(h.id, h.nombre, h.material, h.fabricante.nombre, h.precio))
                 .ToListAsync();
+            _logger.LogInformation("Se han encontrado las herramientas");
             return Ok(herramientas);
+
 
         }
 
