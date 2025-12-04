@@ -13,26 +13,28 @@ namespace AppForSEII2526.Web
         {
             get
             {
-                return Oferta.OfertaItem.Sum(item => item.Precio * item.Porcentaje);
+                return Oferta.OfertaItem.Sum(item => item.Precio * (100 - item.Porcentaje) / 100);
             }
         }
 
-        public event Action? OnChange; 
+        public event Action? OnChange;
 
         private void NotifyStateChanged() => OnChange?.Invoke();
 
         public void AddHerramientaToOferta(HerramientasParaOfertasDTO herramienta)
         {
             if (!Oferta.OfertaItem.Any(item => item.HerramientaId == herramienta.Id))
+            {
                 Oferta.OfertaItem.Add(new OfertaItemDTO()
                 {
                     HerramientaId = herramienta.Id,
                     Nombre = herramienta.Nombre,
                     Material = herramienta.Material,
                     Fabricante = herramienta.Fabricante,
-                    Precio = (float)herramienta.Precio
-                }
-            );
+                    Precio = (float)herramienta.Precio,
+                    Porcentaje = 0
+                });
+            }
         }
 
         public void EliminarItemToOferta(OfertaItemDTO item)
@@ -52,5 +54,5 @@ namespace AppForSEII2526.Web
                 OfertaItem = new List<OfertaItemDTO>()
             };
         }
-    }    
+    }
 }
