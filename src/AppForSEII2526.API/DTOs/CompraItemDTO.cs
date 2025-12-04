@@ -13,7 +13,9 @@ namespace AppForSEII2526.API.DTOs
         [Required, StringLength(50, ErrorMessage="No puede tener mas de 50 caracteres", MinimumLength=1)]
         public string nombre { get; set; }
 
-        
+        public string material { get; set; }
+
+
         public string? descripcion { get; set; }
 
         [DataType(System.ComponentModel.DataAnnotations.DataType.Currency)]
@@ -21,11 +23,12 @@ namespace AppForSEII2526.API.DTOs
 
         
 
-        public CompraItemDTO(int herramientaid, int cantidad, string nombre, string descripcion, float precio)
+        public CompraItemDTO(int herramientaid, int cantidad, string nombre, string material, string descripcion, float precio)
         {
             this.herramientaid = herramientaid;
             this.cantidad = cantidad;
             this.nombre = nombre;
+            this.material = material;
             this.descripcion = descripcion;
             this.precio = precio;
             
@@ -41,6 +44,7 @@ namespace AppForSEII2526.API.DTOs
                    herramientaid == dTO.herramientaid &&
                    cantidad == dTO.cantidad &&
                    nombre == dTO.nombre &&
+                   material == dTO.material &&
                    descripcion == dTO.descripcion &&
                    precio == dTO.precio;
         }

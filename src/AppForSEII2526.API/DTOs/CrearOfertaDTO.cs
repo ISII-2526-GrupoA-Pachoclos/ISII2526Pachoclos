@@ -12,10 +12,6 @@
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime FechaFin { get; set; }
 
-        [Range(1, 100, ErrorMessage = "Establece un porcentaje entre 1 y 100")]
-        public int Porcentaje { get; set; }
-        public string nombre { get; set; }
-
         public tiposMetodoPago TiposMetodoPago { get; set; }
 
         public tiposDirigidaOferta TiposDirigidaOferta { get; set; }
@@ -31,8 +27,6 @@
             return obj is CrearOfertaDTO dTO &&
                    FechaInicio == dTO.FechaInicio &&
                    FechaFin == dTO.FechaFin &&
-                   Porcentaje == dTO.Porcentaje &&
-                   nombre == dTO.nombre &&
                    TiposMetodoPago == dTO.TiposMetodoPago &&
                    TiposDirigidaOferta == dTO.TiposDirigidaOferta &&
                    OfertaItem.SequenceEqual(dTO.OfertaItem);
@@ -41,7 +35,7 @@
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(FechaInicio, FechaFin, Porcentaje, nombre, TiposMetodoPago, TiposDirigidaOferta, OfertaItem);
+            return HashCode.Combine(FechaInicio, FechaFin, TiposMetodoPago, TiposDirigidaOferta, OfertaItem);
         }
     }
 }

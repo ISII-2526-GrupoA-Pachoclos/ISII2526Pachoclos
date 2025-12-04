@@ -2,6 +2,8 @@
 {
     public class OfertaDetalleDTO
     {
+        [JsonPropertyName("Id")]
+        public int Id { get; set; }
 
         [Required, DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
@@ -37,21 +39,34 @@
             HerramientasAOfertar = herramientasAOfertar;
         }
 
+        public OfertaDetalleDTO(int id, DateTime fechaInicio, DateTime fechaFin, DateTime fechaOferta, string nombreUsuario, tiposMetodoPago metodoPago, tiposDirigidaOferta tiposDirigidaOferta, IList<OfertaItemDTO> herramientasAOfertar)
+        {
+            this.Id = id;
+            this.fechaInicio = fechaInicio;
+            this.fechaFin = fechaFin;
+            this.fechaOferta = fechaOferta;
+            this.nombreUsuario = nombreUsuario;
+            this.metodoPago = metodoPago;
+            this.tiposDirigidaOferta = tiposDirigidaOferta;
+            HerramientasAOfertar = herramientasAOfertar;
+        }
+
         public override bool Equals(object? obj)
         {
             return obj is OfertaDetalleDTO dTO &&
+                   Id == dTO.Id &&
                    fechaInicio == dTO.fechaInicio &&
                    fechaFin == dTO.fechaFin &&
                    fechaOferta == dTO.fechaOferta &&
                    nombreUsuario == dTO.nombreUsuario &&
                    metodoPago == dTO.metodoPago &&
-                   tiposDirigidaOferta == dTO.tiposDirigidaOferta;
+                   tiposDirigidaOferta == dTO.tiposDirigidaOferta &&
                    HerramientasAOfertar.SequenceEqual(dTO.HerramientasAOfertar);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(fechaInicio, fechaFin, fechaOferta, nombreUsuario, metodoPago, tiposDirigidaOferta, HerramientasAOfertar);
+            return HashCode.Combine(Id, fechaInicio, fechaFin, fechaOferta, nombreUsuario, metodoPago, tiposDirigidaOferta, HerramientasAOfertar);
         }
     }
 }

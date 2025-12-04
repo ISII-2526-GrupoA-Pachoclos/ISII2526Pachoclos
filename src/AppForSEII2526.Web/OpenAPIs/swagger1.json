@@ -143,6 +143,54 @@
         }
       }
     },
+    "/GetFabricantes": {
+      "get": {
+        "tags": [
+          "Fabricantes"
+        ],
+        "operationId": "GetFabricantes",
+        "parameters": [
+          {
+            "name": "fabricanteNombre",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Herramientas/GetHerramientasParaComprarconTodosLosDatosDTO": {
       "get": {
         "tags": [
@@ -699,16 +747,6 @@
             "type": "string",
             "format": "date"
           },
-          "porcentaje": {
-            "maximum": 100,
-            "minimum": 1,
-            "type": "integer",
-            "format": "int32"
-          },
-          "nombre": {
-            "type": "string",
-            "nullable": true
-          },
           "tiposMetodoPago": {
             "$ref": "#/components/schemas/tiposMetodoPago"
           },
@@ -833,6 +871,10 @@
         ],
         "type": "object",
         "properties": {
+          "Id": {
+            "type": "integer",
+            "format": "int32"
+          },
           "fechaInicio": {
             "type": "string",
             "format": "date"
