@@ -90,7 +90,7 @@ public class RabbitMQLogger : ILogger, IDisposable
 
             _channel.BasicPublish(
                 exchange: _config.Exchange,
-                routingKey: "",
+                routingKey: "log." + logLevel.ToString(), //Concatena el log y el tipo de log (ejemplo: log.Information o log.Error)
                 basicProperties: _properties,
                 body: body);
 

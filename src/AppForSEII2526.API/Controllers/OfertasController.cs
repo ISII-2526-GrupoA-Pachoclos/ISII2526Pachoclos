@@ -27,6 +27,8 @@ namespace AppForSEII2526.API.Controllers
         [ProducesResponseType(typeof(OfertaDetalleDTO), (int)HttpStatusCode.OK)]
         public async Task<ActionResult> GetDetalles_Oferta(int id)
         {
+            _logger.LogInformation("Obteniendo detalles de la oferta con Id {OfertaId}", id);
+
             // Cargar la entidad con sus relaciones
             var ofertaEntity = await _context.Oferta
                 .Include(o => o.ApplicationUser)
@@ -62,6 +64,8 @@ namespace AppForSEII2526.API.Controllers
                     .ToList() ?? new List<OfertaItemDTO>()
             );
 
+            _logger.LogInformation("Detalles de la oferta con Id {OfertaId} obtenidos correctamente", id);
+
             return Ok(ofertaDto);
         }
 
@@ -75,21 +79,26 @@ namespace AppForSEII2526.API.Controllers
         {
             // Validaciones de fechas
             if (crearOfertaDTO.FechaInicio < DateTime.Today)
+                _logger.LogError("La fecha de inicio {FechaInicio} es anterior a la fecha actual", crearOfertaDTO.FechaInicio);
                 ModelState.AddModelError("FechaInicio", "La fecha de inicio debe ser posterior o igual a la fecha actual.");
 
             if (crearOfertaDTO.FechaInicio >= crearOfertaDTO.FechaFin)
+                _logger.LogError("La fecha de fin {FechaFin} no es posterior a la fecha de inicio {FechaInicio}", crearOfertaDTO.FechaFin, crearOfertaDTO.FechaInicio);
                 ModelState.AddModelError("FechaFin", "La fecha de fin debe ser posterior a la fecha de inicio.");
 
             if (crearOfertaDTO.CrearOfertaItem == null || crearOfertaDTO.CrearOfertaItem.Count == 0)
+                _logger.LogError("No se han proporcionado herramientas para la oferta");
                 ModelState.AddModelError("CrearOfertaItem", "Debe agregar al menos una herramienta a la oferta.");
 
             if (!ModelState.IsValid)
+                _logger.LogError("Errores de validación encontrados al crear la oferta");
                 return BadRequest(new ValidationProblemDetails(ModelState));
 
             // Obtener usuario (en un caso real, esto vendría del contexto de autenticación)
             var usuario = await _context.ApplicationUser.FirstOrDefaultAsync();
             if (usuario == null)
             {
+                _logger.LogError("No se encontró un usuario válido al crear la oferta");
                 ModelState.AddModelError("Usuario", "No se encontró un usuario válido.");
                 return BadRequest(new ValidationProblemDetails(ModelState));
             }
@@ -180,6 +189,8 @@ namespace AppForSEII2526.API.Controllers
                 )).ToList()
             );
 
+
+            _logger.LogInformation("Oferta con Id {OfertaId} creada correctamente", ofertaNueva.Id);
             return CreatedAtAction(
                 nameof(GetDetalles_Oferta),
                 new { id = ofertaNueva.Id },

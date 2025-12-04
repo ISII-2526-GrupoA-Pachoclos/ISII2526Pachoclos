@@ -125,6 +125,7 @@ namespace AppForSEII2526.API.Controllers
                 .Select(h => new HerramientasParaOfertasDTO(h.id, h.material, h.nombre, h.precio, h.fabricante.nombre))
                 .ToListAsync();
 
+            _logger.LogInformation("Se han encontrado todas las herramientas para oferta con los filtros aplicados.");
             return Ok(herramientas);
         }
 
