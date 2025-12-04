@@ -1,0 +1,213 @@
+﻿@page "/Reparacion/CrearReparacion"
+
+@using AppForSEII2526.Web.API
+@using AppForSEII2526.Web.Components.Shared
+@*@using Microsoft.AspNetCore.Authorization*@
+@inject AppForHerramientasAPIClient apiClient
+@inject ILogger<CrearReparacion> logger
+@inject ReparacionesStateContainer repState
+@inject NavigationManager navigation
+
+@*@attribute [Authorize]*@
+
+<h3>CrearReparacion</h3>
+
+@* rental is the object that will be edited thanks to the form *@
+<EditForm Model="rep" OnValidSubmit="OpenDialog">
+    <div class="row">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="row alert alert-danger" />
+        <div class="row alert alert-danger" role="alert" hidden="@hideErrors">
+            <p id="ErrorsShown">Errors: @messageError</p>
+        </div>
+    </div>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="rep.NombreC" class="form-control" id="Name" />
+                <label for="Name">Nombre <span class="text-danger">*</span></label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="rep.Apellidos" class="form-control" id="Surname" />
+                <label for="Surname">Apellidos <span class="text-danger">*</span></label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="rep.NumTelefono" class="form-control" id="Phone" />
+                <label for="Phone">Teléfono (opcional, ej: +34600000000)</label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                @*Un drop menú para seleccionar el metodo de pago*@
+                <InputSelect class="form-select" @bind-Value="@rep.MetodoPago" id="TiposMetodoPago">
+                    <option value="@MetodoPago.TarjetaCredito" default> Tarjeta</option>
+                    <option value="@MetodoPago.PayPal"> PayPal</option>
+                    <option value="@MetodoPago.Efectivo"> Efectivo</option>
+                </InputSelect>
+                <label for="TiposMetodoPago">Metodo de Pago <span class="text-danger">*</span></label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating mb-3">
+                <InputDate @bind-Value="rep.FechaEntrega" class="form-control" id="FechaFin" />
+                <label for="FechaFin">Fecha de Entrega <span class="text-danger">*</span></label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-floating">
+                @*this button will be used to ask the user if he want to proceed to rent the movies*@
+                <button class="btn btn-primary w-100" type="submit" id="Submit">
+                    Repara tus Herramientas
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <h4>Detalle de la Reparacion</h4>
+    <p><b>Fecha de Entrega:</b> @rep.FechaEntrega.ToString("dd/MM/yyyy")</p>
+    <p>
+        <b>Total price:</b> @TotalCost €
+        <button class="btn btn-outline-primary" type="button" @onclick="ModifyRentalItems" id="ModifyMovies">
+            Modificar Reparacion
+        </button>
+    </p>
+
+    <div class="mh-100 table-responsive">
+        <table class="table table-condensed table-hover" id="TableOfRentalItems">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Tiempo de Reparacion</th>
+                    <th>Precio</th>
+                    <th>Cantidad <span class="text-danger">*</span></th>
+                    <th>Descripcion (opcional)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in rep.Herramientas)
+                {
+                    <tr id="MovieData_@item.NombreHerramienta">
+                        <td>@item.NombreHerramienta</td>
+                        <td>@item.TiempoReparacion</td>
+                        <td>@item.Precio</td>
+                        <td><InputNumber @bind-Value="item.Cantidad" class="form-control" id="@($"Cantidad_{item.HerramientaId}")" /></td>
+                        <td><InputText @bind-Value="item.Descripcion" class="form-control" id="@($"Descripcion_{item.HerramientaId}")" /></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</EditForm>
+
+@*a modal popup dialog for checking if user wants to proceed to rent*@
+@if (DialogIsOpen)
+{
+    <Dialog Caption="Reparar Herramientas"
+            Message="Quieres proceder con las herramientas seleccionadas?"
+            OnClose="@OnDialogClose"
+            Type=Dialog.Category.SaveNot>
+    </Dialog>
+}
+
+@code {
+    private ReparacionParaCrearDTO rep => repState.Reparacion;
+    private bool DialogIsOpen;
+    private object? errors;
+    /*
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+    */
+    private string messageError = "";
+    private bool hideErrors { get { return messageError.Length == 0; } }
+
+    private void OpenDialog()
+    {
+        DialogIsOpen = true;
+    }
+
+    private async Task OnDialogClose(bool isOk)
+    {
+
+        DialogIsOpen = false;
+        if (isOk)
+        {
+            // Process the data introduced by the user if they are valid
+
+            if (rep.Herramientas.Count > 0)
+            {
+                try
+                {
+                    var rented = await apiClient.CrearReparacionAsync(rep);
+                    repState.ProcesarReparacion();
+                    navigation.NavigateTo($"/Reparacion/GetDetallesReparacion/?ReparacionID={rented.Id}");
+                }
+                catch (ApiException<ValidationProblemDetails> apiexceptionvalidation)
+                {
+
+                    if (apiexceptionvalidation.Result.Errors.Values != null)
+                    {
+                        messageError = "";
+                        foreach (var errors in apiexceptionvalidation.Result.Errors.Values)
+                            //https://learn.microsoft.com/en-us/dotnet/api/system.string.join?view=net-7.0
+                            messageError = string.Join("(*) ", messageError, string.Join(" (*) ", errors));
+                    }
+                }
+                catch (ApiException apiexception)
+                {
+                    //we need to inform user that there was some other error while processing the request
+                    //messageError = "Error while processing your request, please try again later!";
+                    
+                    //Sacar el mensaje por pantalla
+                    messageError = apiexception.Message;
+
+                }
+
+            }
+
+        }
+    }
+
+    private double TotalCost
+    {
+        get{
+            double total = 0;
+            foreach (var item in rep.Herramientas)
+            {
+                total += item.Precio * item.Cantidad;
+            }
+            return total;
+        }
+    }
+
+    private void ModifyRentalItems()
+    {
+        navigation.NavigateTo("/Reparacion/SelectHerramientasForReparar");
+    }
+    /*
+    protected override async Task OnInitializedAsync()
+    {
+
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            if (user is not null)
+            {
+                if (user.Identity is not null && user.Identity.IsAuthenticated)
+                {
+                    rep.NombreC = user.Identity.Name;
+                }
+            }
+            rep.NombreC = rep.NombreC == null ? "" : rep.NombreC;
+            rep.Apellidos = rep.Apellidos == null ? "" : rep.Apellidos;
+            //rental.DeliveryAddress = rental.DeliveryAddress == null ? "" : rental.DeliveryAddress;
+
+        }
+    }
+    */
+}

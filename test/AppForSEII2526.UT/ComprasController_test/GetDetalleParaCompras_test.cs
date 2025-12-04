@@ -65,7 +65,7 @@ namespace AppForSEII2526.UT.ComprasController_test
 
             var compraItemDTO = new List<CompraItemDTO> {
 
-                new CompraItemDTO{ cantidad=1, herramientaid=7, nombre="Martillo", precio=50 , descripcion="descripcion"}
+                new CompraItemDTO{ cantidad=1, herramientaid=7, nombre="Martillo", material= "Madera", precio=50 , descripcion="descripcion"}
 
 
             };
