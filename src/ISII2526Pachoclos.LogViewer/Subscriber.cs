@@ -120,11 +120,8 @@ namespace ISII2526Pachoclos.LogViewer
             // Cambiar color según el nivel de log
             Console.ForegroundColor = logEntry.LogLevel switch
             {
-                "Error" or "Critical" => ConsoleColor.Red,
-                "Warning" => ConsoleColor.Yellow,
-                "Information" => ConsoleColor.Green,
-                "Debug" => ConsoleColor.Blue,
-                "Trace" => ConsoleColor.Gray,
+                "Error" => ConsoleColor.Red,
+                "Information" => ConsoleColor.Green
                 _ => ConsoleColor.White
             };
 
@@ -136,15 +133,6 @@ namespace ISII2526Pachoclos.LogViewer
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"   Excepción: {logEntry.Exception}");
-                Console.ForegroundColor = logEntry.LogLevel switch
-                {
-                    "Error" or "Critical" => ConsoleColor.Red,
-                    "Warning" => ConsoleColor.Yellow,
-                    "Information" => ConsoleColor.Green,
-                    "Debug" => ConsoleColor.Blue,
-                    "Trace" => ConsoleColor.Gray,
-                    _ => ConsoleColor.White
-                };
             }
 
             Console.WriteLine(new string('-', 80));

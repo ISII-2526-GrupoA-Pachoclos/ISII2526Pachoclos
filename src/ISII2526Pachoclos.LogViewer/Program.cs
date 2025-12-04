@@ -55,27 +55,17 @@ class Program
     {
         Console.WriteLine("Seleccione el tipo de logs que desea visualizar:");
         Console.WriteLine();
-        Console.WriteLine("  1. Todos los logs (log.*)");
-        Console.WriteLine("  2. Solo Trace");
-        Console.WriteLine("  3. Solo Debug");
-        Console.WriteLine("  4. Solo Information");
-        Console.WriteLine("  5. Solo Warning");
-        Console.WriteLine("  6. Solo Error");
-        Console.WriteLine("  7. Solo Critical");
+        Console.WriteLine("  1. Solo Information");
+        Console.WriteLine("  2. Solo Error");
         Console.WriteLine();
-        Console.Write("Ingrese su opción (1-7): ");
+        Console.Write("Ingrese su opción (1-2): ");
 
         string? opcion = Console.ReadLine();
 
         return opcion switch
         {
-            "1" => "log.*",
-            "2" => "log.Trace",
-            "3" => "log.Debug",
-            "4" => "log.Information",
-            "5" => "log.Warning",
-            "6" => "log.Error",
-            "7" => "log.Critical",
+            "1" => "log.Information",
+            "2" => "log.Error",
             _ => ObtenerRoutingKeyConValidacion()
         };
     }
@@ -93,13 +83,8 @@ class Program
     {
         return routingKey switch
         {
-            "log.*" => "Todos los logs",
-            "log.Trace" => "Solo logs de nivel Trace",
-            "log.Debug" => "Solo logs de nivel Debug",
             "log.Information" => "Solo logs de nivel Information",
-            "log.Warning" => "Solo logs de nivel Warning",
             "log.Error" => "Solo logs de nivel Error",
-            "log.Critical" => "Solo logs de nivel Critical",
             _ => $"Routing key personalizado: {routingKey}"
         };
     }
