@@ -4,30 +4,37 @@ class Program
 {
     static void Main(string[] args)
     {
-        // Configuración
-        const string hostName = "172.20.10.3";
+        // Configuración de conexión
+        const string hostName = "localhost";
         const int port = 5672;
         const string userName = "guest";
         const string password = "guest";
-        const string exchangeName = "logs";
+        const string exchangeName = "logs_topic";
 
         Console.WriteLine("=== LogViewer - Sistema de Monitoreo de Logs ===");
-        Console.WriteLine("Iniciando aplicación...");
+        Console.WriteLine();
 
-        using var subscriber = new Subscriber(hostName, port, userName, password, exchangeName);
+        // Mostrar menú de opciones
+        string routingKey = MostrarMenuYObtenerRoutingKey();
+
+        Console.WriteLine("\nIniciando aplicación...");
+        Console.WriteLine($"Filtrando logs por: {ObtenerDescripcionFiltro(routingKey)}");
+        Console.WriteLine();
+
+        using var subscriber = new Subscriber(hostName, port, userName, password, exchangeName, routingKey);
 
         try
         {
             subscriber.StartConsuming();
 
-            Console.WriteLine("\nPresiona 'x' para salir...");
+            Console.WriteLine("\nPresiona 'x' + ENTER para salir...");
             Console.WriteLine("Esperando logs...\n");
 
             // Bucle principal que verifica si se presiona 'x'
             while (true)
             {
-                // Verificar si hay una tecla presionada sin bloquear
-                if (Console.ReadLine().ToLower() == "x")
+                var input = Console.ReadLine();
+                if (input?.ToLower() == "x")
                 {
                     Console.WriteLine("Saliendo de LogViewer...");
                     break;
@@ -43,5 +50,57 @@ class Program
 
         Console.WriteLine("LogViewer cerrado correctamente.");
     }
-}
 
+    private static string MostrarMenuYObtenerRoutingKey()
+    {
+        Console.WriteLine("Seleccione el tipo de logs que desea visualizar:");
+        Console.WriteLine();
+        Console.WriteLine("  1. Todos los logs (log.*)");
+        Console.WriteLine("  2. Solo Trace");
+        Console.WriteLine("  3. Solo Debug");
+        Console.WriteLine("  4. Solo Information");
+        Console.WriteLine("  5. Solo Warning");
+        Console.WriteLine("  6. Solo Error");
+        Console.WriteLine("  7. Solo Critical");
+        Console.WriteLine();
+        Console.Write("Ingrese su opción (1-7): ");
+
+        string? opcion = Console.ReadLine();
+
+        return opcion switch
+        {
+            "1" => "log.*",
+            "2" => "log.Trace",
+            "3" => "log.Debug",
+            "4" => "log.Information",
+            "5" => "log.Warning",
+            "6" => "log.Error",
+            "7" => "log.Critical",
+            _ => ObtenerRoutingKeyConValidacion()
+        };
+    }
+
+    private static string ObtenerRoutingKeyConValidacion()
+    {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("\nOpción no válida. Intente nuevamente.");
+        Console.ResetColor();
+        Console.WriteLine();
+        return MostrarMenuYObtenerRoutingKey();
+    }
+
+    private static string ObtenerDescripcionFiltro(string routingKey)
+    {
+        return routingKey switch
+        {
+            "log.*" => "Todos los logs",
+            "log.Trace" => "Solo logs de nivel Trace",
+            "log.Debug" => "Solo logs de nivel Debug",
+            "log.Information" => "Solo logs de nivel Information",
+            "log.Warning" => "Solo logs de nivel Warning",
+            "log.Error" => "Solo logs de nivel Error",
+            "log.Critical" => "Solo logs de nivel Critical",
+            _ => $"Routing key personalizado: {routingKey}"
+        };
+    }
+}

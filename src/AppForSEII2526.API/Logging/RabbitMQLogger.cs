@@ -96,7 +96,7 @@ public class RabbitMQLogger : ILogger, IDisposable
             // Publicar el mensaje en el exchange
             _channel.BasicPublish(
                 exchange: _config.Exchange,
-                routingKey: "", // Vacío para fanout
+                routingKey: "log." + logLevel.ToString(), // Usamos los niveles (Info, Error, etc.) como routing keys
                 basicProperties: _properties,
                 body: body);
 
