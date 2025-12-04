@@ -39,6 +39,7 @@ namespace AppForSEII2526.API.Controllers
 
             // Mapear en memoria de forma defensiva para evitar NullReference en tests
             var ofertaDto = new OfertaDetalleDTO(
+                ofertaEntity.Id,  
                 ofertaEntity.fechaInicio,
                 ofertaEntity.fechaFin,
                 ofertaEntity.fechaOferta,
@@ -85,10 +86,8 @@ namespace AppForSEII2526.API.Controllers
             if (crearOfertaDTO.FechaFin < crearOfertaDTO.FechaInicio.AddDays(7))
                 ModelState.AddModelError("FechaFin", "¡Error, la oferta debe durar al menos 1 semana!");
 
-
             if (!ModelState.IsValid)
                 return BadRequest(new ValidationProblemDetails(ModelState));
-
             
 
             // Obtener usuario (en un caso real, esto vendría del contexto de autenticación)
@@ -170,6 +169,7 @@ namespace AppForSEII2526.API.Controllers
 
             // Crear DTO de respuesta
             var ofertaDetail = new OfertaDetalleDTO(
+                ofertaNueva.Id,  
                 ofertaNueva.fechaInicio,
                 ofertaNueva.fechaFin,
                 ofertaNueva.fechaOferta,

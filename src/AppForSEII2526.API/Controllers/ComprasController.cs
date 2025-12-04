@@ -29,7 +29,8 @@ namespace AppForSEII2526.API.Controllers
                 .Include(c => c.CompraItems)
                     .ThenInclude(c => c.herramienta)
                 .Select(c => new CompraDetalleDTO(
-                    
+
+                    c.Id,
                     c.ApplicationUser.nombre,
                     c.ApplicationUser.apellido,
                     c.direccionEnvio,
@@ -39,6 +40,7 @@ namespace AppForSEII2526.API.Controllers
                         ci.herramientaid,
                         ci.cantidad,
                         ci.herramienta.nombre,
+                        ci.herramienta.material,
                         ci.descripcion,
                         ci.herramienta.precio
                         
@@ -173,7 +175,7 @@ namespace AppForSEII2526.API.Controllers
 
             }
 
-            var compraDetalleDTO = new CompraDetalleDTO(user.nombre, user.apellido, compra.direccionEnvio, compra.fechaCompra, compra.precioTotal, Crearcompra.HerramientasCompradas);
+            var compraDetalleDTO = new CompraDetalleDTO(compra.Id, user.nombre, user.apellido, compra.direccionEnvio, compra.fechaCompra, compra.precioTotal, Crearcompra.HerramientasCompradas);
 
             return CreatedAtAction("GetDetallesCompra", new { id = compra.Id }, compraDetalleDTO);
 
