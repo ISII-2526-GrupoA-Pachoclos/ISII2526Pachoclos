@@ -6,37 +6,13 @@
 
 <h3>DetalleOferta</h3>
 
- @* @attribute [Authorize] *@
+@* @attribute [Authorize] *@
 
-<div class="container-fluid">
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <div class="input-group">
-                <span class="input-group-text" id="basic-addon1">ID Oferta</span>
-                <input type="number" id="inputOfertaID" @bind=filtroOfertaID class="form-control" placeholder="Ingrese ID de Oferta" aria-label="ID Oferta" aria-describedby="basic-addon1">
-                <button type="button" class="btn btn-primary" @onclick=@BuscarOferta id="buscarOferta">Buscar Oferta</button>
-            </div>
-        </div>
-    </div>
-
-    @if (!string.IsNullOrEmpty(error))
-    {
-        <div class="row">
-            <div class="col-12">
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong><i class="bi bi-exclamation-triangle-fill"></i> Error</strong>
-                    <p class="mb-0 mt-2" id="ErrorsShown">@error</p>
-                </div>
-            </div>
-        </div>
-    }
-</div>
-
-@if (oferta == null && string.IsNullOrEmpty(error))
+@if (oferta == null)
 {
-    <p>Ingrese un ID de oferta para buscar...</p>
+    <p>@error</p>
 }
-else if (oferta != null)
+else
 {
     <table class="table table-borderless table-sm">
         <tr>
@@ -82,14 +58,14 @@ else if (oferta != null)
         <tbody>
             @foreach (OfertaItemDTO item in oferta.HerramientasAOfertar)
             {
-                <tr id="RentalItem_@item.HerramientaId">
+                <tr id="@($"RentalItem_{item.HerramientaId}")">
                     <td>@item.HerramientaId</td>
                     <td>@item.Nombre</td>
                     <td>@item.Material</td>
                     <td>@item.Fabricante</td>
-                    <td>@item.Precio €</td>
+                    <td>@item.Precio.ToString("F2") €</td>
                     <td>@item.Porcentaje %</td>
-                    <td>@item.PrecioOferta €</td>
+                    <td>@item.PrecioOferta.ToString("F2") €</td>
                 </tr>
             }
         </tbody>
@@ -107,8 +83,6 @@ else if (oferta != null)
     [Parameter]
     [SupplyParameterFromQuery]
     public int OfertaID { get; set; }
-    
-    private int filtroOfertaID { get; set; }
     private OfertaDetalleDTO oferta;
     private string error = "";
 
@@ -118,68 +92,34 @@ else if (oferta != null)
 
     protected override async Task OnInitializedAsync()
     {
-        // Si viene el OfertaID por parámetro de query, lo usamos
-        if (OfertaID > 0)
-        {
-            filtroOfertaID = OfertaID;
-            BuscarOferta();
-        }
-    }
-
-    private async void BuscarOferta()
-    {
-        error = "";
-        oferta = null;
-
-        if (filtroOfertaID <= 0)
-        {
-            error = "Por favor ingrese un ID de oferta válido (mayor a 0).";
-            return;
-        }
-
-        //we check the user is logged in
-        string nombreUsuario = "";
-        /*
+        string userName = "";
         if (authenticationState is not null)
         {
             var authState = await authenticationState;
             var user = authState?.User;
 
-            //we retrieve the id of the user logged in
             if (user is not null)
             {
-                if (user.Identity is not null && user.Identity.IsAuthenticated && user.IsInRole("User"))
+                if (user.Identity is not null && user.Identity.IsAuthenticated && user.IsInRole("Admin"))
                 {
-                    nombreUsuario = user.Identity.Name;
+                    userName = user.Identity.Name;
                 }
             }
         }
-        */
 
         try
         {
-            oferta = await apiclient.GetDetallesOfertaAsync(filtroOfertaID);
-            
-            if (oferta == null)
-            {
-                error = $"No se encontró ninguna oferta con el ID {filtroOfertaID}.";
-            }
+            oferta = await apiclient.GetDetallesOfertaAsync(OfertaID);
         }
         catch (ApiException exception)
         {
             oferta = null;
-            
-            if (exception.StatusCode == 404)
-            {
-                error = $"No existe una oferta con el ID {filtroOfertaID}.";
-            }
-            else
-            {
-                error = $"No se pudo cargar la oferta. Por favor, inténtelo de nuevo más tarde.";
-            }
         }
 
-        StateHasChanged();
+        if ((oferta == null) || (oferta.NombreUsuario != userName))
+        {
+            error = $"Error! No estás autorizado para ver la oferta o no existe una oferta con id={OfertaID}";
+        }
     }
 
     private decimal CalcularPrecioTotal()

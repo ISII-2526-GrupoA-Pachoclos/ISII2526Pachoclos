@@ -23,12 +23,6 @@
     <div class="row g-3">
         <div class="col-md">
             <div class="form-floating mb-3">
-                <InputNumber @bind-Value="oferta.Porcentaje" class="form-control" id="Porcentaje" />
-                <label for="Porcentaje">Porcentaje </label>
-            </div>
-        </div>
-        <div class="col-md">
-            <div class="form-floating mb-3">
                 <InputDate @bind-Value="oferta.FechaInicio" class="form-control" id="FechaInicio" />
                 <label for="FechaInicio">Fecha Inicio </label>
             </div>
@@ -54,6 +48,16 @@
         </div>
         <div class="col-md">
             <div class="form-floating">
+                @*Un drop menú para seleccionar a quien va dirigida la oferta*@
+                <InputSelect class="form-select" @bind-Value="@oferta.TiposDirigidaOferta" id="TiposDirigidaOferta">
+                    <option value="@TiposDirigidaOferta.Clientes" default> Clientes</option>
+                    <option value="@TiposDirigidaOferta.Socios"> Socios</option>
+                </InputSelect>
+                <label for="TiposDirigidaOferta">Dirigida a</label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating">
                 @*Este boton se usa para preguntar al usuario si quiere proceder con la creación de ofertas*@
                 <button class="btn btn-primary" type="submit" id="Submit">
                     Crea la oferta de tus herramientas
@@ -65,57 +69,55 @@
     <h4>Oferta Detalle</h4>
     <p><b>Fecha desde:</b> @oferta.FechaInicio.ToString("dd/MM/yyyy") <b>hasta:</b> @oferta.FechaFin.ToString("dd/MM/yyyy")</p>
     <p>
-        <b>Precio Total Oferta:</b> @CosteTotal €
-        <button class="btn btn-outline-primary" type="submit" @onclick="ModifyOfertaItems" id="ModifyHerramientas">
+        <b>Precio Total Oferta:</b> @CosteTotal.ToString("F2") €
+        <button class="btn btn-outline-primary" type="button" @onclick="ModifyOfertaItems" id="ModifyHerramientas">
             Modificar Herramientas
         </button>
     </p>
-    
+
     <div class="mh-100 table-responsive">
         <table class="table table-condensed table-hover" id="TablaDeOfertaItems">
             <thead>
                 <tr>
                     <th>Nombre</th>
                     <th>Material</th>
-                    <th>Precio</th>
-                    <th>Dirigida Oferta</th>
+                    <th>Precio Original</th>
+                    <th>Porcentaje Descuento (%)</th>
+                    <th>Precio con Descuento</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in oferta.OfertaItem)
                 {
-                    <tr id="MovieData_@item.Nombre">
+                    <tr id="@($"MovieData_{item.Nombre}")">
                         <td>@item.Nombre</td>
                         <td>@item.Material</td>
-                        <td>@item.Precio</td>
+                        <td>@item.Precio.ToString("F2") €</td>
                         <td>
-                            <InputSelect class="form-select" @bind-Value="@oferta.TiposDirigidaOferta" id="DirigidaOferta">
-                                <option value="@TiposDirigidaOferta.Clientes" default> Clientes</option>
-                                <option value="@TiposDirigidaOferta.Socios"> Socios</option>
-                            </InputSelect>
-                            <label for="DirigidaOferta">Dirigida Oferta</label>
+                            <InputNumber @bind-Value="item.Porcentaje" class="form-control" min="1" max="100" id="@($"Porcentaje_{item.HerramientaId}")" />
                         </td>
+                        <td>@((item.Precio * (100 - item.Porcentaje) / 100).ToString("F2")) €</td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
-    
+
 </EditForm>
 
 @* modal popup para comprobar si el usuario quiere proceder a crear la oferta *@
 @if (DialogIsOpen)
 {
     <Dialog Caption="Crear ofertas"
-    Message="¿Quieres proceder a crear la oferta?"
-    OnClose="@OnDialogClose"
-    Type=Dialog.Category.SaveNot>
+            Message="¿Quieres proceder a crear la oferta?"
+            OnClose="@OnDialogClose"
+            Type=Dialog.Category.SaveNot>
     </Dialog>
 }
 
 @code {
     private string messageError = "";
-    private bool hideErrors { get { return messageError.Length == 0; }}
+    private bool hideErrors { get { return messageError.Length == 0; } }
     private bool DialogIsOpen;
     private decimal CosteTotal
     {
@@ -149,9 +151,9 @@
                 {
                     var ofertado = await apiclient.CrearOfertaAsync(oferta);
                     ofertasState.OfertaProcesada();
-                    navigation.NavigateTo($"/Ofertas/DetalleOferta/?Id={ofertado.Id}");
+                    navigation.NavigateTo($"/Ofertas/DetalleOfertas/?OfertaID={ofertado.Id}");
                 }
-                catch(ApiException<ValidationProblemDetails> apiexceptionvalidation)
+                catch (ApiException<ValidationProblemDetails> apiexceptionvalidation)
                 {
                     if (apiexceptionvalidation.Result.Errors.Values != null)
                     {
@@ -161,7 +163,7 @@
                             messageError = string.Join("(*) ", messageError, string.Join(" (*) ", errors));
                     }
                 }
-                catch (ApiException apiexception)
+                catch (ApiException)
                 {
                     //we need to inform user that there was some other error while processing the request
                     messageError = "Error mientras se procesaba su solicitud, por favor prueba más tarde!";
@@ -187,7 +189,7 @@
             }
         }
     }*/
-    
+
     [CascadingParameter]
     private Task<AuthenticationState>? authenticationState { get; set; }
 
