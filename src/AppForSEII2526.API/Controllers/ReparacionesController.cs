@@ -102,7 +102,8 @@ namespace AppForSEII2526.API.Controllers
             }
 
             // VALIDACIÓN DEL EXAMEN DE PRÁCTICAS DEL SPRINT 2: REVISAR NUMERO DE TELEFONO
-            if(!reparacionParaCrear.numTelefono.StartsWith("+34")) // Comprobamos que empiece por +34
+            if (!string.IsNullOrWhiteSpace(reparacionParaCrear.numTelefono) &&
+               !reparacionParaCrear.numTelefono.StartsWith("+34")) // Comprobamos que empiece por +34
             {
                 ModelState.AddModelError("numTelefono", "Error!, el teléfono debe empezar por +34"); // Devolver Bad Request
             }
