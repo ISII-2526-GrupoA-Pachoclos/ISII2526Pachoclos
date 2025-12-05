@@ -12,17 +12,6 @@
 @*@attribute [Authorize]*@
 
 <div class="container-fluid">
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <div class="input-group">
-                <span class="input-group-text" id="basic-addon1">ID Reparación</span>
-                <input type="number" id="inputReparacionID" @bind=filtroReparacionID class="form-control" placeholder="
-                    Ingrese ID de Reparación" aria-label="ID Reparación" aria-describedby="basic-addon1">
-                <button type="button" class="btn btn-primary" @onclick=@BuscarReparacion id="buscarReparacion">Buscar Reparación</button>
-            </div>
-        </div>
-    </div>
-
     <div class="row alert alert-danger" role="alert" hidden="@string.IsNullOrEmpty(error)">
         <p id="ErrorsShown">@error</p>
     </div>
@@ -87,7 +76,6 @@ else if (rep != null)
     [SupplyParameterFromQuery]
     public int ReparacionID { get; set; }
 
-    private int filtroReparacionID { get; set; }
     private ReparacionDetalleDTO rep;
     private string error = "";
 
@@ -101,8 +89,11 @@ else if (rep != null)
         // Si viene el ReparacionID por parámetro de la barra de busqueda, lo usamos
         if (ReparacionID > 0)
         {
-            filtroReparacionID = ReparacionID;
             await BuscarReparacion();
+        }
+        else
+        {
+            error = "No se proporcionó un ID de reparación válido";
         }
     }
 
@@ -110,12 +101,6 @@ else if (rep != null)
     {
         error = "";
         rep = null;
-
-        if (filtroReparacionID <= 0)
-        {
-            error = "Por favor ingrese un ID de reparación válido (mayor a 0)";
-            return;
-        }
 
         //we check the user is logged in
         /*
@@ -138,24 +123,24 @@ else if (rep != null)
 
         try
         {
-            rep = await apiclient.GetDetallesReparacionAsync(filtroReparacionID);
+            rep = await apiclient.GetDetallesReparacionAsync(ReparacionID);
         }
         catch (ApiException exception)
         {
             rep = null;
-            error = $"Error al cargar la reparación con ID {filtroReparacionID}: {exception.Message}";
+            error = $"Error al cargar la reparación con ID {ReparacionID}: {exception.Message}";
             StateHasChanged();
             return;
         }
 
         if (rep == null)
         {
-            error = $"No existe una reparación con id={filtroReparacionID}";
+            error = $"No existe una reparación con id={ReparacionID}";
         }
         /*
         else if (rep.Nombre != userName)
         {
-            error = $"Error! No estás autorizado a ver esta reparación con id={filtroReparacionID}";
+            error = $"Error! No estás autorizado a ver esta reparación con id={ReparacionID}";
             rep = null;
         }
         */
