@@ -7,34 +7,46 @@ using System.Threading.Tasks;
 
 namespace AppForSEII2526.UIT.CU_Reparar
 {
-    public class CU_RepararHerramientas_UIT : IDisposable
+    public class CU_RepararHerramientas_UIT : UC_UIT
     {
-        //Webdriver: A reference to the browser
-        IWebDriver _driver;
+        private SelectHerramientasParaRepararPO _selectHerramientasParaRepararPO;
+        private const string nombreH1 = "Destornillador";
+        private const string material1 = "Acero";
+        private const string fabricante1 = "Ana";
+        private const int precio1 = 6;
+        private const string tiempoReparacion1 = "2 dias";
 
-        //A reference to the URI of the web page to test
-        string _URI;
 
-        //this may be used whenever some result should be printed in E
-        private readonly ITestOutputHelper _output;
-
-        public CU_RepararHerramientas_UIT(ITestOutputHelper output)
+        public CU_RepararHerramientas_UIT(ITestOutputHelper output) : base(output)
         {
-            //it is needed to run the browser and
-            //know the URI of your app
-            UC_UIT ucuit = new UC_UIT(output);
-
-            //it is initialized using the logger provided by xUnit
-            this._output = output;
+            _selectHerramientasParaRepararPO = new SelectHerramientasParaRepararPO(_driver, _output);
         }
 
-        //The code for your test Methods goes here
-        void IDisposable.Dispose()
+        private void InitialStepsForRepararHerramientas()
         {
-            //To close and release all the resources allocated by the web driver
-            _driver.Close();
-            _driver.Dispose();
-            GC.SuppressFinalize(this);
+            //Initial_step_opening_the_web_page();
+
+            By id = By.Id("CrearReparacion");
+            //we wait for the option of the menu to be visible
+            _selectHerramientasParaRepararPO.WaitForBeingVisible(id);
+            //we click on the menu
+            _driver.FindElement(id).Click();
+        }
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC2_AF1_UC2_4_5_6_filtering()
+        {
+            //Arrange
+            InitialStepsForRepararHerramientas();
+            var expectedHerramientas = new List<string[]> { new string[] { nombreH1, material1, fabricante1, precio1.ToString(), tiempoReparacion1 }, };
+
+            //Act
+            _selectHerramientasParaRepararPO.BuscarHerramientas("Destornillador", "2 dias");
+
+            //Assert
+            Assert.True(_selectHerramientasParaRepararPO.CheckListOfHerramientas(expectedHerramientas));
+
         }
     }
 }
