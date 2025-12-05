@@ -20,6 +20,7 @@ public class RabbitMQLogger : ILogger, IDisposable
         
         ValidateConfiguration(_config);
 
+        // Crear la factoría de conexiones
         var factory = new ConnectionFactory
         {
             HostName = _config.HostName,
@@ -28,9 +29,11 @@ public class RabbitMQLogger : ILogger, IDisposable
             Password = _config.Password
         };
 
+        // Crear conexión y canal
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();
 
+        // Declarar el exchange fanout
         _channel.ExchangeDeclare(
             exchange: _config.Exchange,
             type: _config.ExchangeType,
@@ -41,6 +44,8 @@ public class RabbitMQLogger : ILogger, IDisposable
         _properties.ContentType = "application/json";
 
     }
+
+    
 
     private static void ValidateConfiguration(RabbitMQLoggerConfiguration config)
     {
@@ -85,12 +90,14 @@ public class RabbitMQLogger : ILogger, IDisposable
                 Exception = exception?.ToString()
             };
 
+            // Serializar el objeto log a JSON y convertirlo a bytes
             var json = JsonSerializer.Serialize(logEntry);
             var body = Encoding.UTF8.GetBytes(json);
 
+            // Publicar el mensaje en el exchange
             _channel.BasicPublish(
                 exchange: _config.Exchange,
-                routingKey: "log." + logLevel.ToString(), //Concatena el log y el tipo de log (ejemplo: log.Information o log.Error)
+                routingKey: "log." + logLevel.ToString(), // Usamos los niveles (Info, Error, etc.) como routing keys
                 basicProperties: _properties,
                 body: body);
 

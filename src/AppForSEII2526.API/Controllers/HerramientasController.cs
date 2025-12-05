@@ -89,6 +89,8 @@ namespace AppForSEII2526.API.Controllers
                 .Select(h => new HerramientasParaRepararDTO (h.id, h.material, h.nombre, 
                     h.precio, h.tiempoReparacion, h.fabricante.nombre))
                 .ToArrayAsync();
+
+            _logger.LogInformation("Herramientas para reparar obtenidas");
             return Ok(herramientas);
         }
 
