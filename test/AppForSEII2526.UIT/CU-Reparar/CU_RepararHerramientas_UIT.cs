@@ -13,8 +13,8 @@ namespace AppForSEII2526.UIT.CU_Reparar
         private const string nombreH1 = "Destornillador";
         private const string material1 = "Acero";
         private const string fabricante1 = "Ana";
-        private const int precio1 = 6;
-        private const string tiempoReparacion1 = "2 dias";
+        private const int precio1 = 7;
+        private const string tiempoReparacion1 = "7 dias";
 
 
         public CU_RepararHerramientas_UIT(ITestOutputHelper output) : base(output)
@@ -24,25 +24,31 @@ namespace AppForSEII2526.UIT.CU_Reparar
 
         private void InitialStepsForRepararHerramientas()
         {
-            //Initial_step_opening_the_web_page();
+            Initial_step_opening_the_web_page();
 
             By id = By.Id("CrearReparacion");
             //we wait for the option of the menu to be visible
             _selectHerramientasParaRepararPO.WaitForBeingVisible(id);
+
+            // Esperar un momento adicional para asegurar que Blazor termine de renderizar
+            Thread.Sleep(500);
+
             //we click on the menu
             _driver.FindElement(id).Click();
         }
 
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC2_AF1_UC2_4_5_6_filtering()
+        public void UC2_2_3_AF0_filteringbyNombreandTiempoReparacion()
         {
             //Arrange
             InitialStepsForRepararHerramientas();
-            var expectedHerramientas = new List<string[]> { new string[] { nombreH1, material1, fabricante1, precio1.ToString(), tiempoReparacion1 }, };
+            var expectedHerramientas = new List<string[]> { new string[] { nombreH1, material1, fabricante1, precio1.ToString() + " €", tiempoReparacion1 }, };
 
             //Act
-            _selectHerramientasParaRepararPO.BuscarHerramientas("Destornillador", "2 dias");
+            _selectHerramientasParaRepararPO.BuscarHerramientas("Destornillador", "7 dias");
+
+            Thread.Sleep(500); // Esperar ligeramente a las filas
 
             //Assert
             Assert.True(_selectHerramientasParaRepararPO.CheckListOfHerramientas(expectedHerramientas));

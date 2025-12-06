@@ -20,7 +20,7 @@ namespace AppForMovies.UIT.Shared {
         public string _URI {
             get {
                 //set url of your web page 
-                return "https://localhost:5063/";
+                return "https://localhost:7081/";
 
             }
         }
@@ -76,6 +76,8 @@ namespace AppForMovies.UIT.Shared {
                 PageLoadStrategy = PageLoadStrategy.Normal,
                 AcceptInsecureCertificates = true
             };
+
+
             //For pipelines use this option for hiding the browser
             if (_pipeline) optionsc.AddArgument("--headless");
 
