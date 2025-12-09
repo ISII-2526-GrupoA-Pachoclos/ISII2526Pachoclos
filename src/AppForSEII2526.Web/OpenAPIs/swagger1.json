@@ -703,22 +703,25 @@
       },
       "CrearCompraDTO": {
         "required": [
-          "correoElectronico"
+          "apellido",
+          "direccionEnvio",
+          "nombre"
         ],
         "type": "object",
         "properties": {
           "nombre": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "apellido": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "correoElectronico": {
             "maxLength": 100,
             "minLength": 0,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "numTelefono": {
             "maxLength": 50,
@@ -728,8 +731,8 @@
             "nullable": true
           },
           "direccionEnvio": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "metodoPago": {
             "$ref": "#/components/schemas/formaPago"

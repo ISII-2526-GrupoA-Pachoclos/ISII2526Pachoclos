@@ -77,6 +77,11 @@ namespace AppForSEII2526.API.Controllers
             { 
                 foreach (var item in Crearcompra.HerramientasCompradas)
                 {
+                    if (item.descripcion == null) { 
+
+                        item.descripcion = "";
+
+                    }
                     if (item.cantidad <= 0)
                     {
                         ModelState.AddModelError("Cantidad", "Error! La cantidad debe ser mayor que 0");
