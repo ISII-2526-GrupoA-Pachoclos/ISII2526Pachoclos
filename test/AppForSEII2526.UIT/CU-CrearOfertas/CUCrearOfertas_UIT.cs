@@ -9,39 +9,80 @@ namespace AppForSEII2526.UIT.CU_CrearOfertas
 {
     public class CUCrearOfertas_UIT : UC_UIT
     {
-        private SelectHerramientasParaOfertasPO selectHerramientasParaOfertasPO;
-        private const string herramientaPrecio = "4";
-        private const string herramientaFabricante = "Ana";
+        private SelectHerramientasParaOfertasPO _selectHerramientasParaOfertasPO;
+        private const float filtroPrecio1 = 4;
+        private const string filtroFabricante1 = "Ana";
+        private const int idHerramienta1 = 2;
+        private const string nombreHerramienta1 = "Destornillador";
+        private const string materialHerramienta1 = "Acero";
 
         public CUCrearOfertas_UIT(ITestOutputHelper output) : base(output)
         {
-            selectHerramientasParaOfertasPO = new SelectHerramientasParaOfertasPO(_driver, _output);
-            _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+            _selectHerramientasParaOfertasPO = new SelectHerramientasParaOfertasPO(_driver, _output);
+
+            /*
+            private void Precondition_perform_login() {
+            Perform_login("elena@uclm.es", "Password1234%");
+            }
+            */
+
         }
 
         private void InitialStepsForOfertarHerramientas()
         {
-            
-            // Esperar a que el menú de navegación se cargue
-            selectHerramientasParaOfertasPO.WaitForBeingVisible(By.Id("CreateOfertas"));
+            Initial_step_opening_the_web_page();
 
-            // Hacer clic en el menú
-            _driver.FindElement(By.Id("CreateOfertas")).Click();
+            //Precondition_perform_login();
+
+            By id = By.Id("CreateOfertas");
+            // We wait for the option of the menu to be visible
+            _selectHerramientasParaOfertasPO.WaitForBeingVisible(id);
+
+            //Esperamos para que Blazor termine de renderizar la página
+            Thread.Sleep(500);
+
+            // we click on the menu
+            _driver.FindElement(id).Click();
         }
 
-        [Fact]
+        /*
+        ======================================================
+             PRUEBAS DEL SELECT (PASOS 2,3; FLUJO 0)
+        ======================================================
+        */
+
+        [Theory]
+        [InlineData("6", "Jose", "3", "Martillo", "Madera", "Jose", "6")] // Filtro solo por precio y fabricante
+        [InlineData("6", "", "3", "Martillo", "Madera", "Jose", "6")] // Filtro solo por precio
+        [InlineData("", "Ana", "2", "Destornillador", "Acero", "Ana", "7")] // Filtro solo por fabricante
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC2_AF1_UC2_4_5_6_filtering()
-        {
+        public void UC3_2_3_AF0_filteringbyPrecioandFabricante(
+            string filtroPrecio,
+            string filtroFabricante,
+            string expectedId,
+            string expectedNombre,
+            string expectedMaterial,
+            string expectedFabricante,
+            string expectedPrecio)
+        { 
+
             //Arrange
             InitialStepsForOfertarHerramientas();
-            var expectedHerramientas = new List<string[]> { new string[] { herramientaPrecio, herramientaFabricante }, };
+            var expectedHerramientas = new List<string[]> 
+            { 
+                new string[] { expectedId, expectedNombre, expectedMaterial, expectedFabricante, expectedPrecio }
+            };
 
             //Act
-            selectHerramientasParaOfertasPO.BuscarHerramientas("2", "");
+            _selectHerramientasParaOfertasPO.BuscarHerramientas(filtroPrecio, filtroFabricante);
+
+            Thread.Sleep(500); //Esperamos ligeramente a las filas
 
             //Assert
-            Assert.True(selectHerramientasParaOfertasPO.CheckListOfHerramientas(expectedHerramientas));
+            Assert.True(_selectHerramientasParaOfertasPO.CheckListOfHerramientas(expectedHerramientas));
         }
+
+
+
     }
 }

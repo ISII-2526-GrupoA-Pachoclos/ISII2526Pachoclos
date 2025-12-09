@@ -10,7 +10,7 @@ namespace AppForSEII2526.UIT.CU_CrearOfertas
     public class SelectHerramientasParaOfertasPO : PageObject
     {
         private By inputPrecio = By.Id("inputTitle");
-        private By inputFabricante = By.Id("fabricanteSelect");
+        private By inputFabricante = By.Id("fabricanteSelected");
         private By buttonBuscarHerramientas = By.Id("searchHerramientas");
         private By tableOfHerramientasBy = By.Id("TableOfHerramientas");
 
@@ -27,6 +27,7 @@ namespace AppForSEII2526.UIT.CU_CrearOfertas
             if (fabricante == "") fabricante = "All";
             SelectElement selectElement = new SelectElement(_driver.FindElement(inputFabricante));
             selectElement.SelectByText(fabricante);
+
 
             _driver.FindElement(buttonBuscarHerramientas).Click();
         }
