@@ -11,7 +11,7 @@ namespace AppForSEII2526.UIT.CU_Reparar
     public class CU_RepararHerramientas_UIT : UC_UIT
     {
         private SelectHerramientasParaRepararPO _selectHerramientasParaRepararPO;
-        //private const string nombreH1 = "Destornillador";
+        private const string nombreH1 = "Destornillador";
         //private const string material1 = "Acero";
         //private const string fabricante1 = "Ana";
         //private const int precio1 = 7;
@@ -47,16 +47,16 @@ namespace AppForSEII2526.UIT.CU_Reparar
         }
 
         /*
-        ======================================================
-             PRUEBAS DEL SELECT (PASOS 2,3; FLUJO 0)
-        ======================================================
+        ============================
+             PRUEBAS DEL SELECT 
+        ============================
         */
 
+        // PASOS 2 y 3, FLUJO ALTERNATIVO 0
         [Theory]
         [InlineData("Destornillador", "7 dias", "Destornillador", "Acero", "Ana", "7 €", "7 dias")] // Filtro por nombre y tiempo de reparación
         [InlineData("Destornillador", "", "Destornillador", "Acero", "Ana", "7 €", "7 dias")] // Filtro solo por nombre
         [InlineData("", "7 dias", "Destornillador", "Acero", "Ana", "7 €", "7 dias")] // Filtro solo por tiempo de reparación
-        //[InlineData("", "", "Destornillador", "Acero", "Ana", "7 €", "7 dias")] // Sin filtros (error: ya que esperamos una sola herramienta)
         [Trait("LevelTesting", "Funcional Testing")]
         public void UC2_2_3_AF0_filteringbyNombreandTiempoReparacion(
             string filtroNombre,
@@ -83,6 +83,39 @@ namespace AppForSEII2526.UIT.CU_Reparar
             Assert.True(_selectHerramientasParaRepararPO.CheckListOfHerramientas(expectedHerramientas));
         }
 
-        
+        // PASOS 3, FLUJO ALTERNATIVO 2
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC2_3_AF2_ModificarCarritoHerramientas()
+        {
+            //Arrange
+            InitialStepsForRepararHerramientas();
+            _selectHerramientasParaRepararPO.BuscarHerramientas("", "");
+            Thread.Sleep(500);
+
+            //Act
+            _selectHerramientasParaRepararPO.AddHerramientaToCart(nombreH1);
+            Thread.Sleep(300);
+            _selectHerramientasParaRepararPO.RemoveHerramientaFromCart(nombreH1);
+            Thread.Sleep(300);
+
+            //Assert
+            Assert.True(_selectHerramientasParaRepararPO.RepararHerramientasNotAvailable());
+        }
+
+        // 
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC2_4_AF4_CarritoVacioBotonInactivo()
+        {
+            //Arrange
+            InitialStepsForRepararHerramientas();
+            _selectHerramientasParaRepararPO.BuscarHerramientas("", "");
+            Thread.Sleep(500);
+
+            //Act & Assert
+            // Verificar que el botón está oculto cuando el carrito está vacío
+            Assert.True(_selectHerramientasParaRepararPO.RepararHerramientasNotAvailable());
+        }
     }
 }

@@ -16,6 +16,9 @@ namespace AppForSEII2526.UIT.CU_Reparar
         private By inputfiltroTiempoReparacion = By.Id("inputfiltroTiempoReparacion");
         private By botonBuscarHerramientas = By.Id("BuscarHerramientas");
         private By tableOfHerramientasBy = By.Id("TableOfHerramientas");
+        //private By errorShownBy = By.Id("ErrorsShown");
+        private By buttonRepararHerramientas = By.Id("purchaseHerramientaButton");
+        
 
         public SelectHerramientasParaRepararPO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
@@ -24,10 +27,10 @@ namespace AppForSEII2526.UIT.CU_Reparar
         public void BuscarHerramientas(string nombreHerramienta, string tiempoReparacion)
         {
             //wait for the webelement to be clickable
-            WaitForBeingVisible(inputNombreHerramienta);
+            WaitForBeingClickable(inputNombreHerramienta);
             _driver.FindElement(inputNombreHerramienta).SendKeys(nombreHerramienta);
 
-            WaitForBeingVisible(inputfiltroTiempoReparacion);
+            WaitForBeingClickable(inputfiltroTiempoReparacion);
             _driver.FindElement(inputfiltroTiempoReparacion).SendKeys(tiempoReparacion);
 
 
@@ -45,6 +48,48 @@ namespace AppForSEII2526.UIT.CU_Reparar
             return CheckBodyTable(expectedHerramientas, tableOfHerramientasBy);
         }
 
+        /*
+        public bool CheckMessageError(string errorMessage)
+        {
+            WaitForBeingVisible(errorShownBy);
+            IWebElement actualErrorShown = _driver.FindElement(errorShownBy);
+            _output.WriteLine($"actual Message shown:{actualErrorShown.Text}");
+            return actualErrorShown.Text.Contains(errorMessage);
+        }
+        */
+
+        public void AddHerramientaToCart(string nombreHerramienta)
+        {
+            By addButton = By.Id("herramientaForReparar_" + nombreHerramienta);
+            WaitForBeingClickable(addButton);
+            _driver.FindElement(addButton).Click();
+        }
+
+        public void RemoveHerramientaFromCart(string nombreHerramienta)
+        {
+            By removeButton = By.Id("removeHerramienta_" + nombreHerramienta);
+            WaitForBeingClickable(removeButton);
+            _driver.FindElement(removeButton).Click();
+        }
+
+        public bool RepararHerramientasNotAvailable()
+        {
+            //the button is not Displayed=hidden
+            try
+            {
+                return _driver.FindElement(buttonRepararHerramientas).Displayed == false;
+            }
+            catch (Exception ex)
+            {
+                return true; // Si no existe, está oculto
+            }
+        }
+
+        public void ClickRepararHerramientas()
+        {
+            WaitForBeingClickable(buttonRepararHerramientas);
+            _driver.FindElement(buttonRepararHerramientas).Click();
+        }
     }
 }
 
