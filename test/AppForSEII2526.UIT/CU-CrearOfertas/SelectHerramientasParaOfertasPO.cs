@@ -1,9 +1,11 @@
-﻿using OpenQA.Selenium.DevTools.V137.Network;
+﻿using AppForSEII2526.UIT.Shared;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
+using System.Xml.Linq;
+using Xunit.Abstractions;
 
 namespace AppForSEII2526.UIT.CU_CrearOfertas
 {
@@ -13,10 +15,10 @@ namespace AppForSEII2526.UIT.CU_CrearOfertas
         private By inputFabricante = By.Id("fabricanteSelected");
         private By buttonBuscarHerramientas = By.Id("searchHerramientas");
         private By tableOfHerramientasBy = By.Id("TableOfHerramientas");
+        private By botonOfertar = By.Id("ofertarHerramientaButton");
 
         public SelectHerramientasParaOfertasPO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
-            
         }
 
         public void BuscarHerramientas(string precio, string fabricante)
@@ -28,12 +30,49 @@ namespace AppForSEII2526.UIT.CU_CrearOfertas
             SelectElement selectElement = new SelectElement(_driver.FindElement(inputFabricante));
             selectElement.SelectByText(fabricante);
 
-
             _driver.FindElement(buttonBuscarHerramientas).Click();
+        }
+
+        public bool CheckHerramientasInTable(List<string[]> expectedHerramientas)
+        {
+            return CheckBodyTable(expectedHerramientas, tableOfHerramientasBy);
+        }
+
+
+
+        //------------------- CARRITO ---------------------------
+        public void AddHerramientaToCarrito(string nombreHerramienta)
+        {
+            By addButton = By.Id("herramientaToOfertar_" + nombreHerramienta);
+            WaitForBeingClickable(addButton);
+            _driver.FindElement(addButton).Click();
+        }
+
+        public void RemoveHerramientaFromCarrito(string nombreHerramienta)
+        {
+            By removeButton = By.Id("removeHerramienta_" + nombreHerramienta);
+            WaitForBeingVisible(removeButton);
+            Thread.Sleep(500); // Espera adicional para asegurar que el botón esté interactuable
+            WaitForBeingClickable(removeButton);
+            _driver.FindElement(removeButton).Click();
+        }
+
+        public bool OfertarHerramientasNotAvailable()
+        {
+            // The button is not Displayed == hidden
+            try
+            {
+                return _driver.FindElement(botonOfertar).Displayed == false;
+            }
+            catch (Exception)
+            {
+                return true; // Si no existe, está oculto
+            }
         }
 
         public bool CheckListOfHerramientas(List<string[]> expectedHerramientas)
         {
+
             return CheckBodyTable(expectedHerramientas, tableOfHerramientasBy);
         }
     }
