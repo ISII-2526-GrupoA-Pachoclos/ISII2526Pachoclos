@@ -20,7 +20,7 @@ namespace AppForMovies.UIT.Shared {
         public string _URI {
             get {
                 //set url of your web page 
-                return "https://localhost:5063/";
+                return "https://localhost:7081/";
 
             }
         }

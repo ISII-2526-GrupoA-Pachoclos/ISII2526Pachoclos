@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AppForSEII2526.UIT.CU_Compras
 {
-    internal class SelectHerramientasForCompraPO: PageObject
+    public class SelectHerramientasForCompraPO: PageObject
     {
         public SelectHerramientasForCompraPO( IWebDriver driver, ITestOutputHelper output): base(driver, output) 
         { 
@@ -25,6 +25,8 @@ namespace AppForSEII2526.UIT.CU_Compras
             WaitForBeingClickable(filtroMaterial);
 
             _driver.FindElement(filtroMaterial).SendKeys(material);
+
+            WaitForBeingClickable(filtroPrecio);
             _driver.FindElement(filtroPrecio).SendKeys(percio.ToString());
             _driver.FindElement(botonBuscar).Click();
 

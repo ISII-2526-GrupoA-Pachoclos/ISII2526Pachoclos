@@ -13,9 +13,9 @@ namespace AppForSEII2526.UIT.CU_Compras
         private SelectHerramientasForCompraPO selectHerramientasForCompraPO;
 
         private const string NombreHerramienta = "Martillo";
-        private const string FabricanteHerramienta = "Jose";
-        private const string MaterialHerramienta = "Madera";
-        private const int PrecioHerramienta = 6;
+        //private const string FabricanteHerramienta = "Jose";
+        //private const string MaterialHerramienta = "Madera";
+        //private const int PrecioHerramienta = 6;
 
         public CU_ComprarHerramientas_UIT(ITestOutputHelper output):base(output)
         {
@@ -27,14 +27,28 @@ namespace AppForSEII2526.UIT.CU_Compras
 
         private void InitialStepsForCompra() {
 
+            Initial_step_opening_the_web_page();
+
             selectHerramientasForCompraPO.WaitForBeingVisible(By.Id("CrearCompra"));
+
+            Thread.Sleep(500);
 
             _driver.FindElement(By.Id("CrearCompra")).Click();
         }
-
-        [Fact]
+        
+        [Theory]
+        [InlineData("Made", 0, "Martillo", "Jose", "Madera", 6)] //solo filtro por material
+        [InlineData("", 6, "Martillo", "Jose", "Madera", 6)] //solo filtro por precio
+        [InlineData("Made", 6, "Martillo", "Jose", "Madera", 6)] //filtro por ambos
         [Trait("LevelTesting", "Funcional Testing")]
-        public void CU1_4_5_FA1_filtrarbyMaterial() { 
+        public void CU1_4_5_FA1_filtrarbyMaterial(
+            string filtroMaterial,
+            int filtroPrecio,
+            string NombreHerramienta,
+            string FabricanteHerramienta,
+            string MaterialHerramienta,
+            int PrecioHerramienta
+            ) { 
 
             InitialStepsForCompra();
             var expectedHerramientas = new List<string[]>
@@ -42,7 +56,9 @@ namespace AppForSEII2526.UIT.CU_Compras
                 new string[] { NombreHerramienta, FabricanteHerramienta, MaterialHerramienta, PrecioHerramienta.ToString() }
             };
 
-            selectHerramientasForCompraPO.BuscarHerramientas("Made", 0);
+            selectHerramientasForCompraPO.BuscarHerramientas(filtroMaterial, filtroPrecio);
+
+            Thread.Sleep(500);
 
             Assert.True(selectHerramientasForCompraPO.CheckListaHerramientas(expectedHerramientas));
         }
