@@ -11,7 +11,9 @@ namespace AppForSEII2526.UIT.CU_Reparar
     public class CU_RepararHerramientas_UIT : UC_UIT
     {
         private SelectHerramientasParaRepararPO _selectHerramientasParaRepararPO;
+        private CrearReparacionPO _crearReparacionPO;
         private const string nombreH1 = "Destornillador";
+        private const int idH1 = 2;
         //private const string material1 = "Acero";
         //private const string fabricante1 = "Ana";
         //private const int precio1 = 7;
@@ -21,6 +23,7 @@ namespace AppForSEII2526.UIT.CU_Reparar
         public CU_RepararHerramientas_UIT(ITestOutputHelper output) : base(output)
         {
             _selectHerramientasParaRepararPO = new SelectHerramientasParaRepararPO(_driver, _output);
+            _crearReparacionPO = new CrearReparacionPO(_driver, _output);
         }
 
         /*
@@ -86,7 +89,7 @@ namespace AppForSEII2526.UIT.CU_Reparar
         // PASOS 3, FLUJO ALTERNATIVO 2
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC2_3_AF2_ModificarCarritoHerramientas()
+        public void UC2_3_AF2_ModificarCarrito()
         {
             //Arrange
             InitialStepsForRepararHerramientas();
@@ -103,19 +106,91 @@ namespace AppForSEII2526.UIT.CU_Reparar
             Assert.True(_selectHerramientasParaRepararPO.RepararHerramientasNotAvailable());
         }
 
-        // 
+        // PASO 4, FLUJO ALTERNATIVO 3
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC2_4_AF4_CarritoVacioBotonInactivo()
+        public void UC2_4_AF3_CarritoVacioBotonInactivo()
         {
             //Arrange
             InitialStepsForRepararHerramientas();
             _selectHerramientasParaRepararPO.BuscarHerramientas("", "");
             Thread.Sleep(500);
 
-            //Act & Assert
-            // Verificar que el botón está oculto cuando el carrito está vacío
+            //Act (nada)
+            // Sin añadir herramientas al carrito
+
+            //Assert
             Assert.True(_selectHerramientasParaRepararPO.RepararHerramientasNotAvailable());
         }
+
+
+        /*
+        ===================================
+             PRUEBAS DEL SELECT + POST
+        ===================================
+        */
+
+        // PASO 6, FLUJO ALTERNATIVO 1 - Fecha de entrega anterior
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC2_6_AF1_FechaEntregaAnteriorAHoy()
+        {
+            // Arrange
+            InitialStepsForRepararHerramientas();
+            _selectHerramientasParaRepararPO.BuscarHerramientas("", "");
+            Thread.Sleep(500);
+            _selectHerramientasParaRepararPO.AddHerramientaToCart(nombreH1);
+            _selectHerramientasParaRepararPO.ClickRepararHerramientas();
+
+            DateTime fechaAnterior = DateTime.Today.AddDays(-1);
+
+            // Act
+            _crearReparacionPO.RellenarFormularioReparacion("pibi", "ronaldo", fechaAnterior);
+            Thread.Sleep(500);
+            _crearReparacionPO.RellenarDescripcionReparacion("Mago roto", idH1);
+            Thread.Sleep(500);
+            _crearReparacionPO.ClickSubmitButton();
+            Thread.Sleep(500);
+            _crearReparacionPO.ConfirmDialog();
+            Thread.Sleep(500);
+
+            // Assert
+            Assert.True(_crearReparacionPO.CheckValidationError("La fecha de entrega debe ser igual o posterior a hoy"));
+        }
+
+        // PASO 6, FLUJO ALTERNATIVO 4 - Datos obligatorios no rellenados
+        [Theory]
+        [InlineData("", "ronaldo", 5, "The NombreC field is required.")]
+        [InlineData("pibi", "", 5, "The Apellidos field is required.")]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC2_6_AF4_DatosObligatoriosNoRellenados(
+            string nombre,
+            string apellidos,
+            int diasDesdeHoy,
+            string expectedError)
+        {
+            // Arrange
+            var fechaEntrega = DateTime.Today.AddDays(diasDesdeHoy);
+
+            InitialStepsForRepararHerramientas();
+            _selectHerramientasParaRepararPO.BuscarHerramientas("", "");
+            Thread.Sleep(500);
+            _selectHerramientasParaRepararPO.AddHerramientaToCart(nombreH1);
+            Thread.Sleep(500);
+            _selectHerramientasParaRepararPO.ClickRepararHerramientas();
+            
+            // Act
+            _crearReparacionPO.RellenarFormularioReparacion(nombre, apellidos, fechaEntrega);
+            Thread.Sleep(500);
+            _crearReparacionPO.RellenarDescripcionReparacion("Mago roto", idH1);
+            Thread.Sleep(500);
+            _crearReparacionPO.ClickSubmitButton();
+            Thread.Sleep(500);
+
+            // Assert
+            Assert.True(_crearReparacionPO.CheckValidationError(expectedError), $"Expected error: {expectedError}");
+        }
+
+        
     }
 }
