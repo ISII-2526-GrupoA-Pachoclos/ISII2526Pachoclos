@@ -41,7 +41,7 @@ namespace AppForSEII2526.UIT.CU_Compras
         [InlineData("", 6, "Martillo", "Jose", "Madera", 6)] //solo filtro por precio
         [InlineData("Made", 6, "Martillo", "Jose", "Madera", 6)] //filtro por ambos
         [Trait("LevelTesting", "Funcional Testing")]
-        public void CU1_4_5_FA1_filtrarbyMaterial(
+        public void CU1_4_5_FA1_filtrar(
             string filtroMaterial,
             int filtroPrecio,
             string NombreHerramienta,
@@ -61,6 +61,47 @@ namespace AppForSEII2526.UIT.CU_Compras
             Thread.Sleep(500);
 
             Assert.True(selectHerramientasForCompraPO.CheckListaHerramientas(expectedHerramientas));
+        }
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void CU1_3_FA2_ModificarCarrito() { 
+
+            //Arrange
+            InitialStepsForCompra();
+            selectHerramientasForCompraPO.BuscarHerramientas("", 0);
+            Thread.Sleep(500);
+
+            //Act
+            selectHerramientasForCompraPO.AñadirHerramienta(NombreHerramienta);
+            Thread.Sleep(500);
+            selectHerramientasForCompraPO.QuitarHerramienta(NombreHerramienta);
+            Thread.Sleep(500);
+
+            //Assert
+            Assert.True(selectHerramientasForCompraPO.ComprarHerramientaNotAvailable());
+
+
+        }
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void CU1_3_FA3_noHerramientas()
+        {
+
+            //Arrange
+            InitialStepsForCompra();
+            selectHerramientasForCompraPO.BuscarHerramientas("", 0);
+            Thread.Sleep(500);
+
+            //Act
+            //No se añade ninguna herramienta al carrito
+            Thread.Sleep(500);
+
+            //Assert
+            Assert.True(selectHerramientasForCompraPO.ComprarHerramientaNotAvailable());
+
+
         }
 
 
