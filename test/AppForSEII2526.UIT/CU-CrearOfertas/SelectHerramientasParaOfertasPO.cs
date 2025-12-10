@@ -51,9 +51,8 @@ namespace AppForSEII2526.UIT.CU_CrearOfertas
         public void RemoveHerramientaFromCarrito(string nombreHerramienta)
         {
             By removeButton = By.Id("removeHerramienta_" + nombreHerramienta);
-            WaitForBeingVisible(removeButton);
-            Thread.Sleep(500); // Espera adicional para asegurar que el botón esté interactuable
             WaitForBeingClickable(removeButton);
+            Thread.Sleep(5000);
             _driver.FindElement(removeButton).Click();
         }
 
