@@ -1,5 +1,6 @@
 ﻿using AppForSEII2526.UIT.Shared;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
@@ -46,13 +47,18 @@ namespace AppForSEII2526.UIT.CU_CrearOfertas
             By addButton = By.Id("herramientaToOfertar_" + nombreHerramienta);
             WaitForBeingClickable(addButton);
             _driver.FindElement(addButton).Click();
+
+            // Hacer scroll hacia el botón de ofertar usando Actions
+            WaitForBeingVisible(botonOfertar);
+            IWebElement botonOfertarElement = _driver.FindElement(botonOfertar);
+            Actions actions = new Actions(_driver);
+            actions.MoveToElement(botonOfertarElement).Perform();
         }
 
         public void RemoveHerramientaFromCarrito(string nombreHerramienta)
         {
             By removeButton = By.Id("removeHerramienta_" + nombreHerramienta);
             WaitForBeingClickable(removeButton);
-            Thread.Sleep(5000);
             _driver.FindElement(removeButton).Click();
         }
 
