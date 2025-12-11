@@ -121,7 +121,7 @@ namespace ISII2526Pachoclos.LogViewer
             Console.ForegroundColor = logEntry.LogLevel switch
             {
                 "Error" => ConsoleColor.Red,
-                "Information" => ConsoleColor.Green
+                "Information" => ConsoleColor.Green,
                 _ => ConsoleColor.White
             };
 
