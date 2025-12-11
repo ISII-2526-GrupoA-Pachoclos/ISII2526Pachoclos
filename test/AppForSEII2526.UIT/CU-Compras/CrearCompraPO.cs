@@ -16,6 +16,7 @@ namespace AppForSEII2526.UIT.CU_Compras
         By apellido = By.Id("Apellido");
         By direccion = By.Id("DireccionEnvio");
         By comprarHerramientas = By.Id("Submit");
+        By dialogOk = By.Id("Button_DialogOK");
 
         public void RellenarFormularioCompra(string nombre, string apellidoUser, string direccionEnvio,  string descripcionText)
         {
@@ -33,11 +34,20 @@ namespace AppForSEII2526.UIT.CU_Compras
             _driver.FindElement(comprarHerramientas).Click();
         }
 
-        public bool CheckError(string expectedError) {
-            
-            return CheckModalBodyText(expectedError, );
+        public void ConfirmCompra() { 
+            WaitForBeingClickable(dialogOk);
+            _driver.FindElement(dialogOk).Click();
+
 
         }
+
+        
+        public bool CheckError(string expectedError) {
+            
+            return _driver.PageSource.Contains(expectedError);
+
+        }
+        
 
     }
 }

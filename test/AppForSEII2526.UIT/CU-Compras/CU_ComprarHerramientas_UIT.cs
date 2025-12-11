@@ -11,6 +11,7 @@ namespace AppForSEII2526.UIT.CU_Compras
     {
 
         private SelectHerramientasForCompraPO selectHerramientasForCompraPO;
+        private CrearCompraPO crearCompraPO;
 
         private const string NombreHerramienta = "Martillo";
         //private const string FabricanteHerramienta = "Jose";
@@ -20,7 +21,7 @@ namespace AppForSEII2526.UIT.CU_Compras
         public CU_ComprarHerramientas_UIT(ITestOutputHelper output):base(output)
         {
             selectHerramientasForCompraPO = new SelectHerramientasForCompraPO(_driver, _output);
-
+            crearCompraPO = new CrearCompraPO(_driver, _output);
 
 
         }
@@ -63,6 +64,9 @@ namespace AppForSEII2526.UIT.CU_Compras
             Assert.True(selectHerramientasForCompraPO.CheckListaHerramientas(expectedHerramientas));
         }
 
+        public void CU1_6_FA4() { 
+        }
+
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
         public void CU1_3_FA2_ModificarCarrito() { 
@@ -103,6 +107,8 @@ namespace AppForSEII2526.UIT.CU_Compras
 
 
         }
+
+
 
 
 
