@@ -86,5 +86,16 @@ namespace AppForSEII2526.UIT.CU_Reparar
                 return false;
             }
         }
+
+        public void PressModifyHerramientasButton()
+        {
+            WaitForBeingClickable(modificarHerramientasButton);
+            _driver.FindElement(modificarHerramientasButton).Click();
+        }
+
+        public bool CheckListOfHerramientasParaReparar(List<string[]> expectedHerramientas)
+        {
+            return CheckBodyTable(expectedHerramientas, tableOfRentalItemsBy);
+        }
     }
 }

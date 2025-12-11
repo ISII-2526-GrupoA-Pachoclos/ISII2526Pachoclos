@@ -19,6 +19,8 @@ namespace AppForSEII2526.UIT.CU_Reparar
         //private const int precio1 = 7;
         //private const string tiempoReparacion1 = "7 dias";
 
+        private const string nombreH2 = "Martillo";
+
 
         public CU_RepararHerramientas_UIT(ITestOutputHelper output) : base(output)
         {
@@ -170,16 +172,16 @@ namespace AppForSEII2526.UIT.CU_Reparar
             string expectedError)
         {
             // Arrange
-            var fechaEntrega = DateTime.Today.AddDays(diasDesdeHoy);
-
             InitialStepsForRepararHerramientas();
             _selectHerramientasParaRepararPO.BuscarHerramientas("", "");
             Thread.Sleep(500);
             _selectHerramientasParaRepararPO.AddHerramientaToCart(nombreH1);
             Thread.Sleep(500);
             _selectHerramientasParaRepararPO.ClickRepararHerramientas();
-            
+
             // Act
+            var fechaEntrega = DateTime.Today.AddDays(diasDesdeHoy);
+
             _crearReparacionPO.RellenarFormularioReparacion(nombre, apellidos, fechaEntrega);
             Thread.Sleep(500);
             _crearReparacionPO.RellenarDescripcionReparacion("Mago roto", idH1);
@@ -191,6 +193,110 @@ namespace AppForSEII2526.UIT.CU_Reparar
             Assert.True(_crearReparacionPO.CheckValidationError(expectedError), $"Expected error: {expectedError}");
         }
 
-        
+        // PASO 6, FLUJO ALTERNATIVO 4 - Fecha de entrega anterior (caso especial)
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC2_6_AF4_FechaEntregaAnterior()
+        {
+            // Arrange
+            InitialStepsForRepararHerramientas();
+            _selectHerramientasParaRepararPO.BuscarHerramientas("", "");
+            Thread.Sleep(500);
+            _selectHerramientasParaRepararPO.AddHerramientaToCart(nombreH1);
+            Thread.Sleep(500);
+            _selectHerramientasParaRepararPO.ClickRepararHerramientas();
+
+            // Act
+            var fechaEntrega = DateTime.Today.AddDays(-1);
+
+            _crearReparacionPO.RellenarFormularioReparacion("pibi", "ronaldo", fechaEntrega);
+            Thread.Sleep(500);
+            _crearReparacionPO.RellenarDescripcionReparacion("Mago roto", idH1);
+            Thread.Sleep(500);
+            _crearReparacionPO.ClickSubmitButton();
+            Thread.Sleep(500);
+            _crearReparacionPO.ConfirmDialog();
+            Thread.Sleep(500);
+
+            // Assert
+            Assert.True(_crearReparacionPO.CheckValidationError("La fecha de entrega debe ser igual o posterior a hoy."));
+        }
+
+        // PASO 6, FLUJO ALTERNATIVO 5 - Cantidad 0 no permitida
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC2_6_AF5_CantidadCeroNoPermitida()
+        {
+            // Arrange
+            InitialStepsForRepararHerramientas();
+            _selectHerramientasParaRepararPO.BuscarHerramientas("", "");
+            Thread.Sleep(500);
+            _selectHerramientasParaRepararPO.AddHerramientaToCart(nombreH1);
+            Thread.Sleep(500);
+            _selectHerramientasParaRepararPO.ClickRepararHerramientas();
+
+            // Act
+            var fechaEntrega = DateTime.Today.AddDays(-1);
+
+            _crearReparacionPO.RellenarFormularioReparacion("pibi", "ronaldo", fechaEntrega);
+            Thread.Sleep(500);
+            _crearReparacionPO.RellenarCantidadReparar(idH1, 0);
+            Thread.Sleep(500);
+            _crearReparacionPO.ClickSubmitButton();
+            Thread.Sleep(500);
+            _crearReparacionPO.ConfirmDialog();
+            Thread.Sleep(500);
+
+            // Assert
+            Assert.True(_crearReparacionPO.CheckValidationError("La cantidad debe ser un número positivo mayor que 0."));
+        }
+
+        // PASO 5, FLUJO ALTERNATIVO 2 - Modificar carrito desde CrearReparacion
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC2_5_AF2_ModificarCarritoDesdeCrearReparacion()
+        {
+            // Arrange
+            InitialStepsForRepararHerramientas();
+            _selectHerramientasParaRepararPO.BuscarHerramientas("", "");
+            Thread.Sleep(500);
+
+            // Act
+            _selectHerramientasParaRepararPO.AddHerramientaToCart(nombreH1);
+            Thread.Sleep(500);
+            _selectHerramientasParaRepararPO.AddHerramientaToCart(nombreH2);
+            Thread.Sleep(500);
+
+            // Hacer scroll hacia el botón de reparar herramientas usando Actions 
+            // COMO HA USADO MI COMPAÑERO (ADRIÁN DANIEL MECINAS DUMITRU) EN SU CDU: CREAR OFERTAS
+            _selectHerramientasParaRepararPO.WaitForBeingVisible(By.Id("purchaseHerramientaButton"));
+            var botonRepararHerramientas = _driver.FindElement(By.Id("purchaseHerramientaButton"));
+            var actions = new OpenQA.Selenium.Interactions.Actions(_driver);
+            actions.MoveToElement(botonRepararHerramientas).Perform();
+            Thread.Sleep(300);
+
+            _selectHerramientasParaRepararPO.ClickRepararHerramientas();
+
+            _crearReparacionPO.PressModifyHerramientasButton();
+            Thread.Sleep(500);
+            _selectHerramientasParaRepararPO.RemoveHerramientaFromCart(nombreH2);
+            Thread.Sleep(500);
+            _selectHerramientasParaRepararPO.ClickRepararHerramientas();
+
+            // Assert
+            var expectedHerramientas = new List<string[]>
+            {
+                new string[] { nombreH1, "7 dias", "7" } // Columnas de la herramienta en el POST
+            };
+
+            Assert.True(_crearReparacionPO.CheckListOfHerramientasParaReparar(expectedHerramientas));
+        }
+
+        /*
+        ===========================================
+            PRUEBAS DEL SELECT + POST + DETALLE
+        ===========================================
+        */
+
     }
 }
