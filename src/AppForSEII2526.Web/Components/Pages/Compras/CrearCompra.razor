@@ -15,7 +15,11 @@
     <div class="row">
 
         <DataAnnotationsValidator />
-        <ValidationSummary />
+        <ValidationSummary class="row alert alert-danger" />
+        <div class="row alert alert-danger" role="alert" hidden="@hideErrors">
+            <p id="ErrorsShown">Errors: @messageError</p>
+        </div>
+
     </div>
     <div class="row g-3">
         <div class="col-md">
@@ -142,7 +146,7 @@
 
     private bool DialogIsOpen;
 
-    
+
 
     private object? errors;
 
@@ -158,7 +162,7 @@
         DialogIsOpen = false;
         if (isOk)
         {
-             if (nuevaCompra.HerramientasCompradas.Count > 0)
+            if (nuevaCompra.HerramientasCompradas.Count > 0)
             {
                 try
                 {
@@ -180,7 +184,7 @@
                 catch (ApiException apiexception)
                 {
                     //we need to inform user that there was some other error while processing the request
-                    messageError = "Error while processing your request, please try again later!";
+                    messageError = apiexception.Message;
 
                 }
 

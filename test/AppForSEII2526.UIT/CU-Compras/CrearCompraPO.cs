@@ -17,8 +17,11 @@ namespace AppForSEII2526.UIT.CU_Compras
         By direccion = By.Id("DireccionEnvio");
         By comprarHerramientas = By.Id("Submit");
         By dialogOk = By.Id("Button_DialogOK");
+        By modificarCompra = By.Id("modificarHerramientas");
+        By tablaHerramientasBy = By.Id("TableOfRentalItems");
 
-        public void RellenarFormularioCompra(string nombre, string apellidoUser, string direccionEnvio,  string descripcionText)
+
+        public void RellenarFormularioCompra(string nombre, string apellidoUser, string direccionEnvio)
         {
             WaitForBeingClickable(nombreUsuario);
             _driver.FindElement(nombreUsuario).SendKeys(nombre);
@@ -41,13 +44,32 @@ namespace AppForSEII2526.UIT.CU_Compras
 
         }
 
-        
+        public void ModificarCompra()
+        {
+            WaitForBeingClickable(modificarCompra);
+            _driver.FindElement(modificarCompra).Click();
+        }
+
+
         public bool CheckError(string expectedError) {
             
             return _driver.PageSource.Contains(expectedError);
 
         }
-        
+
+        public bool CheckListaHerramientas(List<string[]> expectedHerramientas)
+        {
+
+            return CheckBodyTable(expectedHerramientas, tablaHerramientasBy);
+        }
+
+        public void rellenarCantidad(int id, int cantidad) {
+            By cantidadBy = By.Id("cantidad_" + id);
+            WaitForBeingClickable(cantidadBy);
+            _driver.FindElement(cantidadBy).Clear();
+            _driver.FindElement(cantidadBy).SendKeys(cantidad.ToString());
+        }
+
 
     }
 }

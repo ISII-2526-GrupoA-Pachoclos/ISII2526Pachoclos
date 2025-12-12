@@ -47,6 +47,12 @@ namespace AppForSEII2526.UIT.CU_Compras
             _driver.FindElement(removeButton).Click();
         }
 
+        public void Comprar() { 
+
+            WaitForBeingClickable(botonComprar);
+            _driver.FindElement(botonComprar).Click();
+        }
+
         public bool ComprarHerramientaNotAvailable()
         {
             try
