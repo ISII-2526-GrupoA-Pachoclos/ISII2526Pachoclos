@@ -20,6 +20,7 @@ namespace AppForSEII2526.UIT.CU_CrearOfertas
 
         public SelectHerramientasParaOfertasPO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
+
         }
 
         public void BuscarHerramientas(string precio, string fabricante)
