@@ -12,6 +12,7 @@ namespace AppForSEII2526.UIT.CU_Reparar
     {
         private SelectHerramientasParaRepararPO _selectHerramientasParaRepararPO;
         private CrearReparacionPO _crearReparacionPO;
+        private DetalleReparacionPO _detalleReparacionPO;
         private const string nombreH1 = "Destornillador";
         private const int idH1 = 2;
         //private const string material1 = "Acero";
@@ -26,6 +27,7 @@ namespace AppForSEII2526.UIT.CU_Reparar
         {
             _selectHerramientasParaRepararPO = new SelectHerramientasParaRepararPO(_driver, _output);
             _crearReparacionPO = new CrearReparacionPO(_driver, _output);
+            _detalleReparacionPO = new DetalleReparacionPO(_driver, _output);
         }
 
         /*
@@ -298,5 +300,50 @@ namespace AppForSEII2526.UIT.CU_Reparar
         ===========================================
         */
 
+        // PASOS 1-7, FLUJO BÁSICO COMPLETO
+        [Theory]
+        [InlineData("pibi", "ronaldo", 5)]
+        [InlineData("pibi", "ronaldo", 7)]
+        [InlineData("pibi", "ronaldo", 8)]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC2_1_2_3_4_5_6_7_FlujoBásico(string nombreC, string apellidosC, int diasDesdeHoy)
+        {
+            // Arrange
+            InitialStepsForRepararHerramientas();
+            _selectHerramientasParaRepararPO.BuscarHerramientas("", "");
+            Thread.Sleep(500);
+            _selectHerramientasParaRepararPO.AddHerramientaToCart(nombreH1);
+            _selectHerramientasParaRepararPO.ClickRepararHerramientas();
+            var fechaEntrega = DateTime.Today.AddDays(diasDesdeHoy);
+
+            // Calcular la fecha de recogida: fechaEntrega + tiempo de reparación del Destornillador (7 días según SQL)
+            var fechaRecogidaEsperada = fechaEntrega.AddDays(7); // 7 días es el tiempo de reparación
+
+            // Act
+            _crearReparacionPO.RellenarFormularioReparacion(nombreC, apellidosC, fechaEntrega);
+            Thread.Sleep(500);
+            _crearReparacionPO.ClickSubmitButton();
+            Thread.Sleep(500);
+            _crearReparacionPO.ConfirmDialog();
+            Thread.Sleep(500);
+
+            // Assert
+            Assert.True(_detalleReparacionPO.CheckReparacionDetail(
+                nombreC,
+                apellidosC,
+                fechaEntrega,
+                fechaRecogidaEsperada,
+                7f
+                ), "Error: los detalles de la reparación no son los esperados");
+
+            var expectedHerramientas = new List<string[]>
+            {
+                new string[] { nombreH1, 1.ToString(), "7 €", "7 dias" }
+            };
+
+            Assert.True(_detalleReparacionPO.CheckListOfHerramientasReparadas(expectedHerramientas),
+                "Error: la lista de herramientas reparadas no es la esperada");
+            }
+    
     }
 }
