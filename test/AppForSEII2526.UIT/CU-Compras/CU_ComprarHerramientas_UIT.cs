@@ -221,6 +221,8 @@ namespace AppForSEII2526.UIT.CU_Compras
 
             //Assert
 
+            Assert.True(detallesCompraPO.CheckDetallesCompra("Juan", "Valdes", "calle de juan", DateTime.Today, PrecioHerramienta));
+
             Assert.True(detallesCompraPO.CheckListaHerramientas(expectedHerramientas));
 
 
