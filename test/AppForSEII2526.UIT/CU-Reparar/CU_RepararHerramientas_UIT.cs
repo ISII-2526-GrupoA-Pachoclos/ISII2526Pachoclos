@@ -98,7 +98,7 @@ namespace AppForSEII2526.UIT.CU_Reparar
         // PASO 3, FLUJO ALTERNATIVO 2 - Modificar carrito desde Select
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC2_3_AF2_ModificarCarrito()
+        public void UC2_3_AF2_ModificarCarritoDesdeSelect()
         {
             //Arrange
             InitialStepsForRepararHerramientas();
