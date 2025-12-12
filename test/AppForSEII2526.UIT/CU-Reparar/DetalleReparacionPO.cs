@@ -12,18 +12,21 @@ namespace AppForSEII2526.UIT.CU_Reparar
 {
     public class DetalleReparacionPO : PageObject
     {
-        By botonPrecioTotal = By.Id("TotalPrice");
+        private By botonPrecioTotal = By.Id("TotalPrice");
 
         public DetalleReparacionPO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
+
         }
 
         public bool CheckReparacionDetail(string nombreC, string apellidosC, DateTime fechaEntrega,
             DateTime fechaRecogida, float precioTotal)
         {
             WaitForBeingVisible(botonPrecioTotal);
+
             bool result = true;
             var nombreApellidos = nombreC + " " + apellidosC;
+
             result = result && _driver.FindElement(By.Id("NameSurname")).Text.Contains(nombreApellidos);
             result = result && _driver.FindElement(By.Id("FechaEntrega")).Text.Contains(fechaEntrega.ToString("dd/MM/yyyy"));
             result = result && _driver.FindElement(By.Id("FechaRecogida")).Text.Contains(fechaRecogida.ToString("dd/MM/yyyy"));

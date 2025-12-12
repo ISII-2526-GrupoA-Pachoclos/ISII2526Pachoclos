@@ -13,15 +13,21 @@ namespace AppForSEII2526.UIT.CU_Reparar
         private SelectHerramientasParaRepararPO _selectHerramientasParaRepararPO;
         private CrearReparacionPO _crearReparacionPO;
         private DetalleReparacionPO _detalleReparacionPO;
+
         private const string nombreH1 = "Destornillador";
         private const int idH1 = 2;
-        //private const string material1 = "Acero";
-        //private const string fabricante1 = "Ana";
-        //private const int precio1 = 7;
-        //private const string tiempoReparacion1 = "7 dias";
+        private const string materialH1 = "Acero";
+        private const string fabricanteH1 = "Ana";
+        private const float precioH1float = 7f;
+        private const string precioH1String = "7 €";
+        private const string tiempoReparacionH1 = "7 dias";
 
         private const string nombreH2 = "Martillo";
 
+        private const string nombreC = "pibi";
+        private const string apellidosC = "ronaldo";
+
+        private const string descripcionRep1 = "Mango roto";
 
         public CU_RepararHerramientas_UIT(ITestOutputHelper output) : base(output)
         {
@@ -38,19 +44,19 @@ namespace AppForSEII2526.UIT.CU_Reparar
 
         private void InitialStepsForRepararHerramientas()
         {
+            // We go to the home page
             Initial_step_opening_the_web_page();
 
             // Precondition_perform_login();
 
-            By id = By.Id("CrearReparacion");
             //we wait for the option of the menu to be visible
-            _selectHerramientasParaRepararPO.WaitForBeingVisible(id);
+            _selectHerramientasParaRepararPO.WaitForBeingVisible(By.Id("CrearReparacion"));
 
             // Esperar un momento adicional para asegurar que Blazor termine de renderizar
             Thread.Sleep(500);
 
             //we click on the menu
-            _driver.FindElement(id).Click();
+            _driver.FindElement(By.Id("CrearReparacion")).Click();
         }
 
         /*
@@ -59,11 +65,11 @@ namespace AppForSEII2526.UIT.CU_Reparar
         ============================
         */
 
-        // PASOS 2 y 3, FLUJO ALTERNATIVO 0
+        // PASOS 2 y 3, FLUJO ALTERNATIVO 0 - Filtros
         [Theory]
-        [InlineData("Destornillador", "7 dias", "Destornillador", "Acero", "Ana", "7 €", "7 dias")] // Filtro por nombre y tiempo de reparación
-        [InlineData("Destornillador", "", "Destornillador", "Acero", "Ana", "7 €", "7 dias")] // Filtro solo por nombre
-        [InlineData("", "7 dias", "Destornillador", "Acero", "Ana", "7 €", "7 dias")] // Filtro solo por tiempo de reparación
+        [InlineData(nombreH1, tiempoReparacionH1, nombreH1, materialH1, fabricanteH1, precioH1String, tiempoReparacionH1)] // Filtro por nombre y tiempo de reparación
+        [InlineData(nombreH1, "", nombreH1, materialH1, fabricanteH1, precioH1String, tiempoReparacionH1)] // Filtro solo por nombre
+        [InlineData("", tiempoReparacionH1, nombreH1, materialH1, fabricanteH1, precioH1String, tiempoReparacionH1)] // Filtro solo por tiempo de reparación
         [Trait("LevelTesting", "Funcional Testing")]
         public void UC2_2_3_AF0_filteringbyNombreandTiempoReparacion(
             string filtroNombre,
@@ -83,14 +89,13 @@ namespace AppForSEII2526.UIT.CU_Reparar
 
             //Act
             _selectHerramientasParaRepararPO.BuscarHerramientas(filtroNombre, filtroTiempoRepracion);
-
             Thread.Sleep(500); // Esperar ligeramente a las filas
 
             //Assert
             Assert.True(_selectHerramientasParaRepararPO.CheckListOfHerramientas(expectedHerramientas));
         }
 
-        // PASOS 3, FLUJO ALTERNATIVO 2
+        // PASO 3, FLUJO ALTERNATIVO 2 - Modificar carrito desde Select
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
         public void UC2_3_AF2_ModificarCarrito()
@@ -110,17 +115,17 @@ namespace AppForSEII2526.UIT.CU_Reparar
             Assert.True(_selectHerramientasParaRepararPO.RepararHerramientasNotAvailable());
         }
 
-        // PASO 4, FLUJO ALTERNATIVO 3
+        // PASO 4, FLUJO ALTERNATIVO 3 - Carrito vacío
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC2_4_AF3_CarritoVacioBotonInactivo()
+        public void UC2_4_AF3_CarritoVacio()
         {
             //Arrange
             InitialStepsForRepararHerramientas();
             _selectHerramientasParaRepararPO.BuscarHerramientas("", "");
             Thread.Sleep(500);
 
-            //Act (nada)
+            //Act
             // Sin añadir herramientas al carrito
 
             //Assert
@@ -149,9 +154,9 @@ namespace AppForSEII2526.UIT.CU_Reparar
             DateTime fechaAnterior = DateTime.Today.AddDays(-1);
 
             // Act
-            _crearReparacionPO.RellenarFormularioReparacion("pibi", "ronaldo", fechaAnterior);
+            _crearReparacionPO.RellenarFormularioReparacion(nombreC, apellidosC, fechaAnterior);
             Thread.Sleep(500);
-            _crearReparacionPO.RellenarDescripcionReparacion("Mago roto", idH1);
+            _crearReparacionPO.RellenarDescripcionReparacion(descripcionRep1, idH1);
             Thread.Sleep(500);
             _crearReparacionPO.ClickSubmitButton();
             Thread.Sleep(500);
@@ -164,8 +169,8 @@ namespace AppForSEII2526.UIT.CU_Reparar
 
         // PASO 6, FLUJO ALTERNATIVO 4 - Datos obligatorios no rellenados
         [Theory]
-        [InlineData("", "ronaldo", 5, "The NombreC field is required.")]
-        [InlineData("pibi", "", 5, "The Apellidos field is required.")]
+        [InlineData("", apellidosC, 5, "The NombreC field is required.")]
+        [InlineData(nombreC, "", 5, "The Apellidos field is required.")]
         [Trait("LevelTesting", "Funcional Testing")]
         public void UC2_6_AF4_DatosObligatoriosNoRellenados(
             string nombre,
@@ -186,7 +191,7 @@ namespace AppForSEII2526.UIT.CU_Reparar
 
             _crearReparacionPO.RellenarFormularioReparacion(nombre, apellidos, fechaEntrega);
             Thread.Sleep(500);
-            _crearReparacionPO.RellenarDescripcionReparacion("Mago roto", idH1);
+            _crearReparacionPO.RellenarDescripcionReparacion(descripcionRep1, idH1);
             Thread.Sleep(500);
             _crearReparacionPO.ClickSubmitButton();
             Thread.Sleep(500);
@@ -195,39 +200,10 @@ namespace AppForSEII2526.UIT.CU_Reparar
             Assert.True(_crearReparacionPO.CheckValidationError(expectedError), $"Expected error: {expectedError}");
         }
 
-        // PASO 6, FLUJO ALTERNATIVO 4 - Fecha de entrega anterior (caso especial)
-        [Fact]
-        [Trait("LevelTesting", "Funcional Testing")]
-        public void UC2_6_AF4_FechaEntregaAnterior()
-        {
-            // Arrange
-            InitialStepsForRepararHerramientas();
-            _selectHerramientasParaRepararPO.BuscarHerramientas("", "");
-            Thread.Sleep(500);
-            _selectHerramientasParaRepararPO.AddHerramientaToCart(nombreH1);
-            Thread.Sleep(500);
-            _selectHerramientasParaRepararPO.ClickRepararHerramientas();
-
-            // Act
-            var fechaEntrega = DateTime.Today.AddDays(-1);
-
-            _crearReparacionPO.RellenarFormularioReparacion("pibi", "ronaldo", fechaEntrega);
-            Thread.Sleep(500);
-            _crearReparacionPO.RellenarDescripcionReparacion("Mago roto", idH1);
-            Thread.Sleep(500);
-            _crearReparacionPO.ClickSubmitButton();
-            Thread.Sleep(500);
-            _crearReparacionPO.ConfirmDialog();
-            Thread.Sleep(500);
-
-            // Assert
-            Assert.True(_crearReparacionPO.CheckValidationError("La fecha de entrega debe ser igual o posterior a hoy."));
-        }
-
         // PASO 6, FLUJO ALTERNATIVO 5 - Cantidad 0 no permitida
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC2_6_AF5_CantidadCeroNoPermitida()
+        public void UC2_6_AF5_CantidadCero()
         {
             // Arrange
             InitialStepsForRepararHerramientas();
@@ -240,7 +216,7 @@ namespace AppForSEII2526.UIT.CU_Reparar
             // Act
             var fechaEntrega = DateTime.Today.AddDays(-1);
 
-            _crearReparacionPO.RellenarFormularioReparacion("pibi", "ronaldo", fechaEntrega);
+            _crearReparacionPO.RellenarFormularioReparacion(nombreC, apellidosC, fechaEntrega);
             Thread.Sleep(500);
             _crearReparacionPO.RellenarCantidadReparar(idH1, 0);
             Thread.Sleep(500);
@@ -288,7 +264,7 @@ namespace AppForSEII2526.UIT.CU_Reparar
             // Assert
             var expectedHerramientas = new List<string[]>
             {
-                new string[] { nombreH1, "7 dias", "7" } // Columnas de la herramienta en el POST
+                new string[] { nombreH1, tiempoReparacionH1, precioH1float.ToString() } // Columnas de la herramienta en el POST
             };
 
             Assert.True(_crearReparacionPO.CheckListOfHerramientasParaReparar(expectedHerramientas));
@@ -302,9 +278,9 @@ namespace AppForSEII2526.UIT.CU_Reparar
 
         // PASOS 1-7, FLUJO BÁSICO COMPLETO
         [Theory]
-        [InlineData("pibi", "ronaldo", 5)]
-        [InlineData("pibi", "ronaldo", 7)]
-        [InlineData("pibi", "ronaldo", 8)]
+        [InlineData(nombreC, apellidosC, 5)]
+        [InlineData(nombreC, apellidosC, 6)]
+        [InlineData(nombreC, apellidosC, 7)]
         [Trait("LevelTesting", "Funcional Testing")]
         public void UC2_1_2_3_4_5_6_7_FlujoBásico(string nombreC, string apellidosC, int diasDesdeHoy)
         {
@@ -316,8 +292,8 @@ namespace AppForSEII2526.UIT.CU_Reparar
             _selectHerramientasParaRepararPO.ClickRepararHerramientas();
             var fechaEntrega = DateTime.Today.AddDays(diasDesdeHoy);
 
-            // Calcular la fecha de recogida: fechaEntrega + tiempo de reparación del Destornillador (7 días según SQL)
-            var fechaRecogidaEsperada = fechaEntrega.AddDays(7); // 7 días es el tiempo de reparación
+            // fecha de recogida: fechaEntrega + tiempo de reparación
+            var fechaRecogidaEsperada = fechaEntrega.AddDays(7);
 
             // Act
             _crearReparacionPO.RellenarFormularioReparacion(nombreC, apellidosC, fechaEntrega);
@@ -333,17 +309,16 @@ namespace AppForSEII2526.UIT.CU_Reparar
                 apellidosC,
                 fechaEntrega,
                 fechaRecogidaEsperada,
-                7f
+                precioH1float
                 ), "Error: los detalles de la reparación no son los esperados");
 
             var expectedHerramientas = new List<string[]>
             {
-                new string[] { nombreH1, 1.ToString(), "7 €", "7 dias" }
+                new string[] { nombreH1, 1.ToString(), precioH1String, tiempoReparacionH1 }
             };
 
             Assert.True(_detalleReparacionPO.CheckListOfHerramientasReparadas(expectedHerramientas),
                 "Error: la lista de herramientas reparadas no es la esperada");
             }
-    
     }
 }

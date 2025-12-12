@@ -16,8 +16,6 @@ namespace AppForSEII2526.UIT.CU_Reparar
         private By inputNombre = By.Id("Name");
         private By inputApellidos = By.Id("Surname");
         private By inputFechaEntrega = By.Id("FechaFin");
-        private By inputTelefono = By.Id("Phone");
-        private By inputMetodoPago = By.Id("TiposMetodoPago");
         private By repararHerramientas = By.Id("Submit");
         private By dialogOkButton = By.Id("Button_DialogOK");
         private By modificarHerramientasButton = By.Id("ModifyMovies");
@@ -25,6 +23,7 @@ namespace AppForSEII2526.UIT.CU_Reparar
 
         public CrearReparacionPO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
+
         }
 
         public void RellenarFormularioReparacion(string nombreC, string apellidosC, DateTime fechaEntrega)
@@ -71,18 +70,18 @@ namespace AppForSEII2526.UIT.CU_Reparar
         public bool CheckGuardarReparacionDisabled()
         {
             WaitForBeingVisible(repararHerramientas);
+            
             try
             {
                 var button = _driver.FindElement(repararHerramientas);
                 var disabledAttr = button.GetAttribute("disabled");
 
-                // El botón está deshabilitado si tiene el atributo "disabled" (no null)
+                // El botón está deshabilitado si tiene el atributo "disabled"
                 // o si Enabled es false
                 return disabledAttr != null || !button.Enabled;
             }
             catch (Exception ex)
             {
-                _output.WriteLine($"Error al verificar si el botón está deshabilitado: {ex.Message}");
                 return false;
             }
         }

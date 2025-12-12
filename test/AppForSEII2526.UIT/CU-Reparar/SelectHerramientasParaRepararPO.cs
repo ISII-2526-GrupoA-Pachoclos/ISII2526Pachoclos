@@ -16,12 +16,11 @@ namespace AppForSEII2526.UIT.CU_Reparar
         private By inputfiltroTiempoReparacion = By.Id("inputfiltroTiempoReparacion");
         private By botonBuscarHerramientas = By.Id("BuscarHerramientas");
         private By tableOfHerramientasBy = By.Id("TableOfHerramientas");
-        //private By errorShownBy = By.Id("ErrorsShown");
         private By buttonRepararHerramientas = By.Id("purchaseHerramientaButton");
         
-
         public SelectHerramientasParaRepararPO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
+
         }
 
         public void BuscarHerramientas(string nombreHerramienta, string tiempoReparacion)
@@ -36,27 +35,12 @@ namespace AppForSEII2526.UIT.CU_Reparar
 
             _driver.FindElement(botonBuscarHerramientas).Click();
 
-            
-
-
-
-
         }
 
         public bool CheckListOfHerramientas(List<string[]> expectedHerramientas)
         {
             return CheckBodyTable(expectedHerramientas, tableOfHerramientasBy);
         }
-
-        /*
-        public bool CheckMessageError(string errorMessage)
-        {
-            WaitForBeingVisible(errorShownBy);
-            IWebElement actualErrorShown = _driver.FindElement(errorShownBy);
-            _output.WriteLine($"actual Message shown:{actualErrorShown.Text}");
-            return actualErrorShown.Text.Contains(errorMessage);
-        }
-        */
 
         public void AddHerramientaToCart(string nombreHerramienta)
         {
