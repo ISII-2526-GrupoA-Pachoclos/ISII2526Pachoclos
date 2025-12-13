@@ -7,7 +7,7 @@ namespace AppForSEII2526.API.DTOs
         [Key]
         public int herramientaid { get; set; }
 
-        [Required]
+        [Required, Range(1, int.MaxValue, ErrorMessage = "La cantidad debe ser un número positivo mayor que 0.")]
         public int cantidad { get; set; }
 
         [Required, StringLength(50, ErrorMessage="No puede tener mas de 50 caracteres", MinimumLength=1)]

@@ -76,6 +76,8 @@ namespace AppForMovies.UIT.Shared {
                 PageLoadStrategy = PageLoadStrategy.Normal,
                 AcceptInsecureCertificates = true
             };
+
+
             //For pipelines use this option for hiding the browser
             if (_pipeline) optionsc.AddArgument("--headless");
 

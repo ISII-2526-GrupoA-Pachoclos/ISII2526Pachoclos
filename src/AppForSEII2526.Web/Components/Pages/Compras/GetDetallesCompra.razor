@@ -3,19 +3,10 @@
 @using AppForSEII2526.Web.API
 @inject AppForHerramientasAPIClient apiclient
 
-<h3>GetDetallesCompra</h3>
+<h3>Detalles de la Compra</h3>
 @*@attribute [Authorize]*@
 <div class="container-fluid">
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <div class="input-group">
-                <span class="input-group-text" id="basic-addon1">ID Compra</span>
-                <input type="number" id="compraID" @bind=CompraID class="form-control" placeholder="
-                    Ingrese ID de la Compra" aria-label="ID Compra" aria-describedby="basic-addon1">
-                <button type="button" class="btn btn-primary" @onclick=@BuscarCompra id="buscarCompra">Buscar Compra</button>
-            </div>
-        </div>
-    </div>
+    
 
     <div class="row alert alert-danger" role="alert" hidden="@string.IsNullOrEmpty(error)">
         <p id="ErrorsShown">@error</p>
@@ -40,7 +31,7 @@ else
         
         <tr>
             <th>Fecha de la compra</th>
-            <td id="FechaCompra">@compra.FechaCompra.ToString("dd/MM/yyyy hh:mm:ss")</td>
+            <td id="FechaCompra">@compra.FechaCompra.ToString("dd/MM/yyyy")</td>
         </tr>
         
     </table>
