@@ -10,125 +10,73 @@ namespace AppForSEII2526.UIT.CU_CrearOfertas
     {
         private By buttonFechaInicio = By.Id("FechaInicio");
         private By buttonFechaFin = By.Id("FechaFin");
-        private By buttonMetodoPago = By.Id("TiposMetodoPago");
-        private By buttonDirigidaA = By.Id("TiposDirigidaOferta");
-        private By buttonCrearOferta = By.Id("Submit");
-        private By buttonModifyHerramientas = By.Id("ModifyHerramientas");
-        private By tableOfertaItems = By.Id("TablaDeOfertaItems");
-        private By errorsShown = By.Id("ErrorsShown");
-        private By modalDialogOk = By.Id("Button_DialogOK");
-        private By modalDialogCancel = By.Id("Button_DialogCancel");
-
+        private By buttonOfertarHerramientas = By.Id("Submit");
+        private By dialogOkButton = By.Id("Button_DialogOK");
+        private By modificarHerramientasButton = By.Id("ModifyHerramientas");
+        private By tableOfOfertasItemsBy = By.Id("TablaDeOfertaItems");
 
         public CrearOfertaPO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
+
         }
 
-        public void IntroducirFechaInicio(DateTime fecha)
+        public void RellenarFormularioOferta(DateTime fechaInicio, DateTime fechaFin)
         {
-            WaitForBeingClickable(buttonFechaInicio);
-            InputDateInDatePicker(buttonFechaInicio, fecha);
+            InputDateInDatePicker(buttonFechaInicio, fechaInicio);
+            InputDateInDatePicker(buttonFechaFin, fechaFin);
         }
 
-        public void IntroducirFechaFin(DateTime fecha)
+        public void RellenarPorcentajeDescuentoOferta(int hID, int porcentajeDescuento)
         {
-            WaitForBeingClickable(buttonFechaFin);
-            InputDateInDatePicker(buttonFechaFin, fecha);
+            WaitForBeingClickable(By.Id($"Porcentaje_{hID}"));
+            _driver.FindElement(By.Id($"Porcentaje_{hID}")).Clear();
+            _driver.FindElement(By.Id($"Porcentaje_{hID}")).SendKeys(porcentajeDescuento.ToString());
         }
 
-        public void SeleccionarMetodoPago(string metodoPago)
+        public bool CheckValidationError(string expectedError)
         {
-            WaitForBeingClickable(buttonMetodoPago);
-            SelectElement selectElement = new SelectElement(_driver.FindElement(buttonMetodoPago));
-            selectElement.SelectByText(metodoPago);
+            return _driver.PageSource.Contains(expectedError);
         }
 
-        public void SeleccionarDirigidaA(string dirigidaA)
+        public void ClickSubmitButton()
         {
-            WaitForBeingClickable(buttonDirigidaA);
-            SelectElement selectElement = new SelectElement(_driver.FindElement(buttonDirigidaA));
-            selectElement.SelectByText(dirigidaA);
+            WaitForBeingClickable(buttonOfertarHerramientas);
+            _driver.FindElement(buttonOfertarHerramientas).Click();
         }
 
-        public void IntroducirPorcentajeDescuento(int herramientaId, int porcentaje)
+        public void ConfirmDialog()
         {
-            By inputPorcentaje = By.Id($"Porcentaje_{herramientaId}");
-            WaitForBeingClickable(inputPorcentaje);
-            var inputElement = _driver.FindElement(inputPorcentaje);
+            WaitForBeingClickable(dialogOkButton);
+            _driver.FindElement(dialogOkButton).Click();
+        }
+
+        public void PressModifyHerramientasButton()
+        {
+            WaitForBeingClickable(modificarHerramientasButton);
+            _driver.FindElement(modificarHerramientasButton).Click();
+        }
+
+        public bool CheckListOfHerramientasParaOfertar(List<string[]> expectedHerramientas)
+        {
+            return CheckBodyTable(expectedHerramientas, tableOfOfertasItemsBy);
+        }
+
+        public void RellenarFechaOpcional(By campo, int? dias)
+        {
+            WaitForBeingVisible(campo);
+            if (dias.HasValue && dias > 0)
+                InputDateInDatePicker(campo, DateTime.Today.AddDays(dias.Value));
+            else
+                _driver.FindElement(campo).Clear();
+        }
+
+        public void RellenarPorcentajeOpcional(int hID, int? porcentaje)
+        {
+            WaitForBeingClickable(By.Id($"Porcentaje_{hID}"));
+            var inputElement = _driver.FindElement(By.Id($"Porcentaje_{hID}"));
             inputElement.Clear();
-            inputElement.SendKeys(porcentaje.ToString());
-        }
-
-        public void ClickCrearOferta()
-        {
-            WaitForBeingClickable(buttonCrearOferta);
-            _driver.FindElement(buttonCrearOferta).Click();
-        }
-
-        public void ClickModificarHerramientas()
-        {
-            WaitForBeingClickable(buttonModifyHerramientas);
-            _driver.FindElement(buttonModifyHerramientas).Click();
-        }
-
-        public void ConfirmarCrearOferta()
-        {
-            WaitForBeingClickable(modalDialogOk);
-            _driver.FindElement(modalDialogOk).Click();
-        }
-
-        public void CancelarCrearOferta()
-        {
-            WaitForBeingClickable(modalDialogCancel);
-            _driver.FindElement(modalDialogCancel).Click();
-        }
-
-        public bool CheckOfertaItemsInTable(List<string[]> expectedItems)
-        {
-            return CheckBodyTable(expectedItems, tableOfertaItems);
-        }
-
-        public bool CheckErrorMessage(string expectedError)
-        {
-            try
-            {
-                WaitForBeingVisible(errorsShown);
-                var errorText = _driver.FindElement(errorsShown).Text;
-                return errorText.Contains(expectedError);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public bool IsSubmitButtonEnabled()
-        {
-            try
-            {
-                return _driver.FindElement(buttonCrearOferta).Enabled;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public string GetPrecioTotalOferta()
-        {
-            // Buscar el elemento que contiene "Precio Total Oferta"
-            var priceElement = _driver.FindElements(By.TagName("p"))
-                .FirstOrDefault(p => p.Text.Contains("Precio Total Oferta"));
-
-            if (priceElement != null)
-            {
-                // Extraer el precio del texto
-                var text = priceElement.Text;
-                var startIndex = text.IndexOf("Precio Total Oferta:") + "Precio Total Oferta:".Length;
-                var endIndex = text.IndexOf("€", startIndex);
-                return text.Substring(startIndex, endIndex - startIndex).Trim();
-            }
-            return string.Empty;
+            if (porcentaje.HasValue)
+                inputElement.SendKeys(porcentaje.Value.ToString());
         }
     }
 }

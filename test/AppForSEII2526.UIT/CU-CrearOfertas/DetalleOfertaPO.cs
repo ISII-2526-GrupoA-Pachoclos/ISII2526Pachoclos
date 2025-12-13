@@ -9,64 +9,32 @@ namespace AppForSEII2526.UIT.CU_CrearOfertas
 {
     public class DetalleOfertaPO : PageObject
     {
-        private By tableFechaInicio = By.Id("FechaInicio");
-        private By tableFechaFin = By.Id("FechaFin");
-        private By tableFechaOferta = By.Id("FechaOferta");
-        private By tableMetodoPago = By.Id("MetodoPago");
-        private By tableTiposDirigidaOferta = By.Id("TiposDirigidaOferta");
-        private By tableOfertaItems = By.Id("OfertaItems");
-        private By tableDetalleOferta = By.Id("DetalleOferta");
-        private By tablePrecioTotal = By.Id("PrecioTotal");
+        private By botonPrecioTotal = By.Id("PrecioTotal");
 
         public DetalleOfertaPO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
+
         }
 
-        public string GetFechaInicio()
+        public bool CheckOfertaDetail(DateTime fechaInicio, DateTime fechaFin, DateTime fechaOferta, string metodoPago, string dirigidaA, int ofertaItems, float precioTotal)
         {
-            WaitForBeingVisible(tableFechaInicio);
-            return _driver.FindElement(tableFechaInicio).Text;
+            WaitForBeingVisible(botonPrecioTotal);
+            bool result = true;
+
+            result = result && _driver.FindElement(By.Id("FechaInicio")).Text.Contains(fechaInicio.ToString("dd/MM/yyyy"));
+            result = result && _driver.FindElement(By.Id("FechaFin")).Text.Contains(fechaFin.ToString("dd/MM/yyyy"));
+            result = result && _driver.FindElement(By.Id("FechaOferta")).Text.Contains(fechaOferta.ToString("dd/MM/yyyy"));
+            result = result && _driver.FindElement(By.Id("MetodoPago")).Text.Contains(metodoPago);
+            result = result && _driver.FindElement(By.Id("TiposDirigidaOferta")).Text.Contains(dirigidaA);
+            result = result && _driver.FindElement(By.Id("OfertaItems")).Text.Contains(ofertaItems.ToString());
+            result = result && _driver.FindElement(botonPrecioTotal).Text.Contains(precioTotal.ToString("F2"));
+
+            return result;
         }
 
-        public string GetFechaFin()
+        public bool CheckListOfHerramientasOfertadas(List<string[]> expectedHerramientas)
         {
-            WaitForBeingVisible(tableFechaFin);
-            return _driver.FindElement(tableFechaFin).Text;
-        }
-
-        public string GetFechaOferta()
-        {
-            WaitForBeingVisible(tableFechaOferta);
-            return _driver.FindElement(tableFechaOferta).Text;
-        }
-
-        public string GetMetodoPago()
-        {
-            WaitForBeingVisible(tableMetodoPago);
-            return _driver.FindElement(tableMetodoPago).Text;
-        }
-
-        public string GetTiposDirigidaOferta()
-        {
-            WaitForBeingVisible(tableTiposDirigidaOferta);
-            return _driver.FindElement(tableTiposDirigidaOferta).Text;
-        }
-
-        public string GetCantidadOfertaItems()
-        {
-            WaitForBeingVisible(tableOfertaItems);
-            return _driver.FindElement(tableOfertaItems).Text;
-        }
-
-        public string GetPrecioTotal()
-        {
-            WaitForBeingVisible(tablePrecioTotal);
-            return _driver.FindElement(tablePrecioTotal).Text;
-        }
-
-        public bool CheckHerramientasOfertadasInTable(List<string[]> expectedHerramientas)
-        {
-            return CheckBodyTable(expectedHerramientas, tableDetalleOferta);
+            return CheckBodyTable(expectedHerramientas, By.Id("DetalleOferta"));
         }
     }
 }

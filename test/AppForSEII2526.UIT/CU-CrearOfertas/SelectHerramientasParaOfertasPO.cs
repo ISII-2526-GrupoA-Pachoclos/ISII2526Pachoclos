@@ -35,14 +35,12 @@ namespace AppForSEII2526.UIT.CU_CrearOfertas
             _driver.FindElement(buttonBuscarHerramientas).Click();
         }
 
-        public bool CheckHerramientasInTable(List<string[]> expectedHerramientas)
+        public bool CheckListOfHerramientas(List<string[]> expectedHerramientas)
         {
+
             return CheckBodyTable(expectedHerramientas, tableOfHerramientasBy);
         }
 
-
-
-        //------------------- CARRITO ---------------------------
         public void AddHerramientaToCarrito(string nombreHerramienta)
         {
             By addButton = By.Id("herramientaToOfertar_" + nombreHerramienta);
@@ -60,7 +58,29 @@ namespace AppForSEII2526.UIT.CU_CrearOfertas
         {
             By removeButton = By.Id("removeHerramienta_" + nombreHerramienta);
             WaitForBeingClickable(removeButton);
-            _driver.FindElement(removeButton).Click();
+            
+            // Hacer scroll hacia el botón de eliminar primero
+            IWebElement removeButtonElement = _driver.FindElement(removeButton);
+            Actions actions = new Actions(_driver);
+            actions.MoveToElement(removeButtonElement).Perform();
+            Thread.Sleep(300); // Pequeña pausa para que termine el scroll
+            
+            try
+            {
+                // Intentar click normal
+                removeButtonElement.Click();
+            }
+            catch (ElementClickInterceptedException)
+            {
+                // Si falla, usar JavaScript para hacer click
+                IJavaScriptExecutor js = (IJavaScriptExecutor)_driver;
+                js.ExecuteScript("arguments[0].click();", removeButtonElement);
+            }
+
+            // Hacer scroll hacia el botón de ofertar después de eliminar
+            WaitForBeingVisible(botonOfertar);
+            IWebElement botonOfertarElement = _driver.FindElement(botonOfertar);
+            actions.MoveToElement(botonOfertarElement).Perform();
         }
 
         public bool OfertarHerramientasNotAvailable()
@@ -76,10 +96,10 @@ namespace AppForSEII2526.UIT.CU_CrearOfertas
             }
         }
 
-        public bool CheckListOfHerramientas(List<string[]> expectedHerramientas)
+        public void ClickOfertarHerramientas()
         {
-
-            return CheckBodyTable(expectedHerramientas, tableOfHerramientasBy);
+            WaitForBeingClickable(botonOfertar);
+            _driver.FindElement(botonOfertar).Click();
         }
     }
 }
