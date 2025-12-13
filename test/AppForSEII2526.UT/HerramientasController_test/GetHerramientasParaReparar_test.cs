@@ -82,7 +82,7 @@ namespace AppForSEII2526.UT.HerramientasController_test
             // Assert
             // Verificar que el resultado es Ok
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var herramientasDTOsActual = Assert.IsAssignableFrom<IList<HerramientasParaRepararDTO>>(okResult.Value);
+            var herramientasDTOsActual = Assert.IsType<HerramientasParaRepararDTO[]>(okResult.Value);
 
             Assert.Equal(herramientasEsperadas, herramientasDTOsActual);
         }
