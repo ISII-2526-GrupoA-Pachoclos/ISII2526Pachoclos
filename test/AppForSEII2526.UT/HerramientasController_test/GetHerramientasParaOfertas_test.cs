@@ -65,20 +65,20 @@ namespace AppForSEII2526.UT.HerramientasController_test
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var herramientasDTOsActual = Assert.IsAssignableFrom<IList<HerramientasParaOfertasDTO>>(okResult.Value);
+            var herramientasDTOsActual = Assert.IsType<List<HerramientasParaOfertasDTO>>(okResult.Value);
 
+            // Verificar que la cantidad de elementos sea la misma
             Assert.Equal(expectedHerramientasOfertadas.Count, herramientasDTOsActual.Count);
 
+            // Verificar que cada elemento esperado esté presente en la lista actual
             foreach (var esperado in expectedHerramientasOfertadas)
             {
-                var match = herramientasDTOsActual.FirstOrDefault(a =>
-                    string.Equals(a.nombre, esperado.nombre, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(a.material, esperado.material, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(a.fabricante, esperado.fabricante, StringComparison.OrdinalIgnoreCase) &&
-                    Math.Abs(a.precio - esperado.precio) < 0.0001f
+                Assert.Contains(herramientasDTOsActual, actual =>
+                    string.Equals(actual.nombre, esperado.nombre, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(actual.material, esperado.material, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(actual.fabricante, esperado.fabricante, StringComparison.OrdinalIgnoreCase) &&
+                    Math.Abs(actual.precio - esperado.precio) < 0.0001f
                 );
-
-                Assert.NotNull(match);
             }
         }
     }
