@@ -75,10 +75,10 @@ class Program
 
         Console.WriteLine("Seleccione el tipo de logs que desea visualizar:");
         Console.WriteLine();
+        Console.WriteLine("  0. Salir de la aplicación");
         Console.WriteLine("  1. Solo Information");
         Console.WriteLine("  2. Solo Error");
         Console.WriteLine("  3. Information y Error");
-        Console.WriteLine("  0. Salir de la aplicación");
         Console.WriteLine();
         Console.Write("Ingrese su opción (0-3): ");
 
