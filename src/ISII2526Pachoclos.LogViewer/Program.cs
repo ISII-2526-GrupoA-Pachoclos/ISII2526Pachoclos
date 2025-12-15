@@ -77,9 +77,10 @@ class Program
         Console.WriteLine();
         Console.WriteLine("  1. Solo Information");
         Console.WriteLine("  2. Solo Error");
+        Console.WriteLine("  3. Information y Error");
         Console.WriteLine("  0. Salir de la aplicación");
         Console.WriteLine();
-        Console.Write("Ingrese su opción (0-2): ");
+        Console.Write("Ingrese su opción (0-3): ");
 
         string? opcion = Console.ReadLine();
 
@@ -87,6 +88,7 @@ class Program
         {
             "1" => "log.Information",
             "2" => "log.Error",
+            "3" => "log.*",
             "0" => SalirDeLaAplicacion(),
             _ => ObtenerRoutingKeyConValidacion(out volverAlMenu)
         };
@@ -114,6 +116,7 @@ class Program
         {
             "log.Information" => "Solo logs de nivel Information",
             "log.Error" => "Solo logs de nivel Error",
+            "log.*" => "Logs de nivel Information y Error",
             _ => $"Routing key personalizado: {routingKey}"
         };
     }
