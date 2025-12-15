@@ -5,7 +5,7 @@ class Program
     static void Main(string[] args)
     {
         // Configuración de conexión
-        const string hostName = "172.20.10.3";
+        const string hostName = "host.docker.internal";
         const int port = 5672;
         const string userName = "guest";
         const string password = "guest";
