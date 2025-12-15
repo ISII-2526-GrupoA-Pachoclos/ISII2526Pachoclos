@@ -14,51 +14,72 @@ class Program
         Console.WriteLine("=== LogViewer - Sistema de Monitoreo de Logs ===");
         Console.WriteLine();
 
-        // Mostrar menú de opciones
-        string routingKey = MostrarMenuYObtenerRoutingKey();
+        bool salir = false;
 
-        Console.WriteLine("\nIniciando aplicación...");
-        Console.WriteLine($"Filtrando logs por: {ObtenerDescripcionFiltro(routingKey)}");
-        Console.WriteLine();
-
-        using var subscriber = new Subscriber(hostName, port, userName, password, exchangeName, routingKey);
-
-        try
+        while (!salir)
         {
-            subscriber.StartConsuming();
+            // Mostrar menú de opciones
+            string routingKey = MostrarMenuYObtenerRoutingKey(out bool volverAlMenu);
 
-            Console.WriteLine("\nPresiona 'x' + ENTER para salir...");
-            Console.WriteLine("Esperando logs...\n");
-
-            // Bucle principal que verifica si se presiona 'x'
-            while (true)
+            if (volverAlMenu)
             {
-                var input = Console.ReadLine();
-                if (input?.ToLower() == "x")
+                continue;
+            }
+
+            Console.WriteLine("\nIniciando aplicación...");
+            Console.WriteLine($"Filtrando logs por: {ObtenerDescripcionFiltro(routingKey)}");
+            Console.WriteLine();
+
+            using var subscriber = new Subscriber(hostName, port, userName, password, exchangeName, routingKey);
+
+            try
+            {
+                subscriber.StartConsuming();
+
+                Console.WriteLine("\nOpciones:");
+                Console.WriteLine("  - Presiona 'm' + ENTER para volver al menú");
+                Console.WriteLine("  - Presiona 'x' + ENTER para salir...");
+                Console.WriteLine("Esperando logs...\n");
+
+                // Bucle principal que verifica la entrada del usuario
+                while (true)
                 {
-                    Console.WriteLine("Saliendo de LogViewer...");
-                    break;
+                    var input = Console.ReadLine();
+                    if (input?.ToLower() == "x")
+                    {
+                        Console.WriteLine("Saliendo de LogViewer...");
+                        salir = true;
+                        break;
+                    }
+                    else if (input?.ToLower() == "m")
+                    {
+                        Console.WriteLine("Volviendo al menú principal...\n");
+                        break;
+                    }
                 }
             }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($" [x] Error crítico: {ex.Message}");
-            Console.WriteLine("Presiona cualquier tecla para salir...");
-            Console.ReadKey();
+            catch (Exception ex)
+            {
+                Console.WriteLine($" [x] Error crítico: {ex.Message}");
+                Console.WriteLine("Presiona cualquier tecla para continuar...");
+                Console.ReadKey();
+            }
         }
 
         Console.WriteLine("LogViewer cerrado correctamente.");
     }
 
-    private static string MostrarMenuYObtenerRoutingKey()
+    private static string MostrarMenuYObtenerRoutingKey(out bool volverAlMenu)
     {
+        volverAlMenu = false;
+
         Console.WriteLine("Seleccione el tipo de logs que desea visualizar:");
         Console.WriteLine();
         Console.WriteLine("  1. Solo Information");
         Console.WriteLine("  2. Solo Error");
+        Console.WriteLine("  0. Salir de la aplicación");
         Console.WriteLine();
-        Console.Write("Ingrese su opción (1-2): ");
+        Console.Write("Ingrese su opción (0-2): ");
 
         string? opcion = Console.ReadLine();
 
@@ -66,17 +87,25 @@ class Program
         {
             "1" => "log.Information",
             "2" => "log.Error",
-            _ => ObtenerRoutingKeyConValidacion()
+            "0" => SalirDeLaAplicacion(),
+            _ => ObtenerRoutingKeyConValidacion(out volverAlMenu)
         };
     }
 
-    private static string ObtenerRoutingKeyConValidacion()
+    private static string ObtenerRoutingKeyConValidacion(out bool volverAlMenu)
     {
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("\nOpción no válida. Intente nuevamente.");
         Console.ResetColor();
         Console.WriteLine();
-        return MostrarMenuYObtenerRoutingKey();
+        return MostrarMenuYObtenerRoutingKey(out volverAlMenu);
+    }
+
+    private static string SalirDeLaAplicacion()
+    {
+        Console.WriteLine("Saliendo de LogViewer...");
+        Environment.Exit(0);
+        return string.Empty; // Nunca se alcanzará
     }
 
     private static string ObtenerDescripcionFiltro(string routingKey)
