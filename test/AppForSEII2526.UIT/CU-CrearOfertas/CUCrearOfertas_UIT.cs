@@ -26,6 +26,11 @@ namespace AppForSEII2526.UIT.CU_CrearOfertas
         private const string precioH1String = "7 €";
         private const int porcentajeDescuento = 50;
 
+        private const int idH2 = 3;
+        private const string materialH2 = "Madera";
+        private const string fabricanteH2 = "Jose";
+        private const float precioH2float = 6f;
+
 
 
         public CUCrearOfertas_UIT(ITestOutputHelper output) : base(output)
@@ -201,7 +206,7 @@ namespace AppForSEII2526.UIT.CU_CrearOfertas
             Thread.Sleep(500);
             _selectHerramientasParaOfertasPO.AddHerramientaToCarrito(nombreHerramienta2);
             Thread.Sleep(500);
-            
+
             _selectHerramientasParaOfertasPO.ClickOfertarHerramientas();
             _crearOfertaPO.PressModifyHerramientasButton();
             Thread.Sleep(500);
@@ -293,7 +298,7 @@ namespace AppForSEII2526.UIT.CU_CrearOfertas
             _crearOfertaPO.ClickSubmitButton();
             Thread.Sleep(500);
             _crearOfertaPO.ConfirmDialog();
-            Thread.Sleep(500); 
+            Thread.Sleep(500);
 
             //Assert
             Assert.True(_detalleOfertaPO.CheckOfertaDetail(
@@ -308,13 +313,92 @@ namespace AppForSEII2526.UIT.CU_CrearOfertas
 
             var expectedHerramientas = new List<string[]>
             {
-                new string[] { 
-                    idH1.ToString(), 
-                    nombreHerramienta1, 
-                    materialH1, 
-                    fabricanteH1, 
-                    precioH1float.ToString("F2") + " €", 
-                    porcentaje.ToString() + " %", 
+                new string[] {
+                    idH1.ToString(),
+                    nombreHerramienta1,
+                    materialH1,
+                    fabricanteH1,
+                    precioH1float.ToString("F2") + " €",
+                    porcentaje.ToString() + " %",
+                    precioOfertaEsperado.ToString("F2") + " €"
+                }
+            };
+
+            Assert.True(_detalleOfertaPO.CheckListOfHerramientasOfertadas(expectedHerramientas),
+                "Error: la lista de herramientas ofertadas no es la esperada");
+        }
+
+
+        /*
+        ============================================================================
+                              MODIFICACIÓN SPRINT 3
+        ============================================================================
+        */
+        [Theory]
+        [InlineData("6", 1, 10, 25)]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC3_ModificacionSprint3(
+            string filtroPrecio,
+            int diasFechaInicio,
+            int diasFechaFin,
+            int porcentaje)
+        {
+            //Arrange
+            InitialStepsForOfertarHerramientas();
+            _selectHerramientasParaOfertasPO.BuscarHerramientas("", fabricanteH1);
+            Thread.Sleep(500);
+            _selectHerramientasParaOfertasPO.AddHerramientaToCarrito(nombreHerramienta1);
+            Thread.Sleep(500);
+            _selectHerramientasParaOfertasPO.BuscarHerramientas(filtroPrecio, "");
+            Thread.Sleep(500);
+            _selectHerramientasParaOfertasPO.AddHerramientaToCarrito(nombreHerramienta2);
+            Thread.Sleep(500);
+            _selectHerramientasParaOfertasPO.ClickOfertarHerramientas();
+            Thread.Sleep(500);
+
+            _crearOfertaPO.PressModifyHerramientasButton();
+            Thread.Sleep(500);
+            _selectHerramientasParaOfertasPO.RemoveHerramientaFromCarrito(nombreHerramienta1);
+            Thread.Sleep(500);
+            _selectHerramientasParaOfertasPO.ClickOfertarHerramientas();
+
+            DateTime fechaInicio = DateTime.Today.AddDays(diasFechaInicio);
+            DateTime fechaFin = DateTime.Today.AddDays(diasFechaFin);
+            DateTime fechaOferta = DateTime.Today;
+
+            // Calcular el precio con descuento esperado
+            float precioOfertaEsperado = precioH2float * (100 - porcentaje) / 100f;
+
+            //Act
+            _crearOfertaPO.RellenarFormularioOferta(fechaInicio, fechaFin);
+            Thread.Sleep(500);
+            _crearOfertaPO.RellenarPorcentajeDescuentoOferta(idH2, porcentaje);
+            Thread.Sleep(500);
+            _crearOfertaPO.ClickSubmitButton();
+            Thread.Sleep(500);
+            _crearOfertaPO.ConfirmDialog();
+            Thread.Sleep(500);
+
+            //Assert
+            Assert.True(_detalleOfertaPO.CheckOfertaDetail(
+                fechaInicio,
+                fechaFin,
+                fechaOferta,
+                "Tarjeta",
+                "Socios",
+                1,
+                precioOfertaEsperado
+            ), "Error: los detalles de la oferta no son los esperados");
+
+            var expectedHerramientas = new List<string[]>
+            {
+                new string[] {
+                    idH2.ToString(),
+                    nombreHerramienta2,
+                    materialH2,
+                    fabricanteH2,
+                    precioH2float.ToString("F2") + " €",
+                    porcentaje.ToString() + " %",
                     precioOfertaEsperado.ToString("F2") + " €"
                 }
             };
