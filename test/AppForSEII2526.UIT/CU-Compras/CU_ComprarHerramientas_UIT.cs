@@ -228,6 +228,67 @@ namespace AppForSEII2526.UIT.CU_Compras
 
         }
 
+        //Examen Sprint 3
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void CU1_FB_FA1_FA1_FA2_examenSprint3() {
+
+            //Arrange
+            InitialStepsForCompra();
+            
+           //Act
+            selectHerramientasForCompraPO.BuscarHerramientas("", 7);
+            Thread.Sleep(500);
+
+            selectHerramientasForCompraPO.AñadirHerramienta(NombreHerramienta2);
+            Thread.Sleep(500);
+
+            selectHerramientasForCompraPO.AñadirHerramienta(NombreHerramienta);
+            Thread.Sleep(500);
+
+            selectHerramientasForCompraPO.Comprar();
+            Thread.Sleep(500);
+            crearCompraPO.ModificarCompra();
+            Thread.Sleep(500);
+            selectHerramientasForCompraPO.QuitarHerramienta(NombreHerramienta2);
+            Thread.Sleep(500);
+            selectHerramientasForCompraPO.Comprar();
+            Thread.Sleep(500);
+            var expectedHerramientas = new List<string[]>
+            {
+                new string[] { NombreHerramienta, MaterialHerramienta, PrecioHerramienta.ToString() }
+
+            };
+            Thread.Sleep(500);
+
+
+
+            //Assert intermedio
+            Assert.True(crearCompraPO.CheckListaHerramientas(expectedHerramientas));
+
+            //Act final
+            Thread.Sleep(500);
+            crearCompraPO.RellenarFormularioCompra("Juan", "Valdes", "calle de juan");
+            Thread.Sleep(500);
+            crearCompraPO.SubmitCompra();
+            Thread.Sleep(500);
+            crearCompraPO.ConfirmCompra();
+            Thread.Sleep(500);
+
+            //Assert final
+
+            var expectedHerramientasCompra = new List<string[]>
+            {
+                new string[] { NombreHerramienta, 1.ToString(), MaterialHerramienta, PrecioHerramienta.ToString(), "" }
+
+            };
+
+            Assert.True(detallesCompraPO.CheckDetallesCompra("Juan", "Valdes", "calle de juan", DateTime.Today, PrecioHerramienta));
+
+            Assert.True(detallesCompraPO.CheckListaHerramientas(expectedHerramientasCompra));
+        }
+
 
 
 

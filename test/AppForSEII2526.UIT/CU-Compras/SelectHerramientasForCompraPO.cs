@@ -34,6 +34,8 @@ namespace AppForSEII2526.UIT.CU_Compras
 
         }
 
+        
+
         public void AñadirHerramienta(string nombreHerramienta) { 
             By addButton = By.Id("HerramientaParaComprar_" + nombreHerramienta);
             WaitForBeingClickable(addButton);
