@@ -37,6 +37,19 @@ namespace AppForSEII2526.UIT.CU_Reparar
 
         }
 
+        public void BorrarFiltros() // MÉTODO CREADO EN EL EXAMEN POR PROBLEMAS EN LAS PRUEBAS
+        {
+            //wait for the webelement to be clickable
+            WaitForBeingClickable(inputNombreHerramienta);
+            _driver.FindElement(inputNombreHerramienta).Clear();
+
+            WaitForBeingClickable(inputfiltroTiempoReparacion);
+            _driver.FindElement(inputfiltroTiempoReparacion).Clear();
+
+
+            _driver.FindElement(botonBuscarHerramientas).Click();
+        }
+
         public bool CheckListOfHerramientas(List<string[]> expectedHerramientas)
         {
             return CheckBodyTable(expectedHerramientas, tableOfHerramientasBy);

@@ -23,6 +23,9 @@ namespace AppForSEII2526.UIT.CU_Reparar
         private const string tiempoReparacionH1 = "7 dias";
 
         private const string nombreH2 = "Martillo";
+        private const string tiempoReparacionH2 = "5 dias";
+        private const float precioH2float = 6f;
+        private const string precioH2String = "6 €";
 
         private const string nombreC = "pibi";
         private const string apellidosC = "ronaldo";
@@ -290,6 +293,7 @@ namespace AppForSEII2526.UIT.CU_Reparar
             Thread.Sleep(500);
             _selectHerramientasParaRepararPO.AddHerramientaToCart(nombreH1);
             _selectHerramientasParaRepararPO.ClickRepararHerramientas();
+            
             var fechaEntrega = DateTime.Today.AddDays(diasDesdeHoy);
 
             // fecha de recogida: fechaEntrega + tiempo de reparación
@@ -319,6 +323,93 @@ namespace AppForSEII2526.UIT.CU_Reparar
 
             Assert.True(_detalleReparacionPO.CheckListOfHerramientasReparadas(expectedHerramientas),
                 "Error: la lista de herramientas reparadas no es la esperada");
-            }
+        }
+
+        /*
+        ===========================================
+            MODIFICACIÓN DEL EXAMEN
+        ===========================================
+         */
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC2_FB_AF0_AF0_AF2_EXAMEN()
+        {
+            // Arrange
+            InitialStepsForRepararHerramientas();
+            
+            // Datos de la herramienta 2 que se reparará
+            var expectedHerramientas = new List<string[]>
+            {
+                new string[] { nombreH2, 1.ToString(), precioH2String, tiempoReparacionH2 }
+            };
+
+
+            // Act
+            _selectHerramientasParaRepararPO.BuscarHerramientas(nombreH1, ""); // 1) Filtramos por nombre
+            Thread.Sleep(500);
+            _selectHerramientasParaRepararPO.AddHerramientaToCart(nombreH1); // 2) Añadimos la herramienta 1
+            Thread.Sleep(500);
+            Thread.Sleep(500);
+
+            _selectHerramientasParaRepararPO.BorrarFiltros(); // Borramos filtros por seguridad (método añadido)
+                                                              // MÉTODO CREADO EN EL EXAMEN POR PROBLEMAS EN LAS PRUEBAS
+            Thread.Sleep(500);
+            Thread.Sleep(500);
+
+            _selectHerramientasParaRepararPO.BuscarHerramientas("", tiempoReparacionH2); // 3) filtramos por tiempo de reparacion
+            Thread.Sleep(500);
+            _selectHerramientasParaRepararPO.AddHerramientaToCart(nombreH2); // 4) añadimos al carrito la 2a herramienta que hemos filtrado
+            Thread.Sleep(500);
+
+            _selectHerramientasParaRepararPO.ClickRepararHerramientas(); // vamos al POST
+            Thread.Sleep(500);
+
+            _crearReparacionPO.PressModifyHerramientasButton(); // 5) Modificamos el carrito desde el POST
+            Thread.Sleep(500);
+
+            _selectHerramientasParaRepararPO.RemoveHerramientaFromCart(nombreH1); // 5) eliminamos la 1a herramienta
+            Thread.Sleep(500);
+
+
+            // 6) Continuamos la reparacion como el flujo básico
+            _selectHerramientasParaRepararPO.ClickRepararHerramientas();
+            Thread.Sleep(500);
+
+            var fechaEntrega = DateTime.Today.AddDays(3);
+
+            // fecha de recogida: fechaEntrega + tiempo de reparación
+            var fechaRecogidaEsperada = fechaEntrega.AddDays(5); // Tiempo reparacion Martillo (5 dias)
+
+            _crearReparacionPO.RellenarFormularioReparacion(nombreC, apellidosC, fechaEntrega);
+            Thread.Sleep(500);
+            _crearReparacionPO.ClickSubmitButton();
+            Thread.Sleep(500);
+            _crearReparacionPO.ConfirmDialog();
+            Thread.Sleep(500);
+
+
+
+            // Assert
+            Assert.True(_detalleReparacionPO.CheckReparacionDetail(
+                nombreC,
+                apellidosC,
+                fechaEntrega,
+                fechaRecogidaEsperada,
+                precioH2float
+                ), "Error: los detalles de la reparación no son los esperados");
+
+            Assert.True(_detalleReparacionPO.CheckListOfHerramientasReparadas(expectedHerramientas),
+                "Error: la lista de herramientas reparadas no es la esperada"); // FIN
+
+
+
+        }
+
+
+
     }
+
 }
+
+    
+
