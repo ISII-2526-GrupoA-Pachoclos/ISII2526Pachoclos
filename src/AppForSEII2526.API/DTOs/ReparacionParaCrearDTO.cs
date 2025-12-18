@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using AppForSEII2526.API.Models;
 
 namespace AppForSEII2526.API.DTOs
@@ -38,8 +39,8 @@ namespace AppForSEII2526.API.DTOs
         [Required, StringLength(50, ErrorMessage = "El apellido no puede tener más de 50 caracteres.")]
         public string apellidos { get; set; }
 
-        [StringLength(50, ErrorMessage = "No puede tener mas de 50 caracteres.", MinimumLength = 1)]
-        [RegularExpression(@"^\+?\d{10,15}$", ErrorMessage = "El número de teléfono no es válido. Ejemplo válido: 9876543210")]
+        //[StringLength(50, ErrorMessage = "No puede tener mas de 50 caracteres.")]
+        [RegularExpression(@"^(\+?\d{10,15})?$", ErrorMessage = "El número de teléfono no es válido. Ejemplo válido: 9876543210")]
         public string? numTelefono { get; set; }
 
         [Required(ErrorMessage = "El método de pago es obligatorio.")]
@@ -52,6 +53,9 @@ namespace AppForSEII2526.API.DTOs
         [Required(ErrorMessage = "Debe incluir al menos una herramienta para reparar.")]
         public IList<ReparacionItemDTO> Herramientas { get; set; } = new List<ReparacionItemDTO>();
 
+
+
+
         public override bool Equals(object? obj)
         {
             return obj is ReparacionParaCrearDTO dTO &&
@@ -61,7 +65,6 @@ namespace AppForSEII2526.API.DTOs
                    metodoPago == dTO.metodoPago &&
                    fechaEntrega == dTO.fechaEntrega &&
                    Herramientas.SequenceEqual(dTO.Herramientas);
-                   
         }
 
         public override int GetHashCode()

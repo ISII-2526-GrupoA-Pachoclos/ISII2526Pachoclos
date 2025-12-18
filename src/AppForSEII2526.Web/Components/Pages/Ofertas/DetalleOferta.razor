@@ -1,0 +1,132 @@
+﻿@page "/Ofertas/DetalleOfertas"
+
+@using AppForSEII2526.Web.API
+@using Microsoft.AspNetCore.Authorization
+@inject AppForHerramientasAPIClient apiclient
+
+<h3>DetalleOferta</h3>
+
+@* @attribute [Authorize] *@
+
+@if (oferta == null)
+{
+    <p>@error</p>
+}
+else
+{
+    <table class="table table-borderless table-sm">
+        <tr>
+            <th>Fecha Inicio</th>
+            <td id="FechaInicio">@oferta.FechaInicio.ToString("dd/MM/yyyy hh:mm:ss") </td>
+        </tr>
+        <tr>
+            <th>Fecha Fin</th>
+            <td id="FechaFin">@oferta.FechaFin.ToString("dd/MM/yyyy hh:mm:ss")</td>
+        </tr>
+        <tr>
+            <th>Fecha Oferta</th>
+            <td id="FechaOferta">@oferta.FechaOferta.ToString("dd/MM/yyyy hh:mm:ss")</td>
+        </tr>
+        <tr>
+            <th>Metodo Pago</th>
+            <td id="MetodoPago">@oferta.MetodoPago</td>
+        </tr>
+        <tr>
+            <th>Tipos Dirigida Oferta</th>
+            <td id="TiposDirigidaOferta">@oferta.TiposDirigidaOferta</td>
+        </tr>
+        <tr>
+            <th>Oferta Items</th>
+            <td id="OfertaItems">@oferta.HerramientasAOfertar.Count</td>
+        </tr>
+    </table>
+
+    <h4>Herramientas Ofertadas</h4>
+
+    <table class="table" id="DetalleOferta">
+        <thead>
+            <tr>
+                <th scope="col">ID Herramienta</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Material</th>
+                <th scope="col">Fabricante</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Porcentaje</th>
+                <th scope="col">Precio Oferta</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (OfertaItemDTO item in oferta.HerramientasAOfertar)
+            {
+                <tr id="@($"RentalItem_{item.HerramientaId}")">
+                    <td>@item.HerramientaId</td>
+                    <td>@item.Nombre</td>
+                    <td>@item.Material</td>
+                    <td>@item.Fabricante</td>
+                    <td>@item.Precio.ToString("F2") €</td>
+                    <td>@item.Porcentaje %</td>
+                    <td>@item.PrecioOferta.ToString("F2") €</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr class="table-light">
+                <td colspan="6" class="text-end fw-semibold">Total:</td>
+                <td class="fw-bold text-primary" id="PrecioTotal">@CalcularPrecioTotal().ToString("F2") €</td>
+            </tr>
+        </tfoot>
+    </table>
+}
+
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int OfertaID { get; set; }
+    private OfertaDetalleDTO oferta;
+    private string error = "";
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        string userName = "";
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            if (user is not null)
+            {
+                if (user.Identity is not null && user.Identity.IsAuthenticated && user.IsInRole("Admin"))
+                {
+                    userName = user.Identity.Name;
+                }
+            }
+        }
+
+        try
+        {
+            oferta = await apiclient.GetDetallesOfertaAsync(OfertaID);
+        }
+        catch (ApiException exception)
+        {
+            oferta = null;
+        }
+
+        if ((oferta == null) || (oferta.NombreUsuario != userName))
+        {
+            error = $"Error! No estás autorizado para ver la oferta o no existe una oferta con id={OfertaID}";
+        }
+    }
+
+    private decimal CalcularPrecioTotal()
+    {
+        if (oferta?.HerramientasAOfertar == null)
+            return 0;
+
+        return (decimal)oferta.HerramientasAOfertar.Sum(item => item.PrecioOferta);
+    }
+}

@@ -1,0 +1,152 @@
+﻿@page "/Reparacion/SelectHerramientasForReparar"
+
+
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient apiclient
+@inject ILogger<SelectHerramientasForReparar> logger
+@inject ReparacionesStateContainer repsState
+@inject NavigationManager navigation
+
+<h3>SelectHerramientasForReparar</h3>
+<div class="container-fluid">
+    <div class="row alert alert-danger" role="alert" hidden="@hideErrors">
+        <p id="ErrorsShown">Errors: @errors</p>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <p>* FILTROS</p>
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">NombreHerramienta</span>
+                        <input type="text" id="inputNombreHerramienta" @bind=filtroNombre class="form-control" placeholder="Nombre Herramienta" aria-label="Nombre Herramienta" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">filtroTiempoReparacion</span>
+                        <input type="text" id="inputfiltroTiempoReparacion" @bind=filtroTiempoReparacion class="form-control" placeholder="Tiempo de Reparacion" aria-label="Tiempo de Reparacion" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" @onclick=@BuscarHerramientas id="BuscarHerramientas">Buscar Herramientas</button>
+                </div>
+            </div>
+            <div class="row">
+                <p>* HERRAMIENTAS DISPONIBLES</p>
+                @if (herramientas == null)
+                {
+                    <p>Cargando Herramientas....</p>
+                }
+                else
+                {
+                    <p>Numero de herramientas: @herramientas.Count</p>
+                    <div class="mh-100 table-responsive">
+                        <table class="table table-condensed table-hover" id="TableOfHerramientas">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Material</th>
+                                    <th>Fabricante</th>
+                                    <th>Precio</th>
+                                    <th>Tiempo de Reparacion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var h in herramientas)
+                                {
+                                    <tr id="HerramientaData_@h.Nombre">
+                                        <td>@h.Nombre</td>
+                                        <td>@h.Material</td>
+                                        <td>@h.Fabricante</td>
+                                        <td>@h.Precio €</td>
+                                        <td>@h.TiempoReparacion</td>
+                                        <td>
+                                            <button class="btn btn-outline-secondary" id="herramientaForReparar_@h.Nombre" @onclick="@(() => AddHerramienta(h))">Add</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3" hidden="@hideRentingCart">
+        <div class="col-12">
+            <div class="row">
+                <h3>Shopping Cart</h3>
+            </div>
+            @foreach (ReparacionItemDTO item in rep.Herramientas)
+            {
+                <div class="row mb-2">
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-light" id="removeHerramienta_@item.NombreHerramienta" @onclick="@(() => RemoveReparacionItem(item))">x @item.NombreHerramienta - @item.Precio€</button>
+                    </div>
+                </div>
+            }
+            <div class="row mt-2">
+                <div class="col-auto">
+                    <button type="button" class="btn btn-primary" id="purchaseHerramientaButton" @onclick=@RepararHerramientas>Reparar Herramientas</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+    private bool hideRentingCart { get { return rep.Herramientas.Count == 0; } }
+    private ICollection<HerramientasParaRepararDTO> herramientas;
+    private bool hideErrors { get { return errors.Length == 0; } }
+    private string errors = "";
+    private string filtroNombre { get; set; }
+    private string filtroTiempoReparacion { get; set; }
+
+
+
+    private ReparacionParaCrearDTO rep => repsState.Reparacion;
+
+    private bool hiddenRentingCart = true;
+
+    private void AddHerramienta(HerramientasParaRepararDTO herr)
+    {
+        repsState.AddHerramientaToReparar(herr);
+    }
+
+    private void RemoveReparacionItem(ReparacionItemDTO item)
+    {
+        repsState.BorrarHerramientaParaReparar(item);
+        if (rep.Herramientas.Count == 0)
+        {
+            hiddenRentingCart = true;
+        }
+    }
+
+    public async void BuscarHerramientas()
+    {
+        try
+        {
+            herramientas = await apiclient.GetHerramientasParaRepararconTodosLosDatosDTOAsync(filtroNombre, filtroTiempoReparacion);
+        }
+        catch (ApiException ex)
+        {
+            logger.LogError($"{DateTime.Now} Error: {ex}");
+            errors = "Error while connecting to the system";
+        }
+        StateHasChanged();
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        BuscarHerramientas();
+        return base.OnInitializedAsync();
+    }
+
+    private void RepararHerramientas()
+    {
+        navigation.NavigateTo("/Reparacion/CrearReparacion");
+    }
+}

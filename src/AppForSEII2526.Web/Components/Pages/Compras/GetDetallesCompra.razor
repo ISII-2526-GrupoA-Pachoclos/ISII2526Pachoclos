@@ -1,0 +1,152 @@
+﻿@page "/Compras/GetDetallesCompra"
+@using Microsoft.AspNetCore.Authorization
+@using AppForSEII2526.Web.API
+@inject AppForHerramientasAPIClient apiclient
+
+<h3>Detalles de la Compra</h3>
+@*@attribute [Authorize]*@
+<div class="container-fluid">
+    
+
+    <div class="row alert alert-danger" role="alert" hidden="@string.IsNullOrEmpty(error)">
+        <p id="ErrorsShown">@error</p>
+    </div>
+</div>
+@if (compra == null)
+{
+    <p>@error</p>
+
+}
+else
+{
+    <table class="table table-borderless table-sm">
+        <tr>
+            <th>Nombre y Apellido</th>
+            <td id="NombreApellido">@compra.NombreCliente @compra.ApellidosCliente</td>
+        </tr>
+        <tr>
+            <th>Dirección de envío</th>
+            <td id="DireccionEnvio">@compra.DireccionEnvio</td>
+        </tr>
+        
+        <tr>
+            <th>Fecha de la compra</th>
+            <td id="FechaCompra">@compra.FechaCompra.ToString("dd/MM/yyyy")</td>
+        </tr>
+        
+    </table>
+
+    <h4>Herramientas Compradas</h4>
+
+    <table class="table" id="RentedMovies">
+        <thead>
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Material</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (CompraItemDTO item in compra.HerramientasCompradas)
+            {
+                <tr id="CompraItem_@item.Nombre">
+                    <td>@item.Nombre</td>
+                    <td>@item.Cantidad</td>
+                    <td>@item.Material</td>
+                    <td>@item.Precio €</td>
+                    <td>@item.Descripcion</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            @*colspan is used to state that TWO columns are collapsed*@
+        <th scope="row" colspan="2" class="text-end">Precio Total</th>
+        <td id="TotalPrice">@compra.PrecioTotal €</td>
+        </tfoot>
+
+    </table>
+    
+}
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int CompraID { get; set; }
+    private CompraDetalleDTO compra;
+    private string error = "";
+
+    //[CascadingParameter]
+    //private Task<AuthenticationState>? authenticationState { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Si viene el CompraID por parámetro de la barra de busqueda, lo usamos
+        if (CompraID > 0)
+        {
+            await BuscarCompra();
+        }
+    }
+
+    private async Task BuscarCompra()
+    {
+        error = "";
+        compra = null;
+
+        if (CompraID <= 0)
+        {
+            error = "Por favor ingrese un ID de compra válido (mayor a 0)";
+            return;
+        }
+
+        //we check the user is logged in
+        /*
+        string userName = "";
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            //we retrieve the id of the user logged in
+            if (user is not null)
+            {
+                if (user.Identity is not null && user.Identity.IsAuthenticated && user.IsInRole("User"))
+                {
+                    userName = user.Identity.Name;
+                }
+            }
+        }
+        */
+
+        try
+        {
+            compra = await apiclient.GetDetallesCompraAsync(CompraID);
+        }
+        catch (ApiException exception)
+        {
+            compra = null;
+            error = $"Error al cargar la compra con ID {CompraID}: {exception.Message}";
+            StateHasChanged();
+            return;
+        }
+
+        if (compra == null)
+        {
+            error = $"No existe una compra con id={CompraID}";
+        }
+        /*
+        else if (rep.Nombre != userName)
+        {
+            error = $"Error! No estás autorizado a ver esta reparación con id={filtroReparacionID}";
+            rep = null;
+        }
+        */
+
+        StateHasChanged();
+    }
+
+    
+
+}

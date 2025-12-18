@@ -1,0 +1,150 @@
+﻿@using AppForSEII2526.Web.API
+
+@page "/Reparacion/GetDetallesReparacion"
+
+@using Microsoft.AspNetCore.Authorization
+@inject AppForHerramientasAPIClient apiclient
+
+
+
+<h3>GetDetallesHerramientasForReparar</h3>
+
+@*@attribute [Authorize]*@
+
+<div class="container-fluid">
+    <div class="row alert alert-danger" role="alert" hidden="@string.IsNullOrEmpty(error)">
+        <p id="ErrorsShown">@error</p>
+    </div>
+</div>
+
+@if (rep == null && string.IsNullOrEmpty(error))
+{
+    <p>Ingrese un ID de reparación para buscar...</p>
+}
+else if (rep != null)
+{
+    <table class="table table-borderless table-sm">
+        <tr>
+            <th>Nombre y Apellidos</th>
+            <td id="NameSurname">@rep.Nombre @rep.Apellido</td>
+        </tr>
+        <tr>
+            <th>Fecha de Entrega</th>
+            <td id="FechaEntrega">@rep.FechaEntrega.ToString("dd/MM/yyyy")</td>
+        </tr>
+        <tr>
+            <th>Fecha de Recogida</th>
+            <td id="FechaRecogida">@rep.FechaRecogida.ToString("dd/MM/yyyy")</td>
+        </tr>
+    </table>
+
+
+    <h4>Herramientas a Reparar</h4>
+    <table class="table" id="HerramientasAReparar">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Descripcion</th>
+                <th>Tiempo de Reparacion</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (ReparacionItemDTO item in rep.HerramientasAReparar)
+            {
+                <tr id="RentalItem_@item.NombreHerramienta">
+                    <td>@item.NombreHerramienta</td>
+                    <td>@item.Cantidad</td>
+                    <td>@item.Precio €</td>
+                    <td>@item.Descripcion</td>
+                    <td>@item.TiempoReparacion</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            @*colspan is used to state that TWO columns are collapsed*@
+        <th scope="row" colspan="2" class="text-end">Precio Total</th>
+        <td id="TotalPrice">@rep.PrecioTotal €</td>
+        </tfoot>
+
+    </table>
+}
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int ReparacionID { get; set; }
+
+    private ReparacionDetalleDTO rep;
+    private string error = "";
+
+    /*
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+    */
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Si viene el ReparacionID por parámetro de la barra de busqueda, lo usamos
+        if (ReparacionID > 0)
+        {
+            await BuscarReparacion();
+        }
+        else
+        {
+            error = "No se proporcionó un ID de reparación válido";
+        }
+    }
+
+    private async Task BuscarReparacion()
+    {
+        error = "";
+        rep = null;
+
+        //we check the user is logged in
+        /*
+        string userName = "";
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            //we retrieve the id of the user logged in
+            if (user is not null)
+            {
+                if (user.Identity is not null && user.Identity.IsAuthenticated && user.IsInRole("User"))
+                {
+                    userName = user.Identity.Name;
+                }
+            }
+        }
+        */
+
+        try
+        {
+            rep = await apiclient.GetDetallesReparacionAsync(ReparacionID);
+        }
+        catch (ApiException exception)
+        {
+            rep = null;
+            error = $"Error al cargar la reparación con ID {ReparacionID}: {exception.Message}";
+            StateHasChanged();
+            return;
+        }
+
+        if (rep == null)
+        {
+            error = $"No existe una reparación con id={ReparacionID}";
+        }
+        /*
+        else if (rep.Nombre != userName)
+        {
+            error = $"Error! No estás autorizado a ver esta reparación con id={ReparacionID}";
+            rep = null;
+        }
+        */
+
+        StateHasChanged();
+    }
+}
